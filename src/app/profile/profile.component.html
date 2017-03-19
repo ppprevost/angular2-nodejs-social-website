@@ -1,0 +1,132 @@
+<div class="col-sm-8 col-sm-offset-2">
+  <h2>Bienvenue {{user.username}}</h2>
+</div>
+
+<div class="container">
+  <div class="panel">
+    <div class="panel-body">
+      <form ng-submit="updateProfile()" class="form-horizontal" enctype="multipart/form-data">
+        <legend>Profile Information</legend>
+        <div class="form-group">
+          <label for="email" class="col-sm-3">Email</label>
+          <div class="col-sm-7">
+            <input type="text" name="email" class="form-control" [(ngModel)]="user.email" (blur)="updateChamp($event)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="name" class="col-sm-3">Name</label>
+          <div class="col-sm-7">
+            <input type="text" name="username" class="form-control" [(ngModel)]="user.username"
+                   (blur)="updateChamp($event)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-3">Gender</label>
+          <div class="col-sm-4">
+            <label class="radio-inline radio col-sm-4">
+              <input name="gender" (change)="updateChamp($event)" type="radio" [(ngModel)]="user.gender" name="gender"
+                     value="male" checked><span>Male</span>
+            </label>
+            <label class="radio-inline col-sm-4">
+              <input name="gender" (change)="updateChamp($event)" type="radio" [(ngModel)]="user.gender" name="gender"
+                     value="female"><span>Female</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="location" class="col-sm-3">Location</label>
+          <div class="col-sm-7">
+            <input type="text" name="location" id="location" class="form-control" [(ngModel)]="user.location"
+                   (blur)="updateChamp($event)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="website" class="col-sm-3">Website</label>
+          <div class="col-sm-7">
+            <input id="website" type="text" (blur)="updateChamp($event)" name="website" id="website"
+                   class="form-control" [(ngModel)]="user.website">
+          </div>
+        </div>
+        <!--<div class="form-group">-->
+          <!--<label class="col-sm-3">Gravatar</label>-->
+          <!--<div class="col-sm-4">-->
+            <!--<img ngf-thumbnail="file || 'app/images/default-avatar.jpg'" class="profile" width="100"-->
+                 <!--height="100">-->
+
+          <!--</div>-->
+          <!--<div class="row"><input type="file" class="button"-->
+                                  <!--accept="image/*">-->
+            <!--<i ng-show="file.$error.required">*required</i><br>-->
+            <!--<i ng-show="file.$error.maxSize">File too large-->
+              <!--MB: max 20M</i>-->
+
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+          <!--<label class="col-sm-3">Cover</label>-->
+          <!--<div class="col-sm-4">-->
+            <!--<img ngf-thumbnail="cover || 'app/images/default-avatar.jpg'" class="profile" width="300"-->
+                 <!--height="100">-->
+
+          <!--</div>-->
+          <!--<div class="row"><input type="file" class="button" ngf-select="uploadCover($cover)" [(ngModel)]="cover"-->
+                                  <!--name="cover" ngf-pattern="'image/*'"-->
+                                  <!--accept="image/*">-->
+            <!--<i ng-show="file.$error.required">*required</i><br>-->
+            <!--<i ng-show="file.$error.maxSize">File too large-->
+              <!--MB: max 20M</i>-->
+
+          <!--</div>-->
+        <!--</div>-->
+        <div class="form-group">
+          <label class="col-sm-3">Biographie</label>
+          <textarea class="form-control" name="bio" [(ngModel)]="user.bio" (blur)="updateChamp($event)"></textarea>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-4">
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-body">
+      <form (ngSubmit)="updatePassword()" [formGroup]="updatePass" class="form-horizontal">
+        <legend>Change Password</legend>
+        <div class="form-group">
+          <label for="password" class="col-sm-3">New Password</label>
+          <div class="col-sm-7">
+            <input formControlName="password" type="password" name="password" id="password" class="form-control"
+            >
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="confirm" class="col-sm-3">Confirm Password</label>
+          <div class="col-sm-7">
+            <input formControlName="confirm" type="password" name="confirm" id="confirm" class="form-control"
+            >
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-4 col-sm-offset-3">
+            <button type="submit" class="btn btn-success">Change Password</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-body">
+      <form ng-submit="deleteAccount()" class="form-horizontal">
+        <legend>Delete Account</legend>
+        <div class="form-group">
+          <p class="col-sm-offset-3 col-sm-9">You can delete your account, but keep in mind this action is
+            irreversible.</p>
+          <div class="col-sm-offset-3 col-sm-9">
+            <button type="submit" class="btn btn-danger">Delete my account</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

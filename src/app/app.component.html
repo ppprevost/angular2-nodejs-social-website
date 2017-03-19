@@ -1,0 +1,69 @@
+<!--<div class="container">-->
+
+<!--<nav class="navbar navbar-dark bg-primary">-->
+<!--<div class="nav navbar-nav">-->
+<!--<a routerLink="/" class="nav-item nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">-->
+<!--<i class="fa fa-home"></i> Home-->
+<!--</a>-->
+<!--<a routerLink="/about" class="nav-item nav-link" routerLinkActive="active">-->
+<!--<i class="fa fa-info-circle"></i> About-->
+<!--</a>-->
+<!--</div>-->
+<!--</nav>-->
+
+<!--<router-outlet></router-outlet>-->
+
+<!--</div>-->
+
+<header>
+  <nav class="principal-navbar navbar navbar-default navbar-fixed-top principal-header">
+    <div class="container">
+      <div class="navbar-header">
+        <button data-toggle="collapse" data-target="#navbar" class="navbar-toggle collapsed">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="/" class="navbar-brand">Mon Social</a>
+        <a *ngIf="loggedIn()" routerLink='/profil' class="navbar-brand" routerLinkActive="active">Mon Profil</a>
+      </div>
+      <div id="navbar" class="navbar-collapse">
+
+        <div class="nav navbar-nav navbar-right">
+          <div class="form-inline">
+            <form *ngIf="!loggedIn()" action="" [formGroup]="loginUser">
+              <input type="text" placeholder="votre email" formControlName="email"> <input type="password"
+                                                                                           formControlName="password"
+                                                                                           placeholder="votre mot de password">
+              <button (click)="loginAccount()">Login</button>
+            </form>
+            <a *ngIf="!loggedIn()" routerLink="/signup" routerLinkActive="active">Create An Account</a>
+          </div>
+        </div>
+        <ul *ngIf="loggedIn()" class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a data-toggle="dropdown" class="navbar-avatar dropdown-toggle"> Menu<i class="caret"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a>Edit Profile</a></li>
+              <li class="divider"></li>
+              <li><a>Follow Users</a></li>
+              <li class="divider"></li>
+
+              <li><a (click)="logOut()">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- Contenu  -->
+<article>
+  <div class="container primaryContent">
+    <router-outlet></router-outlet>
+    <app-sidebar>CONTETN</app-sidebar>
+  </div>
+</article>
