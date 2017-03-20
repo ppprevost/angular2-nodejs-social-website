@@ -20,7 +20,7 @@ app.use(expressValidator());
 app.use('/uploads', express.static(__dirname + "/uploads"));
 var mongoose = require('mongoose');
 //mongoose.connect('mongodb://localhost:27017/test');
-mongoose.connect('mongodb://ppprevost:p85c312m@ds135820.mlab.com:35820/heroku_q4bljjq9')
+mongoose.connect('mongodb://<ppprevost>:<p85c312m>@ds135820.mlab.com:35820/heroku_q4bljjq9')
 var db = mongoose.connection;
 mongoose.Promise = global.Promise;
 let server = require('http').Server(app);
