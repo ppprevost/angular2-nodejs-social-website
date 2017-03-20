@@ -8,7 +8,7 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build",
-    "start": "concurrently \"ng build -w\" \"node src/server/app.js\"",
+    "start":  "node src/server/app.js\",
     "prod": "concurrently \"ng build -aot -prod\" \"node src/server/app.js\"",
     "dev": "concurrently \"ng build -w --progress false --proxy-config proxy.conf.json\"  \"nodemon src/server/app.js\"",
     "test": "ng test",
