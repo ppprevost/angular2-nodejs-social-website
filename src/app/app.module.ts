@@ -2,7 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
-import {RouterModule, CanActivate } from '@angular/router';
+import {RouterModule, CanActivate} from '@angular/router';
 import {AppComponent} from './app.component';
 import {DataService} from './services/data.service';
 import {ToastComponent} from './shared/toast/toast.component';
@@ -10,7 +10,8 @@ import {ProfileComponent} from './profile/profile.component';
 import {SidebarComponent} from './sidebar/sidebar.component';
 import {SignupComponent} from './signup/signup.component';
 import {ValidUrlComponent} from './valid-url/valid-url.component';
-import {AuthGuard} from './services/guard.service'
+import {AuthGuard} from './services/guard.service';
+import {FollowUserComponent} from './follow-user/follow-user.component'
 
 const routing = RouterModule.forRoot([
   {path: '', component: AppComponent},
@@ -21,7 +22,8 @@ const routing = RouterModule.forRoot([
     path: ':URL',
     component: ValidUrlComponent
   }]
-  }
+  },
+  {path: 'app-follow-user', component: FollowUserComponent, canActivate: [AuthGuard]}
 ]);
 
 @NgModule({
@@ -31,7 +33,8 @@ const routing = RouterModule.forRoot([
     ProfileComponent,
     SidebarComponent,
     SignupComponent,
-    ValidUrlComponent
+    ValidUrlComponent,
+    FollowUserComponent
   ],
   imports: [
     BrowserModule,

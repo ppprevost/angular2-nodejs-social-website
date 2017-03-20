@@ -26,7 +26,7 @@
           <span class="icon-bar"></span>
         </button>
         <a href="/" class="navbar-brand">Mon Social</a>
-        <a *ngIf="loggedIn()" routerLink='/profil' class="navbar-brand" routerLinkActive="active">Mon Profil</a>
+        <a *ngIf="loggedIn()" class="navbar-brand">Mon Profil</a>
       </div>
       <div id="navbar" class="navbar-collapse">
 
@@ -46,9 +46,9 @@
             <a data-toggle="dropdown" class="navbar-avatar dropdown-toggle"> Menu<i class="caret"></i>
             </a>
             <ul class="dropdown-menu">
-              <li><a>Edit Profile</a></li>
+              <li><a routerLink='/profil' routerLinkActive="active">Edit Profile</a></li>
               <li class="divider"></li>
-              <li><a>Follow Users</a></li>
+              <li><a routerLink='/app-follow-user' routerLinkActive="active">Follow Users</a></li>
               <li class="divider"></li>
 
               <li><a (click)="logOut()">Logout</a></li>

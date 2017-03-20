@@ -1,0 +1,41 @@
+<div class="row userProfile" data-toggle="isotope" style="position: relative; height: 768px; ">
+  <div class="col-md-6 col-lg-4 item" *ngFor="let waste of waster"
+       [hidden]="user._id == waste._id">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="media">
+          <div class="pull-left" ng-click="click()">
+            <!--<img ng-src="{{waster.image}}" alt="people" class="media-object img-circle" style="width:150px;height: 150px;">-->
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading margin-v-5"><a href="#">{{waste.username}}</a></h4>
+            <span>{{waste.email}}</span>
+            <div class="profile-icons">
+              <span><i class="fa fa-users"></i> none</span>
+              <span><i class="fa fa-photo"></i> none</span>
+            </div>
+            <!--<h3 ng-if="waster.isConnected" class="blink_me">Online</h3>-->
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <p class="common-friends">Common Friends</p>
+        <div class="user-friend-list">
+          <!--<a href="#" ng-repeat="images in image">-->
+          <!--<img ng-src="{{images.image}}" alt="people" class="img-circle" style="width:50px; height:50px">-->
+          <!--</a>-->
+        </div>
+      </div>
+      <!--<div class="panel-footer">-->
+      <!--<a class="btn btn-default btn-sm" ng-click="follow(user._id, waster._id)"-->
+      <!--ng-if="!checkIsFollowing(waster._id)">Follow <i class="fa fa-share"></i></a>-->
+      <!--<a class="btn btn-default btn-sm" ng-if="checkIsFollowing(waster._id) =='pending'">Vous avez demandé<i-->
+      <!--class="fa fa-share"></i></a>-->
+      <!--<a class="btn btn-default btn-sm" ng-if="checkIsFollowing(waster._id) =='requested'"-->
+      <!--ng-click="followOk(user._id, waster._id)">Accepté la demande d'ajout<i class="fa fa-share"></i></a>-->
+      <!--<a class="btn btn-danger btn-sm" ng-click="unfollow(user._id, waster._id)"-->
+      <!--ng-if="checkIsFollowing(waster._id) == 'accepted'">Unfollow <i class="fa fa-low-vision"></i></a>-->
+      <!--</div>-->
+    </div>
+  </div>
+</div>

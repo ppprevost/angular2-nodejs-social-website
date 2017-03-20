@@ -1,6 +1,5 @@
 /* Base Elements */
 @import url(https://fonts.googleapis.com/css?family=Lora:400,400italic,700);
-
 $body-bg: #f4f4f4;
 $line-height-base: 1.57142857;
 $link-color: #1d7cf4;
@@ -31,6 +30,7 @@ $navbar-default-link-active-color: #262626;
 
 $panel-heading-padding: 20px 30px;
 $panel-body-padding: 30px;
+
 
 @import 'sidebar';
 ////
@@ -77,9 +77,11 @@ footer {
   right: 0;
   bottom: 0;
   left: 0;
+  padding: 1rem;
   background-color: #efefef;
   text-align: center;
 }
+
 
 .footer-below {
   padding: 25px 0;
@@ -378,21 +380,20 @@ ul.icon-list {
   padding-left: 1px;
   padding-top: 1px;
 }
-
 .cover.profile .wrapper .friends li {
   float: left;
   margin: 0;
   width: 33.33%;
 }
 
-.userProfile {
-  .media-body {
+.userProfile{
+  .media-body{
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-block;
-    width: 166px;
+    width:166px;
   }
 }
 
@@ -419,12 +420,12 @@ ul.img-grid {
 ul.icon-list.icon-list-block li:not(:last-of-type) {
   border-bottom: 1px solid #e2e9e6;
 }
-
 ul.icon-list.icon-list-block li {
   display: block;
   padding: 8px 10px;
   margin: 0;
 }
+
 
 .panel .share-text {
   box-shadow: none;
@@ -451,24 +452,22 @@ ul.icon-list.icon-list-block li {
 }
 
 @keyframes blinker {
-  50% {
-    opacity: 0.0;
-  }
+  50% { opacity: 0.0; }
 }
 
-.imageCover {
+
+.imageCover{
   overflow: hidden;
 }
-
 ///
-.containerCover { //
+.containerCover{//
   height: 300px;
   align-items: center;
   overflow: hidden;
   display: flex;
 }
 
-.avatar-my-profile {
+.avatar-my-profile{
   width: 45%;
   margin-left: 15px;
 }

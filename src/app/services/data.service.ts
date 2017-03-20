@@ -16,20 +16,12 @@ export class DataService {
 
   }
 
-  getCats(): Observable<any> {
-    return this.http.get('/cats').map(res => res.json());
-  }
-
-  addCat(cat): Observable<any> {
-    return this.http.post('/cat', JSON.stringify(cat), this.options);
-  }
-
   editCat(cat): Observable<any> {
     return this.http.put(`/cat/${cat._id}`, JSON.stringify(cat), this.options);
   }
 
-  deleteCat(cat): Observable<any> {
-    return this.http.delete(`/cat/${cat._id}`, this.options);
+  getUsers(): Promise<any> {
+    return this.http.get('api/users/get').toPromise()
   }
 
   createAccount(user): Observable<any> {
