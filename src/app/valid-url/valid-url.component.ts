@@ -25,7 +25,7 @@ export class ValidUrlComponent implements OnInit {
     });
     this.http.post('/verif', JSON.stringify({url: this.url}), this.options).subscribe((res) => {
 
-this.welcome = "bravo, vous êtes maintenant connecté !! "
+this.welcome = "bravo, vous pouvez maintenant vous connecter !! ";
       console.log(res)
     });
   }

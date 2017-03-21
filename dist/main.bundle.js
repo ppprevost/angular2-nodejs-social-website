@@ -557,7 +557,7 @@ var ValidUrlComponent = (function () {
             _this.url = params['URL'];
         });
         this.http.post('/verif', JSON.stringify({ url: this.url }), this.options).subscribe(function (res) {
-            _this.welcome = "bravo, vous êtes maintenant connecté !! ";
+            _this.welcome = "bravo, vous pouvez maintenant vous connecter !! ";
             console.log(res);
         });
     };

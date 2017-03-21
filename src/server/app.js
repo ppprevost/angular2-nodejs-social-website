@@ -33,9 +33,9 @@ console.log(server);
 
 try {
   var envi = JSON.parse(fs.readFileSync(`${process.cwd()}/src/server/env.json`, 'utf8'));
-  process.env.url = envi.url;
-  process.env.mail = envi.mail;
-  process.env.pass = envi.pass;
+  process.env.url = 'http://localhost:3000/email-verification/${URL}';
+  process.env.mail = 'pp.ifocop@gmail.com';
+  process.env.pass = "p85c312m";
 } catch (err) {
   console.error("you have to create a env.json file in order to send email");
   fs.writeFileSync(`${process.cwd()}/src/server/env.json`, JSON.stringify({
