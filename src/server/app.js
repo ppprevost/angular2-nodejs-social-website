@@ -20,7 +20,11 @@ app.use(expressValidator());
 app.use('/uploads', express.static(__dirname + "/uploads"));
 var mongoose = require('mongoose');
 //mongoose.connect('mongodb://localhost:27017/test');
-mongoose.connect('mongodb://heroku_q4bljjq9:p85c312m@ds135820.mlab.com:35820/heroku_q4bljjq9')
+mongoose.connect('mongodb://heroku_q4bljjq9:20p457b4tk07tuj21dknafdfc8@ds135820.mlab.com:35820/heroku_q4bljjq9');
+mongoose.connection.on('error', function () {
+  console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+  process.exit(1);
+});
 var db = mongoose.connection;
 mongoose.Promise = global.Promise;
 let server = require('http').Server(app);
