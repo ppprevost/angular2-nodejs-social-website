@@ -33,7 +33,7 @@ console.log(server);
 
 try {
   var envi = JSON.parse(fs.readFileSync(`${process.cwd()}/src/server/env.json`, 'utf8'));
-  process.env.url = 'http://localhost:3000/email-verification/${URL}';
+  process.env.url = 'http://angular2-web.herokuapp.com/email-verification/${URL}';
   process.env.mail = 'pp.ifocop@gmail.com';
   process.env.pass = "p85c312m";
 } catch (err) {
