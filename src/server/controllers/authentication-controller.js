@@ -26,8 +26,8 @@ nev.configure({
     host: 'smtp.gmail.com', // Gmail as mail client
     port: 587,
     auth: {
-      user: process.env.mail,
-      pass: process.env.pass
+      user: 'pp.ifocop@gmail.com',
+      pass: 'p85c312m'
     },
     tls: {
       rejectUnauthorized: false
