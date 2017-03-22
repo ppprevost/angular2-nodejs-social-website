@@ -3,6 +3,7 @@
 var randtoken = require('rand-token'),
   nodemailer = require('nodemailer');
 
+
 module.exports = function (mongoose) {
 
   var isPositiveInteger = function (x) {
