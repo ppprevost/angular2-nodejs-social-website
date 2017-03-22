@@ -21,10 +21,13 @@ nev.configure({
   verificationURL: process.env.url,
   shouldSendConfirmation: false,
   transportOptions: {
-    service: 'Mailgun',
+    service: 'Gmail',
+    secure: false,
+    host: 'smtp.gmail.com', // Gmail as mail client
+    port: 587,
     auth: {
-      user: 'postmaster@app190992b4524d44e5af245d97259df82c.mailgun.org',
-      pass: 'dbfa3f1a582ac214a424f295c617f183'
+      user: process.env.mail,
+      pass: process.env.pass
     },
     tls: {
       rejectUnauthorized: false
