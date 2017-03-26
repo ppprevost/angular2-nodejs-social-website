@@ -22,9 +22,10 @@ nev.configure({
   shouldSendConfirmation: false,
   transportOptions: {
     service: 'Gmail',
-    secure: false,
+    pool: true,
     host: 'smtp.gmail.com', // Gmail as mail client
-    port: 587,
+    port: 465,
+    secure: true, // use SSL
     auth: {
       user: 'pp.ifocop@gmail.com',
       pass: 'p85c312m'

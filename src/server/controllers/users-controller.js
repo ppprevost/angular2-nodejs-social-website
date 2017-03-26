@@ -27,7 +27,7 @@ module.exports = function (io) {
       wasterId = req.body.wasterId;
     var userIdWaster;
     var date = new Date();
-
+    console.log("req.body", req.body);
     Users.findById(wasterId, function (err, waster) {
       if (!waster.following.length) { //init s tableau vide
         waster.following.push({
@@ -36,7 +36,7 @@ module.exports = function (io) {
           date: date
         })
       } else {
-        console.log(waster)
+        console.log(waster);
         var already = false; // test si l'user ID est deja présent
         waster.following.forEach(function (doc) {
           if (doc.userId && doc.userId == userId) {
@@ -79,7 +79,7 @@ module.exports = function (io) {
         }
       }
       follower.save(function () {
-        res.json({data: follower, wasterId: userIdWaster});
+        res.json(follower);
       })
 
     });
@@ -96,7 +96,7 @@ module.exports = function (io) {
 
       }
       waster.following.forEach(function (doc) {
-        console.log(doc)
+        console.log(doc);
         if (doc.userId == userId) {
           doc.statut = "accepted"
         }
@@ -116,9 +116,7 @@ module.exports = function (io) {
         });
         follower.save(function () {
         });
-        res.json({data: follower, wasterId: userIdWaster});
-        console.log("follower-->")
-        console.log(follower)
+        res.json(follower);
       }
     });
   };
@@ -130,7 +128,6 @@ module.exports = function (io) {
       console.log(waster)
       waster.following.forEach(function (doc) {
         if (doc.userId == userId) {
-          console.log("doc pop")
           console.log(doc)
           waster.following.splice(doc, 1)
         }
@@ -140,19 +137,27 @@ module.exports = function (io) {
     Users.findById(userId, function (err, follower) {
       follower.following.forEach(function (doc) {
         if (doc.userId == wasterId) {
-          console.log("doc pop2");
           follower.following.splice(doc, 1)
         }
       });
       follower.save();
-      res.json({data: follower});
+      res.json(follower);
     })
   };
   var getThisUser = function (req, res) {
     var userId = req.body.userId;
-    Users.findById(userId, function (err, user) {
+    Users.findById(userId).select({password: 0, __v: 0}).exec(function (err, user) {
       if (!err) {
         res.json(user)
+      }
+    });
+  };
+
+  var returnStatusFollowing = function (req, res) {
+    var userId = req.body.userId;
+    Users.findById(userId, function (err, user) {
+      if (!err) {
+        res.json(user.following)
       }
     });
   };

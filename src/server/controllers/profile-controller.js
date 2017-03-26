@@ -1,50 +1,51 @@
-var User = require('../datasets/users');
-var fs = require('fs-extra');
-var path = require('path');
-var Waste = require('../datasets/wastes');
-var bcrypt = require('bcryptjs');
+let User = require('../datasets/users');
+let fs = require('fs-extra');
+let path = require('path');
+let Waste = require('../datasets/wastes');
+let bcrypt = require('bcryptjs');
+let multer = require('multer');
+
+
+let storage = multer.diskStorage({ //multers disk storage settings
+  destination: function (req, file, cb) {
+    cb(null, './src/assets/upload/');
+  },
+  filename: function (req, file, cb) {
+    var datetimestamp = Date.now();
+    cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length - 1]);
+  }
+});
+
+var upload = multer({ //multer settings
+  storage: storage
+}).single('file');
 
 module.exports = function (io) {
-  var updatePhoto = function (req, res) {
-    var file = req.files.file;
-    var userId = req.body.userId;
-
-    console.log("User " + userId + " is submitting ", file);
-    var uploadDate = new Date();
-    var tempPath = file.path;
-    var targetPath = path.join(__dirname, "../../uploads/" + userId + file.name);
-    console.log("target");
-    console.log(targetPath);
-    var savePath = "/uploads/" + userId + file.name;
-
-    fs.rename(tempPath, targetPath, function (err) {
+  let updatePhoto = (req, res) => {
+    upload(req, res, function (err) {
+      console.log("req.file", req.file);
       if (err) {
-        console.log(err)
-      } else {
-        User.findById(userId, function (err, userData) {
-          var user = userData;
-          user.image = savePath;
-          user.save(function (err) {
-            if (err) {
-              console.log("failed save");
-              res.json({status: 500})
-            } else {
-              console.log("save successful");//
-              console.log(userData);
-              Waste.update({userId: userData._id}, {$set: {userImage: userData.image}}, {
-                upsert: true,
-                multi: true
-              }, function (err) {
-
-              });
-              res.json(user);
-            }
-          })
-        })
-
+        res.json({error_code: 1, err_desc: err});
+        return;
       }
-    })
+      var userId = req.body.userId;
+      User.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
+        var user = userData;
+        user.image = req.file.path.substr(4);
+        user.save(function (err) {
+          if (err) {
+            console.log("failed save");
+            res.status(500).send(err + "error uploading image")
+          } else {
+            console.log("save successful", userData);
+            user.image = user.image
+            res.json(user);
+          }
+        })
+      });
+    });
   };
+
 
   var updateCover = function (req, res) {
     var file = req.files.file;

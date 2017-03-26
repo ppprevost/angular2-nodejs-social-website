@@ -1,11 +1,12 @@
 <div class="row userProfile" data-toggle="isotope" style="position: relative; height: 768px; ">
-  <div class="col-md-6 col-lg-4 item" *ngFor="let waste of waster"
+  <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters"
        [hidden]="user._id == waste._id">
     <div class="panel panel-default">
       <div class="panel-heading">
         <div class="media">
           <div class="pull-left" ng-click="click()">
-            <!--<img ng-src="{{waster.image}}" alt="people" class="media-object img-circle" style="width:150px;height: 150px;">-->
+            <img [src]="waste.image || 'assets/images/default-avatar.jpg'" alt="people" class="media-object img-circle"
+                 style="width:150px;height: 150px;">
           </div>
           <div class="media-body">
             <h4 class="media-heading margin-v-5"><a href="#">{{waste.username}}</a></h4>
@@ -14,7 +15,7 @@
               <span><i class="fa fa-users"></i> none</span>
               <span><i class="fa fa-photo"></i> none</span>
             </div>
-            <!--<h3 ng-if="waster.isConnected" class="blink_me">Online</h3>-->
+            <h3 *ngIf="waste.isConnected" class="blink_me">Online</h3>
           </div>
         </div>
       </div>
@@ -26,16 +27,17 @@
           <!--</a>-->
         </div>
       </div>
-      <!--<div class="panel-footer">-->
-      <!--<a class="btn btn-default btn-sm" ng-click="follow(user._id, waster._id)"-->
-      <!--ng-if="!checkIsFollowing(waster._id)">Follow <i class="fa fa-share"></i></a>-->
-      <!--<a class="btn btn-default btn-sm" ng-if="checkIsFollowing(waster._id) =='pending'">Vous avez demandé<i-->
-      <!--class="fa fa-share"></i></a>-->
-      <!--<a class="btn btn-default btn-sm" ng-if="checkIsFollowing(waster._id) =='requested'"-->
-      <!--ng-click="followOk(user._id, waster._id)">Accepté la demande d'ajout<i class="fa fa-share"></i></a>-->
-      <!--<a class="btn btn-danger btn-sm" ng-click="unfollow(user._id, waster._id)"-->
-      <!--ng-if="checkIsFollowing(waster._id) == 'accepted'">Unfollow <i class="fa fa-low-vision"></i></a>-->
-      <!--</div>-->
+      <div class="panel-footer" [ngSwitch]="checkIsFollowing(waste._id)">
+        <a class="btn btn-default btn-sm" *ngSwitchDefault (click)="follow(waste._id)">Follow <i
+          class="fa fa-share"></i></a>
+        <a class="btn btn-default btn-sm" *ngSwitchCase="'pending'">en attente de confirmation<i
+          class="fa fa-share"></i></a>
+        <a class="btn btn-default btn-sm"
+           *ngSwitchCase="'requested'" (click)="followUserOk(waste._id)">Accepté la demande d'ajout<i
+          class="fa fa-share"></i></a>
+        <a class="btn btn-danger btn-sm" (click)="unfollow(waste._id)"
+           *ngSwitchCase="'accepted'">Unfollow <i class="fa fa-low-vision"></i></a>
+      </div>
     </div>
   </div>
 </div>

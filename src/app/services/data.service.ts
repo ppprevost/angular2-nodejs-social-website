@@ -8,7 +8,6 @@ import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class DataService {
-  private url = 'http://localhost:3000';
   private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
   private options = new RequestOptions({headers: this.headers});
 
@@ -22,6 +21,10 @@ export class DataService {
 
   getUsers(): Promise<any> {
     return this.http.get('api/users/get').toPromise()
+  }
+
+  getThisUser(userid): Observable<any> {
+    return this.http.post('/app/users/getThisUsers', JSON.stringify({userId: userid}), this.options)
   }
 
   createAccount(user): Observable<any> {
@@ -44,5 +47,9 @@ export class DataService {
     return this.http.post('/api/user/logout', JSON.stringify(userId), this.options)
   }
 
+  ListOfFriends(user): Observable<any> {
+    return this.http.post('/app/waste/listOfFriend', JSON.stringify(user), this.options)
+
+  };
 
 }

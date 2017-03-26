@@ -13,7 +13,7 @@ import{Router} from '@angular/router';
 
 @Injectable()
 export class AppComponent implements OnInit {
-  private userId: "string"
+  private userId: "string";
   private loginUser: FormGroup;
   private email = new FormControl('', Validators.required);
   private password = new FormControl('', Validators.required);

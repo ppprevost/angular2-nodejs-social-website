@@ -11,10 +11,13 @@ import {SidebarComponent} from './sidebar/sidebar.component';
 import {SignupComponent} from './signup/signup.component';
 import {ValidUrlComponent} from './valid-url/valid-url.component';
 import {AuthGuard} from './services/guard.service';
-import {FollowUserComponent} from './follow-user/follow-user.component'
+import {FollowUserComponent} from './follow-user/follow-user.component';
+import {HomeComponent} from './home/home.component'
+import {FileSelectDirective, FileDropDirective} from 'ng2-file-upload';
+
 
 const routing = RouterModule.forRoot([
-  {path: '', component: AppComponent},
+  {path: '', component: HomeComponent},
   {path: 'profil', component: ProfileComponent, canActivate: [AuthGuard]},
   {path: 'signup', component: SignupComponent},
   {
@@ -34,7 +37,10 @@ const routing = RouterModule.forRoot([
     SidebarComponent,
     SignupComponent,
     ValidUrlComponent,
-    FollowUserComponent
+    FileSelectDirective,
+    FileDropDirective,
+    FollowUserComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

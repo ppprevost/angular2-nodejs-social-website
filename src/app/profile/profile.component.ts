@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DataService} from '../services/data.service'
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
+import {FileUploader} from 'ng2-file-upload';
 
 @Component({
   selector: 'app-profile',
@@ -13,6 +14,11 @@ export class ProfileComponent implements OnInit {
   private updatePass: FormGroup;
   private password = new FormControl('', Validators.required);
   private confirm = new FormControl('', Validators.required);
+  public uploader: FileUploader = new FileUploader({
+    url: 'http://localhost:3000/upload'//,
+    // itemAlias: "blablabla",
+    // disableMultipart: true
+  });
 
   constructor(private data: DataService, private passwordForm: FormBuilder) {
 
@@ -23,6 +29,9 @@ export class ProfileComponent implements OnInit {
     if (this.profile) {
       this.user = JSON.parse(this.profile)
     }
+    this.uploader.onBuildItemForm = (item, form) => {
+      form.append("userId", this.user["_id"]);
+    };
     this.updatePass = this.passwordForm.group({
       password: this.password,
       confirm: this.confirm
@@ -41,7 +50,6 @@ export class ProfileComponent implements OnInit {
     this.data.updateChamp(obj).subscribe(res => {
       console.log(res);
       localStorage.setItem("profile", res._body)
-
     })
   }
 

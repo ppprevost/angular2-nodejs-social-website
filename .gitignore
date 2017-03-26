@@ -42,4 +42,4 @@ testem.log
 Thumbs.db
 
 #env
-#./server/env.json
+./server/env.json

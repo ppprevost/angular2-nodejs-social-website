@@ -1,16 +1,14 @@
 let express = require('express');
 let http = require('http');
 let path = require('path');
-let fs = require('fs')
-
+let fs = require('fs');
+let multer = require('multer');
 let morgan = require('morgan'); // logger
 let bodyParser = require('body-parser');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 let expressValidator = require('express-validator');
-let multer = require('multer');
 let app = express();
-
 app.set('port', (process.env.PORT || 3000));
 app.use('/', express.static(__dirname + '/../../dist'));
 app.use(bodyParser.json());
@@ -19,8 +17,8 @@ app.use(morgan('dev'));
 app.use(expressValidator());
 app.use('/uploads', express.static(__dirname + "/uploads"));
 var mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost:27017/test');
-mongoose.connect('mongodb://heroku_q4bljjq9:20p457b4tk07tuj21dknafdfc8@ds135820.mlab.com:35820/heroku_q4bljjq9');
+mongoose.connect('mongodb://localhost:27017/test');
+//mongoose.connect('mongodb://heroku_q4bljjq9:20p457b4tk07tuj21dknafdfc8@ds135820.mlab.com:35820/heroku_q4bljjq9');
 mongoose.connection.on('error', function () {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
@@ -31,20 +29,6 @@ let server = require('http').Server(app);
 let io = require('socket.io').listen(server);
 console.log(server);
 
-try {
-  var envi = JSON.parse(fs.readFileSync(`${process.cwd()}/src/server/env.json`, 'utf8'));
-  process.env.url = 'http://angular2-web.herokuapp.com/email-verification/${URL}';
-  process.env.mail = 'pp.ifocop@gmail.com';
-  process.env.pass = "p85c312m";
-} catch (err) {
-  console.error("you have to create a env.json file in order to send email");
-  fs.writeFileSync(`${process.cwd()}/src/server/env.json`, JSON.stringify({
-    "url": "http://localhost:3000/email-verification/${URL}",
-    "pass": "your messaging pass",
-    "mail": "your smtp"
-  }), 'utf8')
-}
-
 db.on('error', () => {
   console.error('connection error:');
   process.exit(1);
@@ -52,9 +36,22 @@ db.on('error', () => {
 
 db.once('open', function () {
   console.log('Connected to MongoDB');
+  try {
+    var envi = JSON.parse(fs.readFileSync(`${process.cwd()}/src/server/env.json`, 'utf8'));
+    process.env.url = 'http://' + envi.host + ':' + envi.port + '/email-verification/${URL}';
+    process.env.mail = 'pp.ifocop@gmail.com';
+    process.env.pass = "p85c312m";
+  } catch (err) {
+    console.error("you have to create a env.json file in order to send email", err);
+    fs.writeFileSync(`${process.cwd()}/src/server/env.json`, JSON.stringify({
+      "url": "http://localhost:3000/email-verification/${URL}",
+      "pass": "your messaging pass",
+      "mail": "your smtp"
+    }), 'utf8')
+  }
+
 
   // APIs
-
   let authenticationController = require('./controllers/authentication-controller')(io);
   let profileController = require('./controllers/profile-controller')(io);
   let wasteController = require('./controllers/waste-controller')(io);
@@ -68,6 +65,7 @@ db.once('open', function () {
   app.post('/api/user/logout', usersController.deconnection);
 
 //Profile profileController.updatePhoto
+  app.post('/upload', profileController.updatePhoto);
   app.post('/api/profile/updateChamp', profileController.updateChamp);
   app.post('/api/profile/editPhoto', multipartMiddleware, profileController.updatePhoto);
   app.post('/api/profile/editCover', profileController.updateCover);
@@ -88,6 +86,7 @@ db.once('open', function () {
   app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '/../../dist/index.html'));
   });
+
 
   app.listen(app.get('port'), function () {
     console.log('Angular 2 Full Stack listening on port ' + app.get('port'));
