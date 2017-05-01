@@ -19,8 +19,9 @@ export class ProfileComponent implements OnInit {
   private password = new FormControl('', Validators.required);
   private confirm = new FormControl('', Validators.required);
   private lastPassword = new FormControl('', Validators.required);
+
   public uploader: FileUploader = new FileUploader({
-    url: `http://${environment.host}:${environment.port}/api/upload`,
+    url: `${environment.url}/api/upload`,
     maxFileSize: 1 * 1024 * 1024,
     allowedMimeType: ['image/png', 'image/jpg', 'image/gif', 'image/jpeg']
   });

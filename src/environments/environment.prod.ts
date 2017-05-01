@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  host: 'localhost',
-  port: '3000'
+  url: 'https://angular2-web.herokuapp.com/',
+
 };

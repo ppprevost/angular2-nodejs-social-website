@@ -5,6 +5,5 @@
 
 export const environment = {
   production: false,
-  host: 'localhost',
-  port: '4200'
+  url: 'http://localhost:4200'
 };
