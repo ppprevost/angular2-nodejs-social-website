@@ -8,9 +8,10 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build",
-    "start": "node %NODE_DEBUG_OPTION% src/server/app.js",
+    "start": "node src/server/app.js",
+    "postinstall": "ng-build -prod",
     "prod": "concurrently \"ng build -prod\" \"node src/server/app.js\"",
-    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"nodemon \"",
+    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"nodemon %NODE_DEBUG_OPTION%\"",
     "dev2": "concurrently \"ng build -w\" \"nodemon \"",
     "test": "ng test",
     "lint": "ng lint",
@@ -29,6 +30,7 @@
     "@angular/platform-browser": "^4.1.0",
     "@angular/platform-browser-dynamic": "^4.1.0",
     "@angular/router": "^4.1.0",
+    "@angular/cli": "^1.0.1",
     "@types/node": "^6.0.71",
     "@types/socket.io-client": "^1.4.29",
     "bcryptjs": "^2.4.3",
@@ -59,8 +61,6 @@
     "zone.js": "^0.8.9"
   },
   "devDependencies": {
-    "@angular/cli": "^1.0.1",
-    "@angular/compiler-cli": "^4.0.0",
     "@types/jasmine": "2.5.38",
     "@types/node": "~6.0.60",
     "codelyzer": "~2.0.0",
