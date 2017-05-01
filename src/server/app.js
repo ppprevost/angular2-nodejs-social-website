@@ -25,6 +25,8 @@ mongoose.connect(process.env.MONGODB_URI);
 var db = mongoose.connection;
 mongoose.Promise = global.Promise;
 
+const routes = require('./routes/routes.js')(app, io);
+
 db.on('error', () => {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
@@ -33,7 +35,7 @@ db.on('error', () => {
 db.once('open', function () {
   console.log('Connected to MongoDB');
 
-  const routes = require('./routes/routes.js')(app, io);
+
 
   // all other routes are handled by Angular
   app.get('/*', function (req, res) {
