@@ -53,7 +53,6 @@ nev.generateTempUserModel(User, function (err, tempUserModel) {
 
 module.exports = function (io) {
   var signup = function (req, res, next) {
-    console.log(req.body);
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('email', 'Email cannot be blank').notEmpty();
     req.assert('pass', 'Password must be at least 4 characters long').len(4);
