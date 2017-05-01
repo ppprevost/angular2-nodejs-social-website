@@ -8,7 +8,7 @@ let multer = require('multer');
 
 let storage = multer.diskStorage({ //multers disk storage settings
   destination: function (req, file, cb) {
-    const dir = './assets/upload/' + req.body.userId;
+    const dir = './src/assets/upload/' + req.body.userId;
     if (!fs.existsSync(dir)) {
       fs.mkdir(dir, err => {
         cb(err, dir)
