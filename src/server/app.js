@@ -9,15 +9,16 @@ const dotenv = require('dotenv');
 dotenv.load({path: '.env'});
 let server = require('http').Server(app);
 let io = require('socket.io').listen(server);
-const routes = require('./routes/routes.js')(app, io);
 const expressValidator = require('express-validator');
+app.use(expressValidator());
 
+const routes = require('./routes/routes.js')(app, io);
 app.set('port', (process.env.PORT || 3000));
 app.use('/', express.static(path.join(__dirname, '/../../dist')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(morgan('dev'));
-app.use(expressValidator());
+
 
 let mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI);
