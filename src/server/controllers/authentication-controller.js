@@ -20,20 +20,20 @@ nev.configure({
   shouldSendConfirmation: false,
   transportOptions: {
     service: process.env.MAILVERIF,
-    // auth: {
-    //   type: 'OAuth2',
-    //   user: "pp.ifocop@gmail.com", // Your gmail address.
-    //   clientSecret: "acvYKdWhFBjuFqEBoVotiO5P",
-    //   refreshToken: "1/ShDNZ0-5W1niTUqq9UDVViLkoWehlftE6Ony-jGsJLg",
-    //   clientId: "1024281017348-rqhunrqq8g4m6b0tre64mo2r5fsbndp6.apps.googleusercontent.com"
-    //
-    // },
-    //host: process.env.HOSTMAIL, // Gmail as mail client
-    secure: true, // use SSL
     auth: {
-      user: process.env.MAILACCOUNT,
-      pass: process.env.MAILPASS
+      type: 'OAuth2',
+      user: "pp.ifocop@gmail.com", // Your gmail address.
+      clientSecret: "acvYKdWhFBjuFqEBoVotiO5P",
+      accessToken: "ya29.Gls9BG0DzHXiIvqBP0XNTfmZ545Wom09n7v0JZP1FF2-92njZP3ELNPFvH_ns1EoLX4n_96-BHdEFwmESXWZ8cpebeSEAEn6E_Zb41SQWrvsjjkNdTnk_HAF--Ut",
+      refreshToken: "1/ShDNZ0-5W1niTUqq9UDVViLkoWehlftE6Ony-jGsJLg",
+      clientId: "1024281017348-rqhunrqq8g4m6b0tre64mo2r5fsbndp6.apps.googleusercontent.com"
     },
+
+    secure: true, // use SSL
+    // auth: {
+    //   user: process.env.MAILACCOUNT,
+    //   pass: process.env.MAILPASS
+    // },
     tls: {
       rejectUnauthorized: false
     }
