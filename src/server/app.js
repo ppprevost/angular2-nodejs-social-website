@@ -11,12 +11,11 @@ let server = require('http').Server(app);
 let io = require('socket.io').listen(server);
 const expressValidator = require('express-validator');
 app.use(expressValidator());
-
-const routes = require('./routes/routes.js')(app, io);
-app.set('port', (process.env.PORT || 3000));
-app.use('/', express.static(path.join(__dirname, '/../../dist')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.set('port', (process.env.PORT || 3000));
+app.use('/', express.static(path.join(__dirname, '/../../dist')));
+
 app.use(morgan('dev'));
 
 
@@ -34,6 +33,7 @@ db.on('error', () => {
 db.once('open', function () {
   console.log('Connected to MongoDB');
 
+  const routes = require('./routes/routes.js')(app, io);
 
   // all other routes are handled by Angular
   app.get('/*', function (req, res) {

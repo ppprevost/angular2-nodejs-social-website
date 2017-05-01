@@ -8,10 +8,10 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build",
-    "start": "node src/server/app.js",
+    "start": "node %NODE_DEBUG_OPTION% src/server/app.js",
     "postinstall": "ng build -prod",
     "prod": "concurrently \"ng build -aot -prod\" \"node src/server/app.js\"",
-    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"nodemon %NODE_DEBUG_OPTION%\"",
+    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"nodemon \"",
     "dev2": "concurrently \"ng build -w\" \"nodemon \"",
     "test": "ng test",
     "lint": "ng lint",

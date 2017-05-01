@@ -20,9 +20,7 @@ nev.configure({
   shouldSendConfirmation: false,
   transportOptions: {
     service: process.env.MAILVERIF,
-    pool: true,
     host: process.env.HOSTMAIL, // Gmail as mail client
-    port: process.env.MAILPORT,
     secure: true, // use SSL
     auth: {
       user: process.env.MAILACCOUNT,
