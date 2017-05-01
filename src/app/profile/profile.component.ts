@@ -15,7 +15,7 @@ import swal from 'sweetalert2'
 export class ProfileComponent implements OnInit {
   public user;
   private profile;
-  private updatePass: FormGroup;
+  updatePass: FormGroup;
   private password = new FormControl('', Validators.required);
   private confirm = new FormControl('', Validators.required);
   private lastPassword = new FormControl('', Validators.required);
