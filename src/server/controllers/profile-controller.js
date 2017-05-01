@@ -10,6 +10,7 @@ let storage = multer.diskStorage({ //multers disk storage settings
   destination: function (req, file, cb) {
     const dir = './src/assets/upload/' + req.body.userId;
     if (!fs.existsSync(dir)) {
+      console.log("le path n'existe pas lors de la creation demulter", dir);
       fs.mkdir(dir, err => {
         cb(err, dir)
       });
