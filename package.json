@@ -20,6 +20,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^4.0.0",
+    "@angular/cli": "^1.0.1",
     "@angular/common": "^4.1.0",
     "@angular/compiler": "^4.1.0",
     "@angular/compiler-cli": "^4.1.0",
@@ -30,7 +31,6 @@
     "@angular/platform-browser": "^4.1.0",
     "@angular/platform-browser-dynamic": "^4.1.0",
     "@angular/router": "^4.1.0",
-    "@angular/cli": "^1.0.1",
     "@types/node": "^6.0.71",
     "@types/socket.io-client": "^1.4.29",
     "bcryptjs": "^2.4.3",
@@ -58,6 +58,7 @@
     "sweetalert2": "^6.6.2",
     "tether": "1.4.0",
     "underscore": "^1.8.3",
+    "xoauth2": "^1.2.0",
     "zone.js": "^0.8.9"
   },
   "devDependencies": {

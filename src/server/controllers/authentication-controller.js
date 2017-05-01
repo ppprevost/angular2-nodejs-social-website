@@ -20,7 +20,15 @@ nev.configure({
   shouldSendConfirmation: false,
   transportOptions: {
     service: process.env.MAILVERIF,
-    host: process.env.HOSTMAIL, // Gmail as mail client
+    // auth: {
+    //   type: 'OAuth2',
+    //   user: "pp.ifocop@gmail.com", // Your gmail address.
+    //   clientSecret: "acvYKdWhFBjuFqEBoVotiO5P",
+    //   refreshToken: "1/ShDNZ0-5W1niTUqq9UDVViLkoWehlftE6Ony-jGsJLg",
+    //   clientId: "1024281017348-rqhunrqq8g4m6b0tre64mo2r5fsbndp6.apps.googleusercontent.com"
+    //
+    // },
+    //host: process.env.HOSTMAIL, // Gmail as mail client
     secure: true, // use SSL
     auth: {
       user: process.env.MAILACCOUNT,
