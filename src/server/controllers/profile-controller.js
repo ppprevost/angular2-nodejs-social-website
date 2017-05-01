@@ -5,7 +5,7 @@ let Waste = require('../datasets/wastes');
 let bcrypt = require('bcryptjs');
 let multer = require('multer');
 
-
+// TODO create branch for heroku and begin amazon s3
 let storage = multer.diskStorage({ //multers disk storage settings
   destination: function (req, file, cb) {
     const dir = './src/assets/upload/' + req.body.userId;

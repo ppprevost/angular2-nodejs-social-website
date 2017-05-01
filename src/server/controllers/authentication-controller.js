@@ -12,7 +12,12 @@ myHasher = function (password, tempUserData, insertTempUser, callback) {
   });
 };
 
-
+/**
+ * Think to see :
+ * https://medium.com/@pandeysoni/nodemailer-service-in-node-js-using-smtp-and-xoauth2-7c638a39a37e
+ * https://nodemailer.com/smtp/oauth2/
+ * and update nodemailer
+ */
 nev.configure({
   persistentUserModel: User,
   expirationTime: 600, // 10 minutes
