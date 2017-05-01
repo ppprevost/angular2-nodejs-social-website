@@ -12,7 +12,7 @@ export class WasteComponent implements OnInit {
   @Input() typePost;
   @Input() onlyOwnPost;
   @Input() userId;
-  private wastes;
+  wastes;
 
   constructor(private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
   }

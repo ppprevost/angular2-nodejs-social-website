@@ -12,7 +12,7 @@ import 'rxjs/add/operator/map';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent implements OnInit {
-  private addUser: FormGroup;
+  addUser: FormGroup;
   private email = new FormControl('', Validators.required);
   private res;
   username = new FormControl('', Validators.required);

@@ -11,7 +11,7 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class ValidUrlComponent implements OnInit {
-  private welcome:string;
+  welcome:string;
   private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
   private options = new RequestOptions({headers: this.headers});
   private url: string;
