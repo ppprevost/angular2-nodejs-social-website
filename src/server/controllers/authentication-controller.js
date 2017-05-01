@@ -4,7 +4,6 @@ var mongoose = require('mongoose');
 var nev = require('../services/email-verification')(mongoose);
 var path = require('path');
 
-
 myHasher = function (password, tempUserData, insertTempUser, callback) {
   bcrypt.genSalt(8, function (err, salt) {
     bcrypt.hash(password, salt, function (err, hash) {
@@ -13,22 +12,21 @@ myHasher = function (password, tempUserData, insertTempUser, callback) {
   });
 };
 
-console.log("processENV====>", process.env)
 
 nev.configure({
   persistentUserModel: User,
   expirationTime: 600, // 10 minutes
-  verificationURL: process.env.url,
+  verificationURL: process.env.URLVERIF,
   shouldSendConfirmation: false,
   transportOptions: {
-    service: 'Gmail',
+    service: process.env.MAILVERIF,
     pool: true,
-    host: 'smtp.gmail.com', // Gmail as mail client
-    port: 465,
+    host: process.env.HOSTMAIL, // Gmail as mail client
+    port: process.env.MAILPORT,
     secure: true, // use SSL
     auth: {
-      user: 'pp.ifocop@gmail.com',
-      pass: 'p85c312m'
+      user: process.env.MAILACCOUNT,
+      pass: process.env.MAILPASS
     },
     tls: {
       rejectUnauthorized: false
@@ -57,8 +55,7 @@ nev.generateTempUserModel(User, function (err, tempUserModel) {
 
 module.exports = function (io) {
   var signup = function (req, res, next) {
-    console.log(req.body)
-
+    console.log(req.body);
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('email', 'Email cannot be blank').notEmpty();
     req.assert('pass', 'Password must be at least 4 characters long').len(4);
@@ -70,7 +67,7 @@ module.exports = function (io) {
     }
     let email = req.body.email;
 
-    var newUser = new User({
+    let newUser = new User({
       email: req.body.email,
       password: req.body.pass,
       username: req.body.username,
@@ -79,7 +76,7 @@ module.exports = function (io) {
 
     nev.createTempUser(newUser, function (err, existingPersistentUser, newTempUser) {
       if (err) {
-        console.log(err)
+        console.log(err);
         return res.status(404).send('ERROR: creating temp user FAILED');
       }
       // user already exists in persistent collection
@@ -132,10 +129,9 @@ module.exports = function (io) {
 
   };
 
-  var login = function (req, res) {
-
+  let login = (req, res) => {
     console.log("req.body", req.body);
-    req.assert('email', 'Email cannot be blank').notEmpty();
+    req.assert('email', 'Email cannot be blank and must be a correct email').notEmpty().isEmail();
     req.assert('password', 'Password cannot be blank').notEmpty();
     req.sanitize('email').normalizeEmail({remove_dots: false});
     var errors = req.validationErrors();
@@ -143,31 +139,29 @@ module.exports = function (io) {
       return res.status(400).send(errors);
     }
 
-    User.find({email: req.body.email}, function (err, results) {
+    User.find({email: req.body.email}, (err, results) => {
       if (err) {
         console.log(err);
       } else {
         if (results && results.length == 1) {
+          let userData = results[0];
           console.log(results.length == 1 ? "nombre de resultat au login ok :" + results.length : "plus de 1 resultat attention!!");
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
-              var userData = results[0];
-              res.json({
-                email: req.body.email,
-                _id: userData._id,
-                username: userData.username,
-                image: userData.image,
-                location: userData.location,
-                gender: userData.gender,
-                bio: userData.bio,
-                following: userData.following,
-                followers: userData.followers
-              });
-
               User.update({_id: userData._id}, {$set: {"isConnected": true}}, function (err, result) {
                 if (!err) {
-                  console.log("connecté a true");
 
+                  res.json({
+                    email: req.body.email,
+                    _id: userData._id,
+                    username: userData.username,
+                    image: userData.image,
+                    location: userData.location,
+                    gender: userData.gender,
+                    bio: userData.bio,
+                    following: userData.following,
+                    followers: userData.followers
+                  });
                 }
               });
             } else {
@@ -188,12 +182,12 @@ module.exports = function (io) {
     });
   };
 
-  var emailVerif = function (req, res) {
+  var emailVerif = (req, res) => {
     console.log(req.body)
     var url = req.body.url;
-    console.log(url)
+    console.log(url);
     nev.confirmTempUser(url, function (err, user) {
-      console.log(user)
+      console.log(user);
       if (err) {
 
       }

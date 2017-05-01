@@ -8,9 +8,19 @@ let multer = require('multer');
 
 let storage = multer.diskStorage({ //multers disk storage settings
   destination: function (req, file, cb) {
-    cb(null, './src/assets/upload/');
+    const dir = './src/assets/upload/' + req.body.userId;
+    if (!fs.existsSync(dir)) {
+      fs.mkdir(dir, err => {
+        cb(err, dir)
+      });
+    } else {
+      cb(null, dir)
+    }
   },
   filename: function (req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      return cb(new Error('Only image files are allowed!'), false);
+    }
     var datetimestamp = Date.now();
     cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length - 1]);
   }
@@ -26,7 +36,6 @@ module.exports = function (io) {
       console.log("req.file", req.file);
       if (err) {
         res.json({error_code: 1, err_desc: err});
-        return;
       }
       var userId = req.body.userId;
       User.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
@@ -114,29 +123,64 @@ module.exports = function (io) {
   };
 
   let updatePassword = (req, res) => {
+    req.assert('lastPassword', 'Password must be at least 4 characters long').len(4);
     req.assert('password', 'Password must be at least 4 characters long').len(4);
-    var errors = req.validationErrors();
+    let errors = req.validationErrors();
     if (errors) {
       return res.status(400).send(errors);
     }
-    let userId = req.body.userId;
-    let password = req.body.password;
-    req.body.password = bcrypt.hashSync(password);
-    User.findByIdAndUpdate(userId, req.body, function (err, success) {
+    let userId = req.body.userId, password = req.body.password;
+    User.findById(userId, function (err, user) {
+      comparePassword(req.body.lastPassword, user.password, function (err, isMatch) {
+        if (err) {
+          res.status(401).json("error when comparing Pasword")
+        } else {
+          if (isMatch) {
+            req.body.password = bcrypt.hashSync(password);
+            user._doc.password = req.body.password;
+            user.save(() => {
+              res.send("password update from the server")
+            })
+          } else {
+            res.status(401).json("Match error, please be sure to fill your good old password")
+          }
+        }
+      })
+    });
+  };
+
+  let comparePassword = (passw, userPass, cb) => {
+    bcrypt.compare(passw, userPass, function (err, isMatch) {
       if (err) {
-        console.log("fail");
-        res.json({status: 500});
-      } else {
-        res.json(success);
+        return cb(err, false);
       }
-    })
+      return cb(null, isMatch);
+    });
+  };
+
+  let deleteAccount = (req, res) => {
+    let id = req.params.id;
+    User.update({'following.userId': id}, {$pull: {following: {userId: id}}}, {multi: true}, (err, numberAffect) => {
+      if (err) {
+        res.status(404).json("cannot find the account")
+      } else {
+        User.findByIdAndRemove(id, (err) => {
+          if (!err) {
+            res.send(`Your account has been deleted, number of friend affected : ${numberAffect}`)
+          } else {
+            res.status(404).json("cannot find the account")
+          }
+        });
+      }
+    });
   };
 
   return {
-    updatePhoto: updatePhoto,
-    updateCover: updateCover,
-    updateChamp: updateChamp,
-    updatePassword: updatePassword
+    updatePhoto,
+    updateCover,
+    updateChamp,
+    updatePassword,
+    deleteAccount
   }
 };
 

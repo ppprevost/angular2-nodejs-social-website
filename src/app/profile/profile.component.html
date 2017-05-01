@@ -50,12 +50,10 @@
         <div class="form-group">
           <label class="col-sm-3">Gravatar</label>
           <div class="col-sm-4">
-            <!--<img ngf-thumbnail="file || 'app/images/default-avatar.jpg'" class="profile" width="100"-->
-            <!--height="100">-->
-
           </div>
-          <div class="row"> <label for="avatar">Avatar</label><input type="file" id="avatar" class="form-control" name="avatar" ng2FileSelect
-                                  [uploader]="uploader"/>
+          <div class="row"><label for="avatar">Avatar</label><input type="file" id="avatar" class="form-control"
+                                                                    name="avatar" ng2FileSelect
+                                                                    [uploader]="uploader"/>
             <table class="table">
               <thead>
               <tr>
@@ -127,6 +125,14 @@
       <form (ngSubmit)="updatePassword()" [formGroup]="updatePass" class="form-horizontal">
         <legend>Change Password</legend>
         <div class="form-group">
+          <label for="password" class="col-sm-3">Old Password</label>
+          <div class="col-sm-7">
+            <input formControlName="lastPassword" type="password" name="lastPassword" id="lastPassword"
+                   class="form-control"
+            >
+          </div>
+        </div>
+        <div class="form-group">
           <label for="password" class="col-sm-3">New Password</label>
           <div class="col-sm-7">
             <input formControlName="password" type="password" name="password" id="password" class="form-control"
@@ -156,7 +162,7 @@
           <p class="col-sm-offset-3 col-sm-9">You can delete your account, but keep in mind this action is
             irreversible.</p>
           <div class="col-sm-offset-3 col-sm-9">
-            <button type="submit" class="btn btn-danger">Delete my account</button>
+            <button (click)="deleteAccount()" type="submit" class="btn btn-danger">Delete my account</button>
           </div>
         </div>
       </form>

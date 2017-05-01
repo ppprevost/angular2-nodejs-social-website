@@ -1,9 +1,7 @@
 var mongoose = require('mongoose');
 module.exports = mongoose.model('Waste', {
-    user: String,
-    userId: String,
-    userImage: String,
-    type:String,
-    content: String,
-    date: {type: Date, default: Date.now}
-})
+  userId: String,
+  userType: {type: String, enum: ['public', 'private']},
+  content: String,
+  date: {type: Date, default: Date.now}
+});

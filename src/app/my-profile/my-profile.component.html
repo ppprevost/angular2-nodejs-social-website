@@ -1,0 +1,186 @@
+<div class="st-content">
+
+  <!-- extra div for emulating position:fixed of the menu -->
+  <div class="st-content-inner">
+    <div class="media media-grid media-clearfix-xs">
+      <div class="media-left">
+        <div class="width-250 width-auto-xs">
+          <div class="panel panel-default widget-user-1 text-center">
+            <div class="avatar">
+              <img class="img-circle" alt="" [src]="user?.image">
+              <h3>{{user?.username}}</h3>
+              <div class="addFriendButton">
+                <div *ngIf="actualUser && id && actualUser._id!=id">
+                  <app-follow (notify)='user.friendShip = $event' [user]="actualUser" [waste]='user'>
+
+                  </app-follow>
+                </div>
+              </div>
+            </div>
+            <div class="profile-icons margin-none">
+              <span><i class="fa fa-user">{{user?.following.length}}</i> </span>
+              <span><i class="fa fa-photo"></i> None</span>
+            </div>
+            <div class="panel-body">
+              <div class="expandable expandable-indicator-white expandable-trigger">
+                <div class="expandable-content" *ngIf='user?.bio'>
+                  {{user?.bio}}
+                  <div class="expandable-indicator"><i></i></div>
+                </div>
+                <div class="expandable-content" *ngIf='!user?.bio'>
+                  Merci de renseigner votre bio
+                  <div class="expandable-indicator"><i></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact -->
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              Contact
+            </div>
+            <ul class="icon-list icon-list-block">
+              <li><i class="fa fa-envelope fa-fw"></i>
+                <span href="#" class="notSendYet" *ngIf="!user?.email">your email</span>
+                <a href="#">{{user?.email}}</a></li>
+              <li><i class="fa fa-globe fa-fw"></i>
+
+                <span href="#" class="notSendYet"
+                      *ngIf="!user?.website">your website</span>
+                <a href="#">{{user?.website}}</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="media-body">
+        <form>
+          <md-radio-group [(ngModel)]="typeWaste" name="typeWaste">
+            <md-radio-button value="public">
+              Public
+            </md-radio-button>
+            <md-radio-button value="private">
+              Private
+            </md-radio-button>
+          </md-radio-group>
+          <div class="panel panel-default share">
+            <div class="input-group">
+              <div class="input-group-btn">
+                <button (click)="sendWaste()" type="submit" class="btn btn-primary"><i class="fa fa-envelope"></i>Send
+                </button>
+              </div>
+              <input [(ngModel)]="newWaste" type="text" name="postContent"
+                     placeholder="Write message..."
+                     class="form-control share-text">
+            </div>
+          </div>
+        </form>
+
+        <div class="tabbable">
+          <ul class="nav nav-tabs" style="overflow: hidden;" tabindex="0">
+            <li class="active"><a data-toggle="tab" href=""><i class="fa fa-fw fa-picture-o"></i>
+              Photos</a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="home" class="tab-pane fade active in">
+              <div
+                *ngIf="uploadPicture.length && actualUser._id==id || uploadPicture.length && user?.friendShip=='accepted';else error">
+                <div class="row">
+                  <div class="col-xs-12">
+                    <button *ngIf="actualUser._id==id" class="btn btn-warning" (click)="deleteAllPictureUser()">
+                      Delete files
+                    </button>
+                  </div>
+
+                </div>
+                <img alt="image" *ngFor="let uplPic of uploadPicture" [src]="'/assets/upload/'+user?._id+'/'+uplPic">
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading panel-heading-gray">
+                <a ng-if="user._id==user._id" ui-sref="editProfile"
+                   class="btn btn-white btn-xs pull-right" href="#"><i class="fa fa-pencil"></i></a>
+                <i class="fa fa-fw fa-info-circle"></i> About
+              </div>
+              <div class="panel-body">
+                <ul class="list-unstyled profile-about margin-none">
+
+                  <li class="padding-v-5">
+                    <div class="row">
+                      <div class="col-sm-4"><span class="text-muted">Gender</span></div>
+                      <div class="col-sm-8">{{user?.gender}}</div>
+                    </div>
+                  </li>
+                  <li class="padding-v-5">
+                    <div class="row">
+                      <div class="col-sm-4"><span class="text-muted">Lives in</span></div>
+                      <div class="col-sm-8">{{user?.location}}</div>
+                    </div>
+                  </li>
+
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-heading panel-heading-gray">
+                <div class="pull-right">
+                  <a ng-if="user._id==user._id" ui-sref="follow" class="btn btn-primary btn-xs"
+                     [routerLink]="['/app-follow-user']">Add <i class="fa fa-plus"></i></a>
+                </div>
+                <i class="icon-user-1"></i> Friends
+              </div>
+              <div class="panel-body">
+                <ul *ngIf="images;else noFriend" class="img-grid">
+                  <li *ngFor="let image of images">
+                    <a href="#">
+                      <img alt="image" [src]="image.image"
+                           [title]="image.username">
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3>Last three posts</h3>
+        <div *ngIf="actualUser && actualUser._id || user && user._id">
+          <app-waste [numberOfWaste]="3"
+                     [userId]="user._id"
+                     [onlyOwnPost]="true"
+                     [typePost]="(actualUser._id==id || user?.friendShip=='accepted')? 'all':'publicOnly'"></app-waste>
+        </div>
+      </div>
+    </div>
+    <div id="ascrail2000" class="nicescroll-rails"
+         style="width: 5px; z-index: auto; cursor: default; position: absolute; top: 71px; left: 1683px; height: 40px; display: none; opacity: 0;">
+      <div
+        style="position: relative; top: 0px; float: right; width: 5px; height: 0px; background-color: rgb(22, 174, 159); border: 0px none; background-clip: padding-box; border-radius: 5px;"></div>
+    </div>
+    <div id="ascrail2000-hr" class="nicescroll-rails"
+         style="height: 5px; z-index: auto; top: 106px; left: 280px; position: absolute; cursor: default; display: none; opacity: 0;">
+      <div
+        style="position: absolute; top: 0px; height: 5px; width: 0px; background-color: rgb(22, 174, 159); border: 0px none; background-clip: padding-box; border-radius: 5px; left: 0px;"></div>
+    </div>
+  </div>
+  <!-- /st-content-inner -->
+
+  <ng-template #error>
+    <!--<div *ngIf="user.friendShip!= 'accepted';else noImage">-->
+    <!--</div>-->
+    <!--<ng-template #noImage>-->
+    <h4>Aucune image à afficher</h4>
+    <!--</ng-template>-->
+
+  </ng-template>
+  <ng-template #noFriend>
+    <p>Vous n'avez pas encore d'amis</p>
+  </ng-template>
+</div>

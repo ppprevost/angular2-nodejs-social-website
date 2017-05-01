@@ -1,106 +1,93 @@
-var Waste = require('../datasets/wastes');
-var Users = require('../datasets/users');
+let Waste = require('../datasets/wastes');
+let Users = require('../datasets/users');
+let mongoose = require('mongoose');
 
 module.exports = function (io) {
-  var postWaste = function (req, res) {
-    var waste = new Waste(req.body);
-    waste.save();
-    Waste.find({})
-      .sort({date: -1}).exec(function (err, allWastes) {
-      if (err) {
-        res.error(err);
-      } else {
-        res.json(allWastes);
-      }
-    });
 
-  };
-
-
-  var sendPost = function (data, fn) {
+  let sendPost = (req, res) => {
+    let data = req.body.request;
     if (data) {
-      var waste = new Waste(data);
-
-      io.sockets.emit("getNewPost", waste);
+      let waste = new Waste(data);
+      // io.sockets.emit("getNewPost", waste);
       waste.save();
-      Waste.find({})
-        .sort({date: -1}).exec(function (err, allWastes) {
-        if (err) {
-          fn("error" / socket)
-        } else {
-          fn("bien sauvegardé dans la base waste /socket")
-        }
-      });
+      res.json(waste);
     } else {
-      fn("Contenu vide")
+      res.status(404).send('aucun contenu enregistré dans la base')
     }
 
   };
 
+  let getPost = (req, res) => {
+    let userData = req.body.following, onlyOwnPost = req.body.onlyOwnPost, typePost = req.body.typePost;
+    let requestedWastes = [userData];
 
-  var getPost = function (req, res) {
-    if (!req.body.following) {
-      Waste.find({})
-        .sort({date: -1})
-        .exec(function (err, allWastes) {
-          if (err) {
-            res.error(err)
-          } else {
-            res.json(allWastes);
+    Users.findById(userData, (err, user) => {
+      if (!err && !onlyOwnPost && user.following && user.following.length) {
+        for (let i = 0, len = user.following.length; i < len; i++) {
+          if (user.following[i].statut == "accepted") {
+            requestedWastes.push(user.following[i].userId);
           }
-        })
-    }
-    else {
-      var requestedWastes = [];
-      var following = req.body.following;
-      for (var i = 0, len = following.length; i < len; i++) {
-        if (following[i].statut == "accepted") {
-          requestedWastes.push({userId: following[i].userId});
         }
       }
       if (requestedWastes.length) {
-        Waste.find({$or: requestedWastes})
+        let seekPosts = {userId: {$in: requestedWastes}};
+        if (typePost == "publicOnly") {
+          seekPosts.userType = "public"
+        }
+        Waste.find(seekPosts)
           .sort({date: -1})
+          .limit(req.body.numberOfWaste)
           .exec(function (err, allWastes) {
             if (err) {
-              console.log(err)
+              res.status(400).send("Erreur dans la récupération de la base de donnée")
             } else {
-              res.json(allWastes);
+              Users.find({
+                _id: {
+                  $in: requestedWastes
+                }
+              }).select({image: 1, _id: 1, username: 1}).exec((err, allUserImage) => {
+                if (err) {
+                  res.status(400).send(err)
+                }
+                allWastes.map(doc => {
+                  allUserImage.forEach((elem) => {
+                    if (doc.userId == elem._id) {
+                      doc._doc.image = elem.image; // hack Mongoose
+                      doc._doc.user = elem.username;
+                      return doc
+                    }
+                  });
+                });
+                res.json(allWastes);
+              });
             }
           })
       } else {
-        console.log("nothing dans le tableau")
+        res.status(400).send("pas de posts trouvés ou erreurs envoi userId")
       }
-    }
+    });
   };
 
-  var listOfFriends = function (req, res) {
-    var requestedImage = [];
-    if (req.body.following) {
-      req.body.following.forEach(function (doc, i) {
-        if (doc.statut == "accepted") {
-          requestedImage.push({_id: doc.userId});
-          Users.find({$or: requestedImage})
-            .select({image: 1, username: 1})
-            .exec(function (err, allWastes) {
-              if (err) {
-                console.log(err)
-              } else {
-                res.json(allWastes)
-              }
-            });
-        }
-      });
+  let listOfFriends = function (req, res) {
+    let following = req.body.following || [];
+    let newTable = [];
+    following.forEach(doc => {
+      if (doc.statut == 'accepted')
+        newTable.push(mongoose.Types.ObjectId(doc.userId))
+    });
+    if (newTable.length) {
+      Users.find({_id: {$in: newTable}}).select({image: 1, _id: 1, username: 1})
+        .exec(function (err, waster) {
+          res.json(waster);
+        });
     }
   };
 
   return {
-    listOfFriends: listOfFriends,
-    sendPost: sendPost,
-    getPost: getPost
+    listOfFriends,
+    sendPost,
+    getPost
   }
-
-
 };
 
 

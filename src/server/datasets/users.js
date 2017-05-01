@@ -17,7 +17,7 @@ var schema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: "mot de passe Mongoose requis"
+    required: "mot de passe Mongoose required"
   },
   website: String,
   gender: String,

@@ -1,8 +1,19 @@
-var Users = require('../datasets/users');
+const Users = require('../datasets/users'), fs = require('fs');
+let uploadUtil = (req, res, callback) => {
+  let userId = req.params.id;
+  let directory = `${process.cwd()}\\src\\assets\\upload\\${userId}\\`;
+  try {
+    let files = fs.readdirSync(directory);
+    callback(files, directory, userId)
+  } catch (err) {
+    res.json([]);
+  }
+};
+
 
 module.exports = function (io) {
-  var getUsers = function (req, res) {
-    Users.find({}, function (err, usersData) {
+  let getUsers = function (req, res) {
+    Users.find().select({password: 0, __v: 0}).exec(function (err, usersData) {
       if (err) {
         res.error(err);
       } else {
@@ -11,8 +22,7 @@ module.exports = function (io) {
     })
   };
 
-
-  var deconnection = function (req, res) {
+  let deconnection = function (req, res) {
     console.log(req.body.userId);
     Users.update({_id: req.body.userId}, {$set: {"isConnected": false}}, function (err, result) {
       if (!err) {
@@ -22,7 +32,7 @@ module.exports = function (io) {
     });
   };
 
-  var followUser = function (req, res) {
+  let followUser = function (req, res) {
     var userId = req.body.userId,
       wasterId = req.body.wasterId;
     var userIdWaster;
@@ -39,7 +49,7 @@ module.exports = function (io) {
         console.log(waster);
         var already = false; // test si l'user ID est deja présent
         waster.following.forEach(function (doc) {
-          if (doc.userId && doc.userId == userId) {
+          if (doc && doc.userId == userId) {
             already = true;
             console.log("deja présent");
           }
@@ -81,11 +91,10 @@ module.exports = function (io) {
       follower.save(function () {
         res.json(follower);
       })
-
     });
   };
 
-  var followUserOk = function (req, res) {
+  let followUserOk = function (req, res) {
     var userId = req.body.userId,
       wasterId = req.body.wasterId;
     var userIdWaster;
@@ -104,7 +113,6 @@ module.exports = function (io) {
       });
       waster.save();
     });
-
     Users.findById(userId, function (err, follower) {
       if (err) {
         console.log("failed save");
@@ -120,15 +128,14 @@ module.exports = function (io) {
       }
     });
   };
-  var unfollowUser = function (req, res) {
+  let unfollowUser = function (req, res) {
     var userId = req.body.userId,
       wasterId = req.body.wasterId;
-
     Users.findById(wasterId, function (err, waster) {
-      console.log(waster)
+      console.log(waster);
       waster.following.forEach(function (doc) {
         if (doc.userId == userId) {
-          console.log(doc)
+          console.log(doc);
           waster.following.splice(doc, 1)
         }
       });
@@ -144,7 +151,7 @@ module.exports = function (io) {
       res.json(follower);
     })
   };
-  var getThisUser = function (req, res) {
+  let getThisUser = function (req, res) {
     var userId = req.body.userId;
     Users.findById(userId).select({password: 0, __v: 0}).exec(function (err, user) {
       if (!err) {
@@ -153,22 +160,69 @@ module.exports = function (io) {
     });
   };
 
-  var returnStatusFollowing = function (req, res) {
-    var userId = req.body.userId;
-    Users.findById(userId, function (err, user) {
-      if (!err) {
-        res.json(user.following)
+  let uploadPicture = (req, res) => {
+    return uploadUtil(req, res, (files, directory, userId) => {
+      if (files.length === 0) {
+        fs.rmdir(directory, function (err) {
+          if (err) {
+            res.status(400).send(err)
+          }
+        });
+      } else {
+        res.json(files);
       }
-    });
+    })
   };
 
+  let deleteAllPictures = (req, res) => {
+    uploadUtil(req, res, (files, directory, userId) => {
+      if (files.length === 0) {
+        fs.rmdir(directory, function (err) {
+          if (err) {
+            res.status(400).send(err)
+          }
+        });
+      }
+      else {
+        Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
+          if (err) {
+            res.status(500).send("unerreru a la suppression:", err);
+          }
+          files.forEach((file, i) => {
+            let filePath = directory + file;
+            fs.stat(filePath, function (err, stats) {
+              if (err) {
+                console.log(JSON.stringify(err));
+              } else {
+                if (stats.isFile()) {
+                  fs.unlink(filePath, function (err) {
+                    if (err) {
+                      res.status(400).json(err)
+                    }
+                  });
+                }
+              }
+            });
+          });
+          user.image = undefined;
+          user.save(() => {
+            res.json(user);
+          })
+        });
+      }
+    })
+  };
+
+
   return {
-    getUsers: getUsers,
-    followUserOk: followUserOk,
-    getThisUser: getThisUser,
-    deconnection: deconnection,
-    followUser: followUser,
-    unfollowUser: unfollowUser
+    getUsers,
+    followUserOk,
+    getThisUser,
+    deconnection,
+    followUser,
+    unfollowUser,
+    uploadPicture,
+    deleteAllPictures
   }
 };
 

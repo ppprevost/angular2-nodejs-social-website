@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Http, URLSearchParams, Headers, RequestOptions} from '@angular/http';
-import {Router, ActivatedRoute, Params} from '@angular/router';
+import {Http, Headers, RequestOptions} from '@angular/http';
+import {ActivatedRoute, Params} from '@angular/router';
 import {Injectable} from '@angular/core';
 
 @Component({

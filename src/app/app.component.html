@@ -1,20 +1,3 @@
-<!--<div class="container">-->
-
-<!--<nav class="navbar navbar-dark bg-primary">-->
-<!--<div class="nav navbar-nav">-->
-<!--<a routerLink="/" class="nav-item nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">-->
-<!--<i class="fa fa-home"></i> Home-->
-<!--</a>-->
-<!--<a routerLink="/about" class="nav-item nav-link" routerLinkActive="active">-->
-<!--<i class="fa fa-info-circle"></i> About-->
-<!--</a>-->
-<!--</div>-->
-<!--</nav>-->
-
-<!--<router-outlet></router-outlet>-->
-
-<!--</div>-->
-
 <header>
   <nav class="principal-navbar navbar navbar-default navbar-fixed-top principal-header">
     <div class="container">
@@ -25,17 +8,22 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a href="/" class="navbar-brand">Mon Social</a>
-        <a *ngIf="loggedIn()" class="navbar-brand">Mon Profil</a>
+        <a href="/" class="navbar-brand">My Social Website</a>
+        <a *ngIf="loggedIn()" class="navbar-brand" [routerLink]="['/my-profile', user._id]" routerLinkActive="active">Mon
+          Profil</a>
       </div>
       <div id="navbar" class="navbar-collapse">
 
         <div class="nav navbar-nav navbar-right">
           <div class="form-inline">
-            <form *ngIf="!loggedIn()" action="" [formGroup]="loginUser">
-              <input type="text" placeholder="votre email" formControlName="email"> <input type="password"
-                                                                                           formControlName="password"
-                                                                                           placeholder="votre mot de password">
+            <form *ngIf="!loggedIn()" [formGroup]="loginUser">
+              <md-input-container>
+                <input mdInput type="text" placeholder="your email" formControlName="email">
+              </md-input-container>
+              <md-input-container><input mdInput type="password"
+                                         formControlName="password"
+                                         placeholder="your password"></md-input-container>
+
               <button (click)="loginAccount()">Login</button>
             </form>
             <a *ngIf="!loggedIn()" routerLink="/signup" routerLinkActive="active">Create An Account</a>
@@ -64,6 +52,7 @@
 <article>
   <div class="container primaryContent">
     <router-outlet></router-outlet>
-    <app-sidebar>CONTETN</app-sidebar>
+    <!--<app-sidebar>CONTETN</app-sidebar>-->
   </div>
+  <ng2-toasty></ng2-toasty>
 </article>

@@ -43,3 +43,6 @@ Thumbs.db
 
 #env
 ./server/env.json
+.env
+
+./^npm-debug
