@@ -15,16 +15,6 @@ app.use(expressValidator());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.set('port', (process.env.PORT || 3000));
-let dirEnv = path.join(process.cwd(), '/.env');
-let contentEnv = "MONGODB_URI=https://localhost:20017 \nMAILVERIF=Gmail \nURLVERIF=http://example.com/email-verification/${URL} \nMAILACCOUNT= \n";
-try {
-  fs.statSync(dirEnv).isFile()
-} catch (err) {
-  if (err.code == 'ENOENT') {
-    console.log('environment file does not exist, please fulfill the information in the dot env file');
-    fs.writeFileSync(dirEnv, contentEnv, 'utf8')
-  }
-}
 app.use('/', express.static(path.join(__dirname, '/../../dist')));
 
 app.use(morgan('dev'));
@@ -32,9 +22,6 @@ let mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI);
 var db = mongoose.connection;
 mongoose.Promise = global.Promise;
-
-
-const routes = require('./routes/routes.js')(app, io);
 db.on('error', () => {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
@@ -42,18 +29,29 @@ db.on('error', () => {
 
 db.once('open', function () {
   console.log('Connected to MongoDB');
-
-
+  const routes = require('./routes/routes.js')(app, io);
   // all other routes are handled by Angular
   app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '/../../dist/index.html'));
   });
 
-
   app.listen(app.get('port'), function () {
     console.log('Angular 4 Full Stack listening on port ' + app.get('port'));
   });
 });
+
+let dirEnv = path.join(process.cwd(), '/.env');
+let contentEnv = "MONGODB_URI=mongodb://localhost:20017 \nMAILVERIF=Gmail \nURLVERIF=http://example.com/email-verification/${URL} \nMAILACCOUNT= \n";
+try {
+  fs.statSync(dirEnv).isFile()
+} catch (err) {
+  if (err.code == 'ENOENT') {
+    if (!process.env.MONGODB_URI) {
+      console.log('environment file does not exist, please fulfill the information in the dot env file at the root folder');
+      fs.writeFileSync(dirEnv, contentEnv, 'utf8')
+    }
+  }
+}
 
 //traitement socket
 io.on('connection', function (socket) {

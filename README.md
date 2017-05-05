@@ -4,15 +4,14 @@ Social website created with Angular 4, Angular-cli, MongoDB, Node.js, Express.js
 
 ## Getting Started
 
-email-verification system, backend server with node.js and front end with angular 4. Development mode use file system and production mode want to use Amazon Web Service S3. login Access, profile etc...
-
+email-verification system, backend server with node.js and front end with Angular 4 and Angular 4 Material, login access, profile . Development mode uses File system and production mode would use Amazon Web Service S3. etc...
 
 ### Prerequisites
 
-Install Node.js and MongoDb.
-Install Nodemon and Angular-cli.
-Create Gmail account in order to use nodemailer email verification module. thne go to this page to use the GMAIL API.
-Then  install all node module at the root of the project
+Install Node.js and MongoDb or use a Mongolab account.
+Install Nodemon and Angular-cli with npm -g command.
+Create Gmail account in order to use nodemailer email verification module. Then go to this page to use the GMAIL API.
+Then  install all node modules
 ```
 npm install -g nodemon angular-cli
 npm install
@@ -22,8 +21,8 @@ npm install
 
 ## Development mode
 ```
-*create a .env file a the root folder. It contains all variables uses by node.js ( mongodb_uri, gmail etc...)
-*
+* Please fulfill the information in the .env file. It contains all variables uses by node.js ( mongodb_uri, gmail, amazon etc...)
+
 
 npm run dev
 ```
@@ -39,15 +38,12 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+Do more test
 
 ### Break down into end to end tests
 
 Explain what these tests test and why
 
-```
-Give an example
-```
 
 ### And coding style tests
 
@@ -67,7 +63,7 @@ Anyone who wants to make some tests or adding more modules or fonctionality are 
 
 ## Authors
 
-* **Pierre-Philippe PREVOST** - *Initial work* - [PurpleBooth](https://github.com/ppprevost)
+* **Pierre-Philippe PREVOST** - *Initial work* - [Angular4 Social Project](https://angular2-web.herokuapp.com)
 
 Don't hesitate to contribute and pull request !
 
@@ -78,6 +74,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * Thanks to David Violante Github Page
-* Inspiration
-* etc
+
 
