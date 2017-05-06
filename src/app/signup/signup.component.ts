@@ -33,19 +33,21 @@ export class SignupComponent implements OnInit {
   }
 
   addAccount() {
-    this.dataService.createAccount(this.addUser.value).map(res => res.json())
+    this.dataService.createAccount(this.addUser.value)
+      .map(res => res.json().msg)
       .subscribe((res) => {
           this.res = res;
-          console.log("response Angular2", res);
           var toastOptions: ToastOptions = {
             title: "Congratulations !",
             msg: res,
             showClose: true,
-            timeout: 5000,
+            timeout: 8000,
             theme: 'material',
           };
           this.toastyService.success(toastOptions);
           this.router.navigate(['./']);
+        }, (err) => {
+          this.toastyService.error(err)
         }
       )
   }
