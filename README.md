@@ -10,7 +10,9 @@ email-verification system, backend server with node.js and front end with Angula
 
 Install Node.js and MongoDb or use a Mongolab account.
 Install Nodemon and Angular-cli with npm -g command.
-Create Gmail account in order to use nodemailer email verification module. Then go to this page to use the GMAIL API.
+Create Gmail account in order to use nodemailer email verification module. Then go to this page to use the GMAIL API:
+ * [Configure your GMAIL API](https://medium.com/@pandeysoni/nodemailer-service-in-node-js-using-smtp-and-xoauth2-7c638a39a37e)
+ * [NODEMAILER MAJ EPLANATION](https://nodemailer.com/smtp/oauth2/)
 Then  install all node modules
 ```
 npm install -g nodemon angular-cli

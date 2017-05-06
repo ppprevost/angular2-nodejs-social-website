@@ -33,21 +33,24 @@ export class SignupComponent implements OnInit {
   }
 
   addAccount() {
+    let toastOptions = (response, title) => {
+      return {
+        title: title,
+        msg: response,
+        showClose: true,
+        timeout: 8000,
+        theme: 'material',
+      };
+    };
     this.dataService.createAccount(this.addUser.value)
       .map(res => res.json().msg)
       .subscribe((res) => {
           this.res = res;
-          var toastOptions: ToastOptions = {
-            title: "Congratulations !",
-            msg: res,
-            showClose: true,
-            timeout: 8000,
-            theme: 'material',
-          };
-          this.toastyService.success(toastOptions);
+
+          this.toastyService.success(toastOptions(res, "Congratulations !"));
           this.router.navigate(['./']);
         }, (err) => {
-          this.toastyService.error(err)
+          this.toastyService.error(toastOptions(err, "An error occured"))
         }
       )
   }
