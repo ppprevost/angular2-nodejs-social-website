@@ -29,7 +29,7 @@ nev.configure({
       type: 'OAuth2',
       user: process.env.MAILACCOUNT, // Your gmail address.
       clientSecret: process.env.CLIENTSECRET,
-      accessToken: "ya29.Gls9BG0DzHXiIvqBP0XNTfmZ545Wom09n7v0JZP1FF2-92njZP3ELNPFvH_ns1EoLX4n_96-BHdEFwmESXWZ8cpebeSEAEn6E_Zb41SQWrvsjjkNdTnk_HAF--Ut",
+      accessToken: process.env.ACCESSTOKEN,
       refreshToken: process.env.REFRESHTOKEN,
       clientId: process.env.CLIENTID
     },
