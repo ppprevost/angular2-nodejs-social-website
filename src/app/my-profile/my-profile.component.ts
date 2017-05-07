@@ -87,7 +87,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   deleteAllPictureUser() {
     return this.data.deleteAllPicture(this.auth.user._id).subscribe(
       data => {
-        localStorage.setItem('profile', data['_body']);
+        this.auth.callRefreshUserData(data.json());
         this.uploadPicture = []
       },
       err => console.log(err))

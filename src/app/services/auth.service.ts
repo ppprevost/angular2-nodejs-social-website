@@ -25,7 +25,6 @@ export class AuthService {
       .map(res => res.json())
       .map(data => {
         console.log(data);
-        this.user = localStorage.setItem('profile', data.user);
         localStorage.setItem('token', data.token);
         return this.user = this.decodeUserFromToken(data.token);
       });
