@@ -1,5 +1,6 @@
 import {Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
 import {DataService} from '../services/data.service';
+import {AuthService} from '../services/auth.service';
 import {Params, ActivatedRoute} from '@angular/router';
 import {WasteComponent} from '../utils/waste/waste.component';
 
@@ -27,11 +28,11 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   uploadPicture: string[] = [];
   @ViewChild(WasteComponent) wasteComponent: WasteComponent;
 
-  constructor(private activatedRoute: ActivatedRoute, private data: DataService) {
+  constructor(private auth: AuthService, private activatedRoute: ActivatedRoute, private data: DataService) {
   }
 
   ngOnInit() {
-   // this.user = this.activatedRoute.snapshot.data['user'];
+    // this.user = this.activatedRoute.snapshot.data['user'];
     return this.getThisUser();
   }
 
@@ -46,15 +47,15 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   getThisUser() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.id = params['id'];
-      if (this.id != this.data.user._id) {
+      if (this.id != this.auth.user._id) {
         this.data.getThisUser(this.id).subscribe(following => {
           this.user = following.json();
-          this.actualUser = this.data.user;
+          this.actualUser = this.auth.user;
           this.getFollowerImage(this.user);
           this.getPictureUser(this.user._id);
         });
       } else {
-        this.user = this.actualUser = this.data.user;
+        this.user = this.actualUser = this.auth.user;
         this.getPictureUser(this.user._id);
         this.getFollowerImage(this.user)
       }
@@ -84,7 +85,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   }
 
   deleteAllPictureUser() {
-    return this.data.deleteAllPicture(this.data.user._id).subscribe(
+    return this.data.deleteAllPicture(this.auth.user._id).subscribe(
       data => {
         localStorage.setItem('profile', data['_body']);
         this.uploadPicture = []
@@ -94,8 +95,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
 
   sendWaste() {
     let request = {
-      user: this.data.user.username,
-      userId: this.data.user._id,
+      user: this.auth.user.username,
+      userId: this.auth.user._id,
       userType: this.typeWaste || 'public',
       content: this.newWaste
     };

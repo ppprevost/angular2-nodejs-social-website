@@ -1,6 +1,7 @@
-import {Component, OnInit, Injectable, OnDestroy, ViewContainerRef} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewContainerRef} from '@angular/core';
 
 import {DataService} from './services/data.service';
+import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import{Router} from '@angular/router';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
@@ -10,7 +11,7 @@ import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-@Injectable()
+
 export class AppComponent implements OnInit,OnDestroy {
 
   private loginUser: FormGroup;
@@ -18,8 +19,9 @@ export class AppComponent implements OnInit,OnDestroy {
   private password = new FormControl('', Validators.required);
   user;
 
-  constructor(private toastyService: ToastyService, private toastyConfig: ToastyConfig, private data: DataService, private addUserForm: FormBuilder, private router: Router, vcr: ViewContainerRef) {
+  constructor(private auth: AuthService, private toastyService: ToastyService, private toastyConfig: ToastyConfig, private data: DataService, private addUserForm: FormBuilder, private router: Router, vcr: ViewContainerRef) {
     this.toastyConfig.theme = 'material';
+
   }
 
   ngOnInit() {
@@ -28,11 +30,9 @@ export class AppComponent implements OnInit,OnDestroy {
       password: this.password
     });
     if (this.loggedIn()) {
-      console.log("on rafraichit le user")
-      this.data.getThisUser(this.data.user._id).subscribe(following => {
-        console.log('setITem');
-        localStorage.setItem('profile', following["_body"]);
-      })
+      console.log("on rafraichit le user");
+      this.auth.callRefreshUserData()
+
     }
   }
 
@@ -40,28 +40,29 @@ export class AppComponent implements OnInit,OnDestroy {
 
   }
 
+
   loginAccount() {
-    this.data.loginAccount(this.loginUser.value).subscribe(data => {
-      console.log(data);
-      localStorage.setItem("profile", data["_body"]);
-      this.user = JSON.parse(localStorage["profile"])._id;
-      this.router.navigate(['./']);
-    }, err => {
-      if (typeof err.json() == 'string') {
-        this.toastyService.error(err.json())
-      } else {
-        if (Array.isArray(err.json())) {
-          this.toastyService.error(err.json()[0].msg)
+    this.auth.loginAccount(this.loginUser.value).subscribe(
+      data => {
+        console.log(data);
+        this.router.navigate(['./']);
+      },
+      err => {
+        if (typeof err.json() == 'string') {
+          this.toastyService.error(err.json())
         } else {
-          this.toastyService.error(err.json().msg)
+          if (Array.isArray(err.json())) {
+            this.toastyService.error(err.json()[0].msg)
+          } else {
+            this.toastyService.error(err.json().msg)
+          }
         }
-      }
-    });
+      });
   }
 
   logOut() {
     console.log("click sur logout avec socket");
-    this.data.logOut({userId: this.user._id}).subscribe(res => {
+    this.data.logOut(this.auth.user._id).subscribe(res => {
       console.log(res);
       localStorage.clear();
       this.router.navigate(['./']);
@@ -83,6 +84,6 @@ export class AppComponent implements OnInit,OnDestroy {
   }
 
   loggedIn() {
-    return this.user = this.data.loggedIn()
+    return this.auth.loggedIn()
   }
 }

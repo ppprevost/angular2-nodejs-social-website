@@ -16,7 +16,8 @@ module.exports = function (app, io) {
   app.post('/verif', authenticationController.emailVerif);
   app.post('/api/user/signup', authenticationController.signup);
   app.post('/api/user/login', authenticationController.login);
-  app.get('/api/user/logout/:id', usersController.deconnection);
+  app.post('/api/user/refreshUserData', authenticationController.refreshUserData);
+  app.put('/api/user/logout/:id', usersController.deconnection);
 
 //Profile profileController.updatePhoto
   app.options('api/upload', cors(corsOptions)); // enable pre-flight request for request

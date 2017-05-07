@@ -23,6 +23,10 @@ export class DataService {
     return this.http.post('/api/users/getThisUsers', JSON.stringify({userId: userid}), this.options)
   }
 
+  refreshUserData(token): Observable<any> {
+    return this.http.post('/api/user/refreshUserData', JSON.stringify(token), this.options)
+  }
+
   createAccount(user): Observable<any> {
     return this.http.post('/api/user/signup', JSON.stringify(user), this.options)
   }
@@ -39,11 +43,11 @@ export class DataService {
     return this.http.post('/api/user/login', JSON.stringify(user), this.options)
   }
 
-  logOut(userId: Object): Observable<any> {
-    return this.http.get(`/api/user/logout/${userId}`, this.options)
+  logOut(userId: string): Observable<any> {
+    return this.http.put(`/api/user/logout/${userId}`, {userId: userId}, this.options)
   }
 
-  deleteAccount(userId: string):Observable<any> {
+  deleteAccount(userId: string): Observable<any> {
     return this.http.delete(`api/profile/deleteAccount/${userId}`, this.options)
   }
 
@@ -57,14 +61,6 @@ export class DataService {
 
   deleteAllPicture(userId: string): Observable<any> {
     return this.http.delete(`/api/users/deleteAllPicture/${userId}`, this.options);
-  }
-
-  loggedIn() {
-    try {
-      return this.user = JSON.parse(localStorage["profile"])
-    } catch (err) {
-
-    }
   }
 
   sendWaste(request: Object) {

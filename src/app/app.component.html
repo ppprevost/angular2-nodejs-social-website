@@ -9,14 +9,15 @@
           <span class="icon-bar"></span>
         </button>
         <a href="/" class="navbar-brand">My Social Website</a>
-        <a *ngIf="loggedIn()" class="navbar-brand" [routerLink]="['/my-profile', user._id]" routerLinkActive="active">Mon
-          Profil</a>
+        <a *ngIf="auth.loggedIn()" class="navbar-brand" [routerLink]="['/my-profile', auth.user._id]"
+           routerLinkActive="active">My
+          Profile</a>
       </div>
       <div id="navbar" class="navbar-collapse">
 
         <div class="nav navbar-nav navbar-right">
           <div class="form-inline">
-            <form *ngIf="!loggedIn()" [formGroup]="loginUser">
+            <form *ngIf="!auth.loggedIn()" [formGroup]="loginUser">
               <md-input-container>
                 <input mdInput type="text" placeholder="your email" formControlName="email">
               </md-input-container>
@@ -26,10 +27,10 @@
 
               <button (click)="loginAccount()">Login</button>
             </form>
-            <a *ngIf="!loggedIn()" routerLink="/signup" routerLinkActive="active">Create An Account</a>
+            <a *ngIf="!auth.loggedIn()" routerLink="/signup" routerLinkActive="active">Create An Account</a>
           </div>
         </div>
-        <ul *ngIf="loggedIn()" class="nav navbar-nav navbar-right">
+        <ul *ngIf="auth.loggedIn()" class="nav navbar-nav navbar-right">
           <li class="dropdown">
             <a data-toggle="dropdown" class="navbar-avatar dropdown-toggle"> Menu<i class="caret"></i>
             </a>

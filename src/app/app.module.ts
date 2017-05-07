@@ -6,6 +6,7 @@ import {HttpModule} from '@angular/http';
 import {RouterModule, CanActivate} from '@angular/router';
 import {AppComponent} from './app.component';
 import {DataService} from './services/data.service';
+import {AuthService} from './services/auth.service';
 import {ProfileComponent} from './profile/profile.component';
 import {SidebarComponent} from './sidebar/sidebar.component';
 import {ToastyModule} from 'ng2-toasty';
@@ -20,6 +21,7 @@ import {FollowComponent} from './utils/follow/follow.component';
 import {WasteComponent} from './utils/waste/waste.component';
 import {ValidPictureDirective} from './utils/valid-picture.directive';
 import {MdRadioModule, MdInputModule} from '@angular/material';
+
 
 const routing = RouterModule.forRoot([
   {path: '', component: HomeComponent},
@@ -68,6 +70,7 @@ const routing = RouterModule.forRoot([
   ],
   providers: [
     DataService,
+    AuthService,
     AuthGuard
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

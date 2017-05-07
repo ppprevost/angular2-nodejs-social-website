@@ -1,6 +1,6 @@
 <div class="row userProfile" data-toggle="isotope" style="position: relative; height: 768px; ">
   <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters"
-       [hidden]="user._id == waste._id">
+       [hidden]="auth.user._id == waste._id">
     <div class="panel panel-default">
       <div class="panel-heading">
         <a href="" [routerLink]="['/my-profile', waste._id]" routerLinkActive="active">
@@ -28,8 +28,8 @@
         <div class="user-friend-list">
         </div>
       </div>
-      <div *ngIf="user">
-        <app-follow (notify)='waste.message = $event' [waste]="waste" [user]="user"></app-follow>
+      <div *ngIf="auth.user">
+        <app-follow (notify)='waste.message = $event' [waste]="waste" [user]="auth.user"></app-follow>
       </div>
     </div>
   </div>

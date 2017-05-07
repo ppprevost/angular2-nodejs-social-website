@@ -2,6 +2,7 @@ import {Component, OnInit, ViewChild, SimpleChanges, OnChanges} from '@angular/c
 import {DataService} from '../services/data.service';
 import {WasteComponent} from '../utils/waste/waste.component';
 import {MdRadioModule} from '@angular/material';
+import {AuthService} from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -16,36 +17,36 @@ export class HomeComponent implements OnInit, OnChanges {
   newWaste: string;
   @ViewChild(WasteComponent) wasteComponent: WasteComponent;
 
-  constructor(private data: DataService) {
+  constructor(private auth: AuthService, private data: DataService) {
     console.log(this)
   }
 
   ngOnInit() {
-    if (this.user)
       this.getFollowerImage();
-
   }
 
   ngOnChanges(changes: SimpleChanges) {
     console.log(changes)
-
   }
 
   getFollowerImage() {
-    return this.data.ListOfFriends(this.data.user).subscribe((data) => {
+    return this.data.ListOfFriends(this.auth.user).subscribe((data) => {
         this.images = data.json();
       },
       err => console.log(err))
   }
 
   loggedIn() {
-    return this.user = this.data.loggedIn()
+    if (this.auth.loggedIn()) {
+
+      return this.user = this.auth.user
+    }
   }
 
   sendWaste() {
     let request = {
-      user: this.data.user.username,
-      userId: this.data.user._id,
+      user: this.auth.user.username,
+      userId: this.auth.user._id,
       userType: this.typeWaste || 'public',
       content: this.newWaste
     };

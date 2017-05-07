@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {DataService} from '../services/data.service'
+import {DataService} from '../services/data.service';
+import {AuthService} from '../services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {FileUploader} from 'ng2-file-upload';
 import {environment} from '../../environments/environment';
@@ -26,15 +27,12 @@ export class ProfileComponent implements OnInit {
     allowedMimeType: ['image/png', 'image/jpg', 'image/gif', 'image/jpeg']
   });
 
-  constructor(private data: DataService, private passwordForm: FormBuilder) {
+  constructor(private auth: AuthService, private data: DataService, private passwordForm: FormBuilder) {
 
   }
 
   ngOnInit() {
-    this.profile = localStorage["profile"];
-    if (this.profile) {
-      this.user = JSON.parse(this.profile)
-    }
+    this.user = this.auth.user;
     this.uploader.onBuildItemForm = (item, form) => {
       form.append("userId", this.user["_id"]);
     };
@@ -42,7 +40,7 @@ export class ProfileComponent implements OnInit {
       file.withCredentials = false;
     };
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-      localStorage.setItem('profile', response)
+      this.auth.callRefreshUserData(response)
     };
     this.updatePass = this.passwordForm.group({
       lastPassword: this.lastPassword,
@@ -62,7 +60,7 @@ export class ProfileComponent implements OnInit {
 
     this.data.updateChamp(obj).subscribe(res => {
       console.log(res);
-      localStorage.setItem("profile", res._body)
+      this.auth.callRefreshUserData(res.json())
     })
   }
 

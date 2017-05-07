@@ -1,8 +1,9 @@
-var User = require('../datasets/users');
-var bcrypt = require('bcryptjs');
-var mongoose = require('mongoose');
-var nev = require('../services/email-verification')(mongoose);
-var path = require('path');
+const Users = require('../datasets/users');
+const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
+const nev = require('../services/email-verification')(mongoose);
+const path = require('path');
+const jwt = require('jsonwebtoken');
 
 myHasher = function (password, tempUserData, insertTempUser, callback) {
   bcrypt.genSalt(8, function (err, salt) {
@@ -19,7 +20,7 @@ myHasher = function (password, tempUserData, insertTempUser, callback) {
  * and update nodemailer
  */
 nev.configure({
-  persistentUserModel: User,
+  persistentUserModel: Users,
   expirationTime: 600, // 10 minutes
   verificationURL: process.env.URLVERIF,
   shouldSendConfirmation: false,
@@ -54,7 +55,7 @@ nev.configure({
   console.log('configured: ' + (typeof options === 'object'));
 });
 
-nev.generateTempUserModel(User, function (err, tempUserModel) {
+nev.generateTempUserModel(Users, function (err, tempUserModel) {
   if (err) {
     console.log(err);
     return;
@@ -77,7 +78,7 @@ module.exports = function (io) {
     }
     let email = req.body.email;
 
-    let newUser = new User({
+    let newUser = new Users({
       email: req.body.email,
       password: req.body.pass,
       username: req.body.username,
@@ -149,7 +150,7 @@ module.exports = function (io) {
       return res.status(400).send(errors);
     }
 
-    User.find({email: req.body.email}, (err, results) => {
+    Users.find({email: req.body.email}, (err, results) => {
       if (err) {
         console.log(err);
       } else {
@@ -158,20 +159,14 @@ module.exports = function (io) {
           console.log(results.length == 1 ? "nombre de resultat au login ok :" + results.length : "plus de 1 resultat attention!!");
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
-              User.update({_id: userData._id}, {$set: {"isConnected": true}}, function (err, result) {
-                if (!err) {
 
-                  res.json({
-                    email: req.body.email,
-                    _id: userData._id,
-                    username: userData.username,
-                    image: userData.image,
-                    location: userData.location,
-                    gender: userData.gender,
-                    bio: userData.bio,
-                    following: userData.following,
-                    followers: userData.followers
-                  });
+              Users.update({_id: userData._id}, {$set: {"isConnected": true}}, function (err, result) {
+                if (!err) {
+                  delete userData.password;
+                  const token = jwt.sign({user: userData}, process.env.SECRET_TOKEN);
+                  res.status(200).json(
+                    {token: token, user:userData}
+                  );
                 }
               });
             } else {
@@ -192,7 +187,7 @@ module.exports = function (io) {
     });
   };
 
-  var emailVerif = (req, res) => {
+  let emailVerif = (req, res) => {
     console.log(req.body)
     var url = req.body.url;
     console.log(url);
@@ -212,10 +207,24 @@ module.exports = function (io) {
       }
     });
   };
+
+  let refreshUserData = (req, res) => {
+    let token = req.body.token;
+    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
+      if (!err)
+        Users.findById(decoded.user).select({password: 0, __v: 0}).exec(function (err, user) {
+          if (!err) {
+            res.status(200).json(user)
+          }
+        });
+    })
+  };
+
   return {
-    emailVerif: emailVerif,
-    login: login,
-    signup: signup
+    emailVerif,
+    login,
+    refreshUserData,
+    signup
   };
 
 };
