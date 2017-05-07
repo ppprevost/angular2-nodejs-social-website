@@ -25,7 +25,6 @@ module.exports = function (app, io) {
   app.post('/api/upload', profileController.updatePhoto);
   app.post('/api/profile/updateChamp', profileController.updateChamp);
   app.post('/api/profile/editPhoto', profileController.updatePhoto);
-  app.post('/api/profile/editCover', profileController.updateCover);
   app.post('/api/profile/updatePassword', profileController.updatePassword);
   app.delete('/api/profile/deleteAccount/:id', profileController.deleteAccount);
 //Waste

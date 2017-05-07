@@ -21,6 +21,7 @@ import {FollowComponent} from './utils/follow/follow.component';
 import {WasteComponent} from './utils/waste/waste.component';
 import {ValidPictureDirective} from './utils/valid-picture.directive';
 import {MdRadioModule, MdInputModule} from '@angular/material';
+import { ListOfFriendComponent } from './utils/list-of-friend/list-of-friend.component';
 
 
 const routing = RouterModule.forRoot([
@@ -54,7 +55,8 @@ const routing = RouterModule.forRoot([
     MyProfileComponent,
     FollowComponent,
     WasteComponent,
-    ValidPictureDirective
+    ValidPictureDirective,
+    ListOfFriendComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-<div class="st-content">
+<div *ngIf="!isLoading; else loading" class="st-content">
 
   <!-- extra div for emulating position:fixed of the menu -->
   <div class="st-content-inner">
@@ -138,14 +138,7 @@
                 <i class="icon-user-1"></i> Friends
               </div>
               <div class="panel-body">
-                <ul *ngIf="images;else noFriend" class="img-grid">
-                  <li *ngFor="let image of images">
-                    <a href="#">
-                      <img alt="image" [src]="image.image"
-                           [title]="image.username">
-                    </a>
-                  </li>
-                </ul>
+                <app-list-of-friend [user]="user"></app-list-of-friend>
               </div>
             </div>
           </div>
@@ -180,7 +173,12 @@
     <!--</ng-template>-->
 
   </ng-template>
-  <ng-template #noFriend>
-    <p>Vous n'avez pas encore d'amis</p>
-  </ng-template>
 </div>
+
+<ng-template #loading>
+  <h4 class="card-header">Loading...</h4>
+  <div class="card-block text-xs-center">
+    <i class="fa fa-circle-o-notch fa-spin fa-3x"></i>
+  </div>
+
+</ng-template>

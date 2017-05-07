@@ -10,7 +10,7 @@ import {AuthService} from '../services/auth.service';
   styleUrls: ['./home.component.css']
 })
 
-export class HomeComponent implements OnInit, OnChanges {
+export class HomeComponent implements OnInit {
   user;
   images: Object[] = [];
   typeWaste: string;
@@ -22,19 +22,9 @@ export class HomeComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-      this.getFollowerImage();
+
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    console.log(changes)
-  }
-
-  getFollowerImage() {
-    return this.data.ListOfFriends(this.auth.user).subscribe((data) => {
-        this.images = data.json();
-      },
-      err => console.log(err))
-  }
 
   loggedIn() {
     if (this.auth.loggedIn()) {

@@ -5,7 +5,7 @@ let Waste = require('../datasets/wastes');
 let bcrypt = require('bcryptjs');
 let multer = require('multer');
 
-// TODO create branch for heroku and begin amazon s3
+
 let storage = multer.diskStorage({ //multers disk storage settings
   destination: function (req, file, cb) {
     const dir = './src/assets/upload/' + req.body.userId;
@@ -38,58 +38,21 @@ module.exports = function (io) {
       if (err) {
         res.json({error_code: 1, err_desc: err});
       }
-      var userId = req.body.userId;
+      let userId = req.body.userId;
       User.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
-        var user = userData;
-        user.image = req.file.path.substr(4);
+        let user = userData;
+        user[req.body.uploadType] = req.file.path.substr(4);
         user.save(function (err) {
           if (err) {
             console.log("failed save");
             res.status(500).send(err + "error uploading image")
           } else {
             console.log("save successful", userData);
-            user.image = user.image
             res.json(user);
           }
         })
       });
     });
-  };
-
-
-  var updateCover = function (req, res) {
-    var file = req.files.file;
-    var userId = req.body.userId;
-
-    console.log("User " + userId + " is submitting ", file);
-    var uploadDate = new Date();
-    var tempPath = file.path;
-    var targetPath = path.join(__dirname, "../../uploads/cover/" + userId + file.name);
-    console.log("target");
-    console.log(targetPath);
-    var savePath = "/uploads/cover/" + userId + file.name;
-
-    fs.rename(tempPath, targetPath, function (err) {
-      if (err) {
-        console.log(err)
-      } else {
-        User.findById(userId, function (err, userData) {
-          var user = userData;
-          user.cover = savePath;
-          user.save(function (err) {
-            if (err) {
-              console.log("failed save");
-              res.json({status: 500})
-            } else {
-              console.log("save successful");//
-              console.log(userData)
-              res.json(user);
-            }
-          })
-        })
-
-      }
-    })
   };
 
   let updateChamp = function (req, res) {
@@ -178,7 +141,6 @@ module.exports = function (io) {
 
   return {
     updatePhoto,
-    updateCover,
     updateChamp,
     updatePassword,
     deleteAccount

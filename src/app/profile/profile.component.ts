@@ -16,6 +16,7 @@ import swal from 'sweetalert2'
 export class ProfileComponent implements OnInit {
   public user;
   private profile;
+  public typeUpload: string;
   updatePass: FormGroup;
   private password = new FormControl('', Validators.required);
   private confirm = new FormControl('', Validators.required);
@@ -35,6 +36,8 @@ export class ProfileComponent implements OnInit {
     this.user = this.auth.user;
     this.uploader.onBuildItemForm = (item, form) => {
       form.append("userId", this.user["_id"]);
+      form.append("uploadType", this.typeUpload);
+
     };
     this.uploader.onAfterAddingFile = (file: any) => {
       file.withCredentials = false;
@@ -62,6 +65,10 @@ export class ProfileComponent implements OnInit {
       console.log(res);
       this.auth.callRefreshUserData(res.json())
     })
+  }
+
+  getTypeUpload(event) {
+    return this.typeUpload = event.target.id
   }
 
   updatePassword() {

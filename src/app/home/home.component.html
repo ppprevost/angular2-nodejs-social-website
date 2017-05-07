@@ -3,18 +3,12 @@
     <div class="wrapper">
       <div class="image">
         <div class="containerCover">
-          <img class="imageCover" alt="people" [src]="user.cover || 'http://placehold.it/1000x300'">
+          <img class="imageCover" alt="cover" [src]="user.cover">
         </div>
       </div>
-      <ul class="friends">
-        <li *ngFor="let image of images">
-          <a href="#">
-            <img class="img-responsive" alt="people" [src]="image.image"
-                 title="{{image.username}}">
-          </a>
-        </li>
-        <li><a class="group" href="#"><i class="fa fa-group"></i></a></li>
-      </ul>
+      <div class="friends">
+        <app-list-of-friend [user]="user"></app-list-of-friend>
+      </div>
     </div>
     <div class="cover-info">
       <div class="avatar">

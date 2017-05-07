@@ -3,6 +3,7 @@ import {DataService} from '../services/data.service';
 import {AuthService} from '../services/auth.service';
 import {Params, ActivatedRoute} from '@angular/router';
 import {WasteComponent} from '../utils/waste/waste.component';
+import {Compiler} from '@angular/core';
 
 interface User {
   bio: string,
@@ -21,6 +22,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   user;
   id: string;
   images;
+  isLoading = true;
   wasters;
   typeWaste: string;
   newWaste;
@@ -28,7 +30,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   uploadPicture: string[] = [];
   @ViewChild(WasteComponent) wasteComponent: WasteComponent;
 
-  constructor(private auth: AuthService, private activatedRoute: ActivatedRoute, private data: DataService) {
+  constructor(private _compiler: Compiler, private auth: AuthService, private activatedRoute: ActivatedRoute, private data: DataService) {
   }
 
   ngOnInit() {
@@ -81,13 +83,15 @@ export class MyProfileComponent implements OnInit, OnDestroy {
       .subscribe(data => {
           this.uploadPicture = data
         },
-        (err) => console.log(err))
+        (err) => console.log(err),
+        () => this.isLoading = false)
   }
 
   deleteAllPictureUser() {
     return this.data.deleteAllPicture(this.auth.user._id).subscribe(
       data => {
         this.auth.callRefreshUserData(data.json());
+        this._compiler.clearCache();
         this.uploadPicture = []
       },
       err => console.log(err))
