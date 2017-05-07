@@ -1,0 +1,12 @@
+<ul *ngIf="images;else noFriend" class="img-grid">
+  <li *ngFor="let image of images">
+    <a href="#">
+      <img alt="image" [src]="image.image"
+           [title]="image.username">
+    </a>
+  </li>
+</ul>
+
+<ng-template #noFriend>
+  <p>No friends yet</p>
+</ng-template>
