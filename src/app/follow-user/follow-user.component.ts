@@ -1,8 +1,8 @@
-import {Component, OnInit, Injectable} from '@angular/core';
+import {Component, OnInit, ViewChild, AfterViewInit} from '@angular/core';
 import {DataService} from '../services/data.service'
 import {AuthService} from '../services/auth.service'
 import 'rxjs/add/operator/toPromise';
-
+import {ListOfFriendComponent} from '../utils/list-of-friend/list-of-friend.component';
 
 @Component({
   selector: 'app-follow-user',
@@ -10,11 +10,11 @@ import 'rxjs/add/operator/toPromise';
   styleUrls: ['./follow-user.component.css']
 })
 
-export class FollowUserComponent implements OnInit {
+export class FollowUserComponent implements OnInit, AfterViewInit {
   wasters;
+  @ViewChild(ListOfFriendComponent) listOfFriendComponent: ListOfFriendComponent;
 
-
-  constructor(private auth:AuthService ,private data: DataService) {
+  constructor(private auth: AuthService, private data: DataService) {
   }
 
   ngOnInit() {
@@ -23,12 +23,14 @@ export class FollowUserComponent implements OnInit {
     });
   }
 
-  onNotify(message: string) {
-    console.log("response from parentData", message);
-    this.wasters.forEach((waster) => {
-      waster.message = message
-    })
+  ngAfterViewInit() {
+
   }
 
-
+  onNotify(message: string, waster) {
+    console.log("response from parentData", message == "accepted");
+    if (this.listOfFriendComponent && message=="accepted") {
+      this.listOfFriendComponent.getFollowerImage(this.auth.user)
+    }
+  }
 }

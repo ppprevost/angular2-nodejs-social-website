@@ -13,7 +13,7 @@
             <div class="media-body">
               <h4 class="media-heading margin-v-5"><a href="#">{{waste.username}}</a></h4>
               <span>{{waste.message}}</span>
-              <span>{{waste.email}}</span>
+              <p>{{waste.email}}</p>
               <div class="profile-icons">
                 <span><i class="fa fa-users"></i> none</span>
                 <span><i class="fa fa-photo"></i> none</span>
@@ -24,13 +24,14 @@
         </a>
       </div>
       <div class="panel-body">
-        <p class="common-friends">Common Friends</p>
+        <p class="common-friends" (click)="onclick($event)">Common Friends</p>
         <div class="user-friend-list">
-          <app-list-of-friend [user]="waste"></app-list-of-friend>
+          <app-list-of-friend #notify [user]="waste"></app-list-of-friend>
         </div>
       </div>
       <div *ngIf="auth.user">
-        <app-follow (notify)='waste.message = $event' [waste]="waste" [user]="auth.user"></app-follow>
+        <app-follow (notify)='waste.message = $event; onNotify($event,waste)' [waste]="waste"
+                    [user]="auth.user"></app-follow>
       </div>
     </div>
   </div>

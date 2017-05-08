@@ -53,24 +53,16 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         this.data.getThisUser(this.id).subscribe(following => {
           this.user = following.json();
           this.actualUser = this.auth.user;
-          this.getFollowerImage(this.user);
+
           this.getPictureUser(this.user._id);
         });
       } else {
         this.user = this.actualUser = this.auth.user;
         this.getPictureUser(this.user._id);
-        this.getFollowerImage(this.user)
+
       }
     });
   };
-
-  getFollowerImage(user) { // avatar from other friends
-    if (user && user.following && user.following.length > 0) {
-      return this.data.ListOfFriends(user).subscribe((elem) => {
-        this.images = elem.json();
-      })
-    }
-  }
 
   /**
    * uploaded Image

@@ -1,5 +1,6 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, AfterViewInit} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
+import {AuthService} from '../../services/auth.service'
 
 interface Obj {
   userId: string;
@@ -12,6 +13,7 @@ interface Obj {
   styleUrls: ['./follow.component.scss'],
 })
 export class FollowComponent implements OnInit {
+  isLoading = true;
   @Input() waste;
   @Input() user;
   @Output() notify: EventEmitter<string> = new EventEmitter<string>();
@@ -25,7 +27,7 @@ export class FollowComponent implements OnInit {
   private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
   private options = new RequestOptions({headers: this.headers});
 
-  constructor(private http: Http) {
+  constructor(private auth: AuthService, private http: Http) {
   }
 
   ngOnInit() {
@@ -34,30 +36,30 @@ export class FollowComponent implements OnInit {
 
   followUserOk(wasterId) {
     this.http.post('/api/users/followOk', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      this.user = data.json();
+      this.auth.callRefreshUserData(data.json());
       this.getThisUser();
     });
   }
 
   follow(wasterId) {
-    this.notify.emit('Click from nested component');
+    //  this.notify.emit('Click from nested component');
     this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      this.user = data.json();
+      this.auth.callRefreshUserData(data.json());
       this.getThisUser();
     });
   }
 
   unfollow(wasterId) {
-    this.notify.emit('Click from nested component');
+    //this.notify.emit('Click from nested component');
     this.http.post('/api/users/unfollow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      this.user = data.json();
+      this.auth.callRefreshUserData(data.json());
       this.getThisUser();
     });
   }
 
   getThisUser() { // pour rafraichir la liste des différents followers
-    if (this.user.following.length) {
-      this.user.following.map((elem) => {
+    if (this.auth.user.following.length) {
+      this.auth.user.following.map((elem) => {
         if (elem.userId == this.waste._id) {
           this.waste.status = elem.statut;
           this.notify.emit(this.waste.status);
@@ -65,6 +67,16 @@ export class FollowComponent implements OnInit {
       });
     } else {
       this.waste.status = ""
+
     }
+    this.isLoading = false;
   }
+
+  typeFollowing(typeFollowing, wasterId) {
+    return this.http.post(`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
+      this.auth.callRefreshUserData(data.json());
+      this.getThisUser();
+    });
+  }
+
 }

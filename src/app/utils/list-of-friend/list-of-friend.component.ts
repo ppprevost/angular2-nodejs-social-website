@@ -1,4 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, OnChanges} from '@angular/core';
 import {DataService} from '../../services/data.service';
 
 @Component({
@@ -6,16 +6,20 @@ import {DataService} from '../../services/data.service';
   templateUrl: './list-of-friend.component.html',
   styleUrls: ['./list-of-friend.component.scss']
 })
-export class ListOfFriendComponent implements OnInit {
+export class ListOfFriendComponent implements OnInit,OnChanges {
 
   @Input() user;
-  images:[Object];
+  images: [Object];
 
-  constructor(private data:DataService) {
+  constructor(private data: DataService) {
   }
 
   ngOnInit() {
     this.getFollowerImage(this.user)
+  }
+
+  ngOnChanges(data) {
+    console.log(data)
   }
 
   getFollowerImage(user) { // avatar from other friends

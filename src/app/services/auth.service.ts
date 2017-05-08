@@ -39,7 +39,7 @@ export class AuthService {
       return this.user = userData
     } else {
       return this.data.refreshUserData({token: this.token}).subscribe(user => {
-        console.log('setITem');
+
         this.user = user.json();
       })
     }

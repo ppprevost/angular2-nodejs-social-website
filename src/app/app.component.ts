@@ -30,7 +30,6 @@ export class AppComponent implements OnInit,OnDestroy {
       password: this.password
     });
     if (this.loggedIn()) {
-      console.log("on rafraichit le user");
       this.auth.callRefreshUserData()
 
     }
