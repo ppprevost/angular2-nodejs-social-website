@@ -71,16 +71,21 @@ module.exports = function (io) {
   let listOfFriends = function (req, res) {
     let following = req.body.following || [];
     let newTable = [];
-    following.forEach(doc => {
-      if (doc.statut == 'accepted')
-        newTable.push(mongoose.Types.ObjectId(doc.userId))
-    });
-    if (newTable.length) {
-      Users.find({_id: {$in: newTable}}).select({image: 1, _id: 1, username: 1})
-        .exec(function (err, waster) {
-          res.json(waster);
-        });
+    if (!following.length) {
+      res.json([]);
+    } else {
+      following.forEach(doc => {
+        if (doc.statut == 'accepted')
+          newTable.push(mongoose.Types.ObjectId(doc.userId))
+      });
+      if (newTable.length) {
+        Users.find({_id: {$in: newTable}}).select({image: 1, _id: 1, username: 1})
+          .exec(function (err, waster) {
+            res.json(waster);
+          });
+      }
     }
+
   };
 
   return {
