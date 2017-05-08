@@ -52,7 +52,7 @@ export class DataService {
   }
 
   ListOfFriends(user): Observable<any> {
-    return this.http.post('/api/waste/listOfFriend/', JSON.stringify(user), this.options)
+    return this.http.post('/api/waste/listOfFriend', JSON.stringify(user), this.options)
   };
 
   getYourOwnPicture(userId: Object): Observable<any> {
