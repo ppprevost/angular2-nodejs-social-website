@@ -165,7 +165,7 @@ module.exports = function (io) {
                   delete userData.password;
                   const token = jwt.sign({user: userData}, process.env.SECRET_TOKEN);
                   res.status(200).json(
-                    {token: token, user:userData}
+                    {token: token}
                   );
                 }
               });
