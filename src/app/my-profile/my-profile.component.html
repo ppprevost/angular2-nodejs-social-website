@@ -18,8 +18,8 @@
               </div>
             </div>
             <div class="profile-icons margin-none">
-              <span><i class="fa fa-user">{{user?.following.length}}</i> </span>
-              <span><i class="fa fa-photo"></i> None</span>
+              <span><i class="fa fa-user">{{user?.friends}}</i> </span>
+              <span><i class="fa fa-photo"></i> {{uploadPicture.length}}</span>
             </div>
             <div class="panel-body">
               <div class="expandable expandable-indicator-white expandable-trigger">
@@ -56,7 +56,7 @@
       <div class="media-body">
         <form>
           <md-radio-group [(ngModel)]="typeWaste" name="typeWaste">
-            <md-radio-button value="public">
+            <md-radio-button [checked]="checked" value="public">
               Public
             </md-radio-button>
             <md-radio-button value="private">
@@ -104,7 +104,7 @@
           <div class="col-md-6">
             <div class="panel panel-default">
               <div class="panel-heading panel-heading-gray">
-                <a ng-if="user._id==user._id" ui-sref="editProfile"
+                <a *ngIf="actualUser._id==id" [routerLink]="['/profil']" routerLinkActive="active"
                    class="btn btn-white btn-xs pull-right" href="#"><i class="fa fa-pencil"></i></a>
                 <i class="fa fa-fw fa-info-circle"></i> About
               </div>
@@ -132,13 +132,14 @@
             <div class="panel panel-default">
               <div class="panel-heading panel-heading-gray">
                 <div class="pull-right">
-                  <a ng-if="user._id==user._id" ui-sref="follow" class="btn btn-primary btn-xs"
-                     [routerLink]="['/app-follow-user']">Add <i class="fa fa-plus"></i></a>
+                  <a *ngIf="actualUser._id==id" class="btn btn-primary btn-xs"
+                     [routerLink]=['/app-follow-user']>Add <i class="fa fa-plus"></i></a>
                 </div>
                 <i class="icon-user-1"></i> Friends
               </div>
               <div class="panel-body">
-                <app-list-of-friend [user]="user"></app-list-of-friend>
+                <app-list-of-friend
+                (notify)="user.friends = $event" [user]="user"></app-list-of-friend>
               </div>
             </div>
           </div>

@@ -34,10 +34,10 @@
 
             <form>
               <md-radio-group [(ngModel)]="typeWaste" name="typeWaste">
-                <md-radio-button value="public">
+                <md-radio-button [checked]="checked" [value]="public">
                   Public
                 </md-radio-button>
-                <md-radio-button value="private">
+                <md-radio-button [value]="private">
                   Private
                 </md-radio-button>
               </md-radio-group>
@@ -57,7 +57,7 @@
             <a href="#"><i class="fa fa-photo"></i></a>
             <a href="#"><i class="fa fa-video-camera"></i></a>
             <!--<button href="#"-->
-                    <!--class="btn btn-primary btn-xs pull-right display-none" type="submit">Post-->
+            <!--class="btn btn-primary btn-xs pull-right display-none" type="submit">Post-->
             <!--</button>-->
           </div>
         </div>

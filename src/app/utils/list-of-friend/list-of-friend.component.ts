@@ -9,6 +9,7 @@ import {DataService} from '../../services/data.service';
 export class ListOfFriendComponent implements OnInit,OnChanges {
 
   @Input() user;
+  @Output() notify: EventEmitter<string> = new EventEmitter<string>();
   images: [Object];
 
   constructor(private data: DataService) {
@@ -26,6 +27,7 @@ export class ListOfFriendComponent implements OnInit,OnChanges {
     if (user && user.following && user.following.length > 0) {
       return this.data.ListOfFriends(user).subscribe((elem) => {
         this.images = elem.json();
+        this.notify.emit(this.images.length);
       })
     }
   }

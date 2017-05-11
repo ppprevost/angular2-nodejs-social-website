@@ -97,7 +97,7 @@ module.exports = function (io) {
     User.findById(userId, function (err, user) {
       comparePassword(req.body.lastPassword, user.password, function (err, isMatch) {
         if (err) {
-          res.status(401).json("error when comparing Pasword")
+          res.status(401).send("error when comparing Pasword")
         } else {
           if (isMatch) {
             req.body.password = bcrypt.hashSync(password);
@@ -106,7 +106,7 @@ module.exports = function (io) {
               res.send("password update from the server")
             })
           } else {
-            res.status(401).json("Match error, please be sure to fill your good old password")
+            res.status(401).send("Match error, please be sure to fill your good old password")
           }
         }
       })
