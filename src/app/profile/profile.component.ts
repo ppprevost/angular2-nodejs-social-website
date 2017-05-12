@@ -110,6 +110,9 @@ export class ProfileComponent implements OnInit {
 
   errMethod(err) {
     let x: string;
+    if(typeof err =="string"){
+      x = err
+    }
     if (typeof err.json() == 'string') {
       x = err.json()
     } else {

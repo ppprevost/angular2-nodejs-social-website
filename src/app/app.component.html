@@ -37,7 +37,7 @@
             <ul class="dropdown-menu">
               <li><a routerLink='/profil' routerLinkActive="active">Edit Profile</a></li>
               <li class="divider"></li>
-              <li><a routerLink='/app-follow-user' routerLinkActive="active">Follow Users</a></li>
+              <li><a [routerLink]="['/app-follow-user']" routerLinkActive="active">Follow Users</a></li>
               <li class="divider"></li>
 
               <li><a (click)="logOut()">Logout</a></li>

@@ -56,7 +56,7 @@
       <div class="media-body">
         <form>
           <md-radio-group [(ngModel)]="typeWaste" name="typeWaste">
-            <md-radio-button [checked]="checked" value="public">
+            <md-radio-button [value]="public">
               Public
             </md-radio-button>
             <md-radio-button value="private">
@@ -132,8 +132,9 @@
             <div class="panel panel-default">
               <div class="panel-heading panel-heading-gray">
                 <div class="pull-right">
-                  <a *ngIf="actualUser._id==id" class="btn btn-primary btn-xs"
-                     [routerLink]=['/app-follow-user']>Add <i class="fa fa-plus"></i></a>
+                  <!--<a *ngIf="actualUser._id==id" class="btn btn-primary btn-xs"-->
+                     <!--[routerLink]=['/app-follow-user']>-->
+                    <!--Add <i class="fa fa-plus"></i></a>-->
                 </div>
                 <i class="icon-user-1"></i> Friends
               </div>

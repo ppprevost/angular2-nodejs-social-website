@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, OnChanges} from '@angular/core';
+import {Component, OnInit, Input, OnChanges, Output, EventEmitter} from '@angular/core';
 import {DataService} from '../../services/data.service';
 
 @Component({
@@ -9,7 +9,7 @@ import {DataService} from '../../services/data.service';
 export class ListOfFriendComponent implements OnInit,OnChanges {
 
   @Input() user;
-  @Output() notify: EventEmitter<string> = new EventEmitter<string>();
+  @Output() notify: EventEmitter<number> = new EventEmitter<number>();
   images: [Object];
 
   constructor(private data: DataService) {
