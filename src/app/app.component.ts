@@ -19,7 +19,7 @@ export class AppComponent implements OnInit,OnDestroy {
   private password = new FormControl('', Validators.required);
   user;
 
-  constructor(private auth: AuthService, private toastyService: ToastyService, private toastyConfig: ToastyConfig, private data: DataService, private addUserForm: FormBuilder, private router: Router, vcr: ViewContainerRef) {
+  constructor(public auth: AuthService, private toastyService: ToastyService, private toastyConfig: ToastyConfig, private data: DataService, private addUserForm: FormBuilder, private router: Router, vcr: ViewContainerRef) {
     this.toastyConfig.theme = 'material';
 
   }

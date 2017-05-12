@@ -50,7 +50,7 @@
         <div class="form-group">
           <label class="col-sm-3">Gravatar</label>
 
-          <div class="row"><input (click)="getTypeUpload($event)" type="file" id="image" class="form-control"
+          <div class="row"><input (click)="getTypeUpload($event)" type="file" accept="image/*" id="image" class="form-control"
                                   name="image" ng2FileSelect
                                   [uploader]="uploader"/>
           </div>
@@ -58,7 +58,7 @@
         <div class="form-group">
           <label class="col-sm-3">Cover</label>
           <div class="row">
-            <input (click)="getTypeUpload($event)" type="file" id="cover" class="form-control"
+            <input (click)="getTypeUpload($event)" type="file"  accept="image/*" id="cover" class="form-control"
                    name="avatar" ng2FileSelect
                    [uploader]="uploader"/>
           </div>

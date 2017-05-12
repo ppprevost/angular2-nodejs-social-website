@@ -85,7 +85,7 @@ export class ProfileComponent implements OnInit {
           .subscribe(res => {
               swal({
                 title: 'Success!',
-                text: res,
+                text: res.msg,
                 type: 'success',
                 confirmButtonText: 'Ok'
               })
@@ -113,8 +113,8 @@ export class ProfileComponent implements OnInit {
     if(typeof err =="string"){
       x = err
     }
-    if (typeof err.json() == 'string') {
-      x = err.json()
+    if (typeof err.text() == 'string') {
+      x = err.text()
     } else {
       err.json().forEach((elem, i) => {
         let param = elem.msg.replace('Password', elem.param);

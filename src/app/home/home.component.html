@@ -18,8 +18,11 @@
       <div class="name"><a href="#">{{user.username}}</a></div>
       <ul class="cover-nav">
         <li class="active"><a href="index.html"><i class="fa fa-fw icon-ship-wheel"></i> Timeline</a></li>
-        <li><a ui-sref="myProfile({userId:user._id})"><i class="fa fa-fw icon-user-1"></i> About</a></li>
-        <li><a href="users.html"><i class="fa fa-fw fa-users"></i> Friends</a></li>
+        <li>
+          <a [routerLink]="['/my-profile', auth.user._id]"><i class="fa fa-fw icon-user-1"></i> About
+          </a>
+        </li>
+        <li><a [routerLink]="['/app-follow-user']"><i class="fa fa-fw fa-users"></i> Friends</a></li>
       </ul>
     </div>
   </div>

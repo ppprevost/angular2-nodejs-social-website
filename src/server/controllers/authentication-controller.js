@@ -26,20 +26,20 @@ nev.configure({
   shouldSendConfirmation: false,
   transportOptions: {
     service: process.env.MAILVERIF,
-    auth: {
-      type: 'OAuth2',
-      user: process.env.MAILACCOUNT, // Your gmail address.
-      clientSecret: process.env.CLIENTSECRET,
-      accessToken: process.env.ACCESSTOKEN,
-      refreshToken: process.env.REFRESHTOKEN,
-      clientId: process.env.CLIENTID
-    },
+    // auth: {
+    //   type: 'OAuth2',
+    //   user: process.env.MAILACCOUNT, // Your gmail address.
+    //   clientSecret: process.env.CLIENTSECRET,
+    //   accessToken: process.env.ACCESSTOKEN,
+    //   refreshToken: process.env.REFRESHTOKEN,
+    //   clientId: process.env.CLIENTID
+    // },
 
     secure: true, // use SSL
-    // auth: {
-    //   user: process.env.MAILACCOUNT,
-    //   pass: process.env.MAILPASS
-    // },
+    auth: {
+      user: process.env.MAILACCOUNT,
+      pass: process.env.MAILPASS
+    },
     tls: {
       rejectUnauthorized: false
     }
@@ -167,6 +167,8 @@ module.exports = function (io) {
                   res.status(200).json(
                     {token: token}
                   );
+                } else {
+                  res.status(401).send({msg: 'problem with connection'})
                 }
               });
             } else {

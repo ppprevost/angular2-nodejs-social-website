@@ -41,7 +41,7 @@ db.once('open', function () {
 });
 
 let dirEnv = path.join(process.cwd(), '/.env');
-let contentEnv = "MONGODB_URI=mongodb://localhost:27017/test \nMAILVERIF=Gmail \nURLVERIF=http://example.com/email-verification/${URL} \nMAILACCOUNT= \nCLIENTID= \nACCESSTOKEN= \nREFRESHTOKEN= \nCLIENTSECRET= \n";
+let contentEnv = "MONGODB_URI=mongodb://localhost:27017/test \nMAILVERIF=Gmail \nURLVERIF=http://example.com/email-verification/${URL} \nMAILACCOUNT= \nMAILPASS= \nCLIENTID= \nACCESSTOKEN= \nREFRESHTOKEN= \nCLIENTSECRET= \n SECRET_TOKEN=social";
 try {
   fs.statSync(dirEnv).isFile()
 } catch (err) {

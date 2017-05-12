@@ -100,10 +100,9 @@ module.exports = function (io) {
           res.status(401).send("error when comparing Pasword")
         } else {
           if (isMatch) {
-            req.body.password = bcrypt.hashSync(password);
-            user._doc.password = req.body.password;
+            user.password = bcrypt.hashSync(password);
             user.save(() => {
-              res.send("password update from the server")
+              res.json({msg:"password update from the server"})
             })
           } else {
             res.status(401).send("Match error, please be sure to fill your good old password")
