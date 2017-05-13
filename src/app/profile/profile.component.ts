@@ -34,13 +34,14 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.auth.user;
-    this.uploader.onBuildItemForm = (item, form) => {
+    this.uploader.onBuildItemForm = (item:any, form) => {
       form.append("userId", this.user["_id"]);
-      form.append("uploadType", this.typeUpload);
+      form.append("uploadType", item.typeUpload);
 
     };
     this.uploader.onAfterAddingFile = (file: any) => {
       file.withCredentials = false;
+      file.typeUpload = this.typeUpload || "cover"
     };
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       this.auth.callRefreshUserData(response)

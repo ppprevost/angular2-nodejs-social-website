@@ -18,8 +18,8 @@
               </div>
             </div>
             <div class="profile-icons margin-none">
-              <span><i class="fa fa-user">{{user?.friends}}</i> </span>
-              <span><i class="fa fa-photo"></i> {{uploadPicture.length}}</span>
+              <span><i class="fa fa-user" mdTooltip="Number of friends" mdTooltipPosition="below">{{user?.friends}}</i> </span>
+              <span><i class="fa fa-photo" mdTooltip="Number of photos" mdTooltipPosition="below"></i> {{uploadPicture.length}}</span>
             </div>
             <div class="panel-body">
               <div class="expandable expandable-indicator-white expandable-trigger">
@@ -133,14 +133,14 @@
               <div class="panel-heading panel-heading-gray">
                 <div class="pull-right">
                   <!--<a *ngIf="actualUser._id==id" class="btn btn-primary btn-xs"-->
-                     <!--[routerLink]=['/app-follow-user']>-->
-                    <!--Add <i class="fa fa-plus"></i></a>-->
+                  <!--[routerLink]=['/app-follow-user']>-->
+                  <!--Add <i class="fa fa-plus"></i></a>-->
                 </div>
                 <i class="icon-user-1"></i> Friends
               </div>
               <div class="panel-body">
                 <app-list-of-friend
-                (notify)="user.friends = $event" [user]="user"></app-list-of-friend>
+                  (notify)="user.friends = $event" [user]="user"></app-list-of-friend>
               </div>
             </div>
           </div>

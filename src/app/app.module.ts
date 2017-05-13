@@ -20,8 +20,9 @@ import {MyProfileComponent} from './my-profile/my-profile.component';
 import {FollowComponent} from './utils/follow/follow.component';
 import {WasteComponent} from './utils/waste/waste.component';
 import {ValidPictureDirective} from './utils/valid-picture.directive';
-import {MdRadioModule, MdInputModule} from '@angular/material';
+import {MdRadioModule, MdInputModule, MdTooltipModule} from '@angular/material';
 import { ListOfFriendComponent } from './utils/list-of-friend/list-of-friend.component';
+import { TooltipDirective } from './utils/tooltip.directive';
 
 
 const routing = RouterModule.forRoot([
@@ -56,7 +57,8 @@ const routing = RouterModule.forRoot([
     FollowComponent,
     WasteComponent,
     ValidPictureDirective,
-    ListOfFriendComponent
+    ListOfFriendComponent,
+    TooltipDirective
   ],
   imports: [
     BrowserModule,
@@ -66,6 +68,7 @@ const routing = RouterModule.forRoot([
     ReactiveFormsModule,
     MdRadioModule,
     MdInputModule,
+    MdTooltipModule,
     ToastyModule.forRoot(),
     HttpModule,
     routing
