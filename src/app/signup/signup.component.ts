@@ -32,6 +32,10 @@ export class SignupComponent implements OnInit {
     })
   }
 
+  handleCorrectCaptcha(event) {
+    console.log(event);
+  }
+
   addAccount() {
     let toastOptions = (response, title) => {
       return {
