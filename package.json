@@ -66,6 +66,7 @@
   "devDependencies": {
     "@types/jasmine": "2.5.38",
     "@types/node": "~6.0.60",
+    "@types/socket.io-client": "^1.4.29",
     "codelyzer": "~2.0.0",
     "concurrently": "^3.3.0",
     "eslint": "^3.19.0",

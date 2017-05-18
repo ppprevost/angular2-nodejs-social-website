@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy, ViewContainerRef} from '@angular/core';
-
+import * as sio from 'socket.io-client';
 import {DataService} from './services/data.service';
 import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
@@ -13,11 +13,11 @@ import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 })
 
 export class AppComponent implements OnInit,OnDestroy {
-
   private loginUser: FormGroup;
   private email = new FormControl('', Validators.required);
   private password = new FormControl('', Validators.required);
   user;
+  socket: SocketIOClient.Socket;
 
   constructor(public auth: AuthService, private toastyService: ToastyService, private toastyConfig: ToastyConfig, private data: DataService, private addUserForm: FormBuilder, private router: Router, vcr: ViewContainerRef) {
     this.toastyConfig.theme = 'material';
@@ -25,6 +25,9 @@ export class AppComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit() {
+    this.socket = sio({
+      path: '/socket.io'
+    });
     this.loginUser = this.addUserForm.group({
       email: this.email,
       password: this.password
