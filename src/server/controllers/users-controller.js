@@ -1,4 +1,4 @@
-const Users = require('../datasets/users'), fs = require('fs');
+const Users = require('../datasets/users'), fs = require('fs'), UsersConnected = require('../datasets/connected-users');
 let uploadUtil = (req, res, callback) => {
   let userId = req.params.id;
   let directory = `${process.cwd()}\\src\\assets\\upload\\${userId}\\`;
@@ -26,8 +26,11 @@ module.exports = function (io) {
     console.log(req.body.userId);
     Users.update({_id: req.body.userId}, {$set: {"isConnected": false}}, function (err, result) {
       if (!err) {
-        res.send("deconnection effectuée")
-        //io.sockets.emit("userDisconnected", data.userId)
+        UsersConnected.findOneAndRemove({userId: req.body.userId}, (err) => {
+          if (!err) {
+            res.send("deconnection effectuée")
+          }
+        });
       }
     });
   };

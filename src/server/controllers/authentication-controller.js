@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const nev = require('../services/email-verification')(mongoose);
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const UsersConnected = require('../datasets/connected-users');
 
 myHasher = function (password, tempUserData, insertTempUser, callback) {
   bcrypt.genSalt(8, function (err, salt) {
@@ -164,6 +165,12 @@ module.exports = function (io) {
                 if (!err) {
                   delete userData.password;
                   const token = jwt.sign({user: userData}, process.env.SECRET_TOKEN);
+                  let newUserConnected = new UsersConnected({
+                    userId: userData._id,
+                    socketId: req.body.socketId,
+                    isConnected:true
+                  });
+                  newUserConnected.save();
                   res.status(200).json(
                     {token: token}
                   );

@@ -12,8 +12,9 @@ import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements OnInit,OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   private loginUser: FormGroup;
+  private loginAndSocket;
   private email = new FormControl('', Validators.required);
   private password = new FormControl('', Validators.required);
   user;
@@ -30,8 +31,10 @@ export class AppComponent implements OnInit,OnDestroy {
     });
     this.loginUser = this.addUserForm.group({
       email: this.email,
-      password: this.password
+      password: this.password,
+      socketId: this.socket.id
     });
+
     if (this.loggedIn()) {
       this.auth.callRefreshUserData()
 
@@ -44,7 +47,9 @@ export class AppComponent implements OnInit,OnDestroy {
 
 
   loginAccount() {
-    this.auth.loginAccount(this.loginUser.value).subscribe(
+    this.loginAndSocket = this.loginUser.value;
+    this.loginAndSocket.socketId = this.socket.id;
+    this.auth.loginAccount(this.loginAndSocket).subscribe(
       data => {
         console.log(data);
         this.router.navigate(['./']);

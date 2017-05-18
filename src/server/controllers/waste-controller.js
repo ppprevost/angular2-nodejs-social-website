@@ -1,5 +1,6 @@
 let Waste = require('../datasets/wastes');
 let Users = require('../datasets/users');
+let UsersConnected = require('../datasets/connected-users');
 let mongoose = require('mongoose');
 
 module.exports = function (io) {
@@ -11,6 +12,16 @@ module.exports = function (io) {
       // io.sockets.emit("getNewPost", waste);
       waste.save();
       res.json(waste);
+      UsersConnected.find({userId: data._id}, (err, userConnecteds) => {
+        if (!err) {
+          let pushSocket = []
+          userConnecteds.map((elem) => {
+            pushSocket = [...elem]
+          });
+          io.broadcast.to(pushSocket).emit(waste);
+        }
+
+      });
     } else {
       res.status(404).send('aucun contenu enregistré dans la base')
     }

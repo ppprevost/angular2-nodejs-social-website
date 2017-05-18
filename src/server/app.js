@@ -6,11 +6,6 @@ const morgan = require('morgan'); // logger
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const app = express();
-//let server = require('http').createServer(app);
-//let io = require('socket.io')(server);
-// io({
-//   path: '/socket.io'
-// })
 const expressValidator = require('express-validator');
 app.use(expressValidator());
 app.use(bodyParser.json());
