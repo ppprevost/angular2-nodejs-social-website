@@ -42,15 +42,14 @@ db.once('open', function () {
   console.log('Connected to MongoDB');
 
   // all other routes are handled by Angular
-  app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, '/../../dist/index.html'));
-  });
-
   let server = app.listen(app.get('port'), function () {
     console.log('Angular 4 Full Stack listening on port ' + app.get('port'));
   });
   let io = require('socket.io')(server);
   const routes = require('./routes/routes.js')(app, io);
+  app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, '/../../dist/index.html'));
+  });
 
   //traitement socket
   io.on('connection', function (socket) {
