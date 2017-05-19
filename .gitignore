@@ -2,7 +2,7 @@
 
 # compiled output
 /dist
-/upload/*
+/src/assets/upload/*
 /tmp
 /out-tsc
 
@@ -47,5 +47,5 @@ Thumbs.db
 ./server/env.json
 .env
 
-./^npm-debug
+*npm-debug
 ^npm-debug.log

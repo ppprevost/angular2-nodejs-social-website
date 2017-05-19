@@ -12,13 +12,13 @@ module.exports = function (io) {
       // io.sockets.emit("getNewPost", waste);
       waste.save();
       res.json(waste);
-      UsersConnected.find({userId: data._id}, (err, userConnecteds) => {
+      UsersConnected.find({userId: data.userId}, (err, userConnecteds) => {
         if (!err) {
           let pushSocket = []
           userConnecteds.map((elem) => {
-            pushSocket = [...elem]
+            pushSocket = [...pushSocket,elem]
           });
-          io.broadcast.to(pushSocket).emit(waste);
+          io.to(pushSocket).emit("getNewPost",waste);
         }
 
       });

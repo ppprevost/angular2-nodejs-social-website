@@ -5,6 +5,8 @@ import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import{Router} from '@angular/router';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +24,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(public auth: AuthService, private toastyService: ToastyService, private toastyConfig: ToastyConfig, private data: DataService, private addUserForm: FormBuilder, private router: Router, vcr: ViewContainerRef) {
     this.toastyConfig.theme = 'material';
+
+  }
+
+  getMessage(){
 
   }
 
