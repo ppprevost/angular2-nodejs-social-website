@@ -36,7 +36,7 @@ export class ProfileComponent implements OnInit {
     this.user = this.auth.user;
     this.uploader.onBuildItemForm = (item:any, form) => {
       form.append("userId", this.user["_id"]);
-      form.append("uploadType", item.typeUpload);
+      form.append("uploadType", this.typeUpload);
 
     };
     this.uploader.onAfterAddingFile = (file: any) => {

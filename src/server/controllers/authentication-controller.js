@@ -168,7 +168,7 @@ module.exports = function (io) {
                   let newUserConnected = new UsersConnected({
                     userId: userData._id,
                     socketId: req.body.socketId,
-                    isConnected:true
+                    isConnected: true
                   });
                   newUserConnected.save();
                   res.status(200).json(
@@ -195,6 +195,21 @@ module.exports = function (io) {
       }
     });
   };
+
+  let refreshSocketIdOfConnectedUsers = (req, res) => {
+    let socketId = req.body.socketId
+    UsersConnected.findOne({userId: req.body.userId}, (err, user) => {
+      if (user.socketId != socketId) {
+        user.socketId = socketId
+        user.save(() => {
+          res.send(`socketnumber ${req.body.socketId} has been updated`)
+        });
+      }
+
+    });
+
+  };
+
 
   let emailVerif = (req, res) => {
     console.log(req.body)
@@ -231,6 +246,7 @@ module.exports = function (io) {
 
   return {
     emailVerif,
+    refreshSocketIdOfConnectedUsers,
     login,
     refreshUserData,
     signup

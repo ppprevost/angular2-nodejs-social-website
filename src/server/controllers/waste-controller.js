@@ -9,19 +9,26 @@ module.exports = function (io) {
     let data = req.body.request;
     if (data) {
       let waste = new Waste(data);
-      // io.sockets.emit("getNewPost", waste);
       waste.save();
-      res.json(waste);
-      UsersConnected.find({userId: data.userId}, (err, userConnecteds) => {
-        if (!err) {
-          let pushSocket = []
-          userConnecteds.map((elem) => {
-            pushSocket = [...pushSocket,elem]
-          });
-          io.to(pushSocket).emit("getNewPost",waste);
-        }
 
+      Users.findById(data.userId, (err, user) => {
+        user.following.forEach(elem => {
+          if (elem.statut == "accepted") {
+            UsersConnected.findOne({userId: elem.userId}, (err, userConnecteds) => {
+              if (io.sockets.connected[userConnecteds.socketId]) {
+                io.sockets.connected[userConnecteds.socketId].emit("getNewPost", waste)
+              } else {
+                console.log("users are not connected")
+              }
+            });
+            // for(let connected in io.sockets.connected){
+            //   io.sockets.connected[connected].emit("getNewPost",waste)
+            //
+            // }
+          }
+        })
       });
+      res.json(waste);
     } else {
       res.status(404).send('aucun contenu enregistré dans la base')
     }
@@ -79,6 +86,11 @@ module.exports = function (io) {
     });
   };
 
+  /**
+   *
+   * @param req
+   * @param res
+   */
   let listOfFriends = function (req, res) {
     let following = req.body.following || [];
     let newTable = [];

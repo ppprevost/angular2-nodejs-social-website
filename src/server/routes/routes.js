@@ -16,6 +16,7 @@ module.exports = function (app, io) {
   app.post('/verif', authenticationController.emailVerif);
   app.post('/api/user/signup', authenticationController.signup);
   app.post('/api/user/login', authenticationController.login);
+  app.post('/api/user/refreshSocketId', authenticationController.refreshSocketIdOfConnectedUsers);
   app.post('/api/user/refreshUserData', authenticationController.refreshUserData);
   app.put('/api/user/logout/:id', usersController.deconnection);
 

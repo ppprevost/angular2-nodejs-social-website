@@ -63,6 +63,13 @@ export class DataService {
     return this.http.delete(`/api/users/deleteAllPicture/${userId}`, this.options);
   }
 
+  refreshSocketIdOfConnectedUsers(userId: string, socketId: string): Observable<any> {
+    return this.http.post('/api/user/refreshSocketId', JSON.stringify({
+      userId: userId,
+      socketId: socketId
+    }), this.options)
+  }
+
   sendWaste(request: Object) {
     return this.http.post('api/waste/sendPost', JSON.stringify(request), this.options)
   }

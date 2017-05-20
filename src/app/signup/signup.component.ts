@@ -16,7 +16,8 @@ export class SignupComponent implements OnInit {
   addUser: FormGroup;
   private email = new FormControl('', Validators.required);
   private res;
-  username = new FormControl('', Validators.required);
+  private eventCaptcha = false;
+  username = new FormControl('', [Validators.required, Validators.maxLength(20)]);
   password = new FormControl('', Validators.required);
 
   constructor(private toastyService: ToastyService, private dataService: DataService, private addUserForm: FormBuilder, private router: Router) {
@@ -33,6 +34,7 @@ export class SignupComponent implements OnInit {
   }
 
   handleCorrectCaptcha(event) {
+    this.eventCaptcha = true;
     console.log(event);
   }
 

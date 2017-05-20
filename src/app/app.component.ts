@@ -1,17 +1,16 @@
 import {Component, OnInit, OnDestroy, ViewContainerRef} from '@angular/core';
-import * as sio from 'socket.io-client';
 import {DataService} from './services/data.service';
 import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import{Router} from '@angular/router';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
+import {SocketService} from './services/socket.service'
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [SocketService]
 })
 
 export class AppComponent implements OnInit, OnDestroy {
@@ -19,46 +18,41 @@ export class AppComponent implements OnInit, OnDestroy {
   private loginAndSocket;
   private email = new FormControl('', Validators.required);
   private password = new FormControl('', Validators.required);
-  user;
-  socket: SocketIOClient.Socket;
+  private connection;
+  private connectionOfUser;
 
-  constructor(public auth: AuthService, private toastyService: ToastyService, private toastyConfig: ToastyConfig, private data: DataService, private addUserForm: FormBuilder, private router: Router, vcr: ViewContainerRef) {
+  user;
+
+  constructor(private socket: SocketService, public auth: AuthService, private toastyService: ToastyService, private toastyConfig: ToastyConfig, private data: DataService, private addUserForm: FormBuilder, private router: Router, vcr: ViewContainerRef) {
     this.toastyConfig.theme = 'material';
 
   }
 
-  getMessage(){
-
-  }
-
   ngOnInit() {
-    this.socket = sio({
-      path: '/socket.io'
-    });
+
     this.loginUser = this.addUserForm.group({
       email: this.email,
-      password: this.password,
-      socketId: this.socket.id
+      password: this.password
     });
 
     if (this.loggedIn()) {
-      this.auth.callRefreshUserData()
-
+      this.initSocket()
     }
   }
 
   ngOnDestroy() {
-
+    this.connectionOfUser.unsubscribe();
+    this.connection.unsubscribe();
   }
-
 
   loginAccount() {
     this.loginAndSocket = this.loginUser.value;
-    this.loginAndSocket.socketId = this.socket.id;
+    this.loginAndSocket.socketId = this.socket.socket.id;
     this.auth.loginAccount(this.loginAndSocket).subscribe(
       data => {
         console.log(data);
         this.router.navigate(['./']);
+        this.initSocket();
       },
       err => {
         if (typeof err.json() == 'string') {
@@ -98,5 +92,20 @@ export class AppComponent implements OnInit, OnDestroy {
 
   loggedIn() {
     return this.auth.loggedIn()
+  }
+
+  initSocket() {
+    this.connection = this.socket.socketFunction("getNewPost")
+      .subscribe(message => {
+        console.log(message)
+        this.toastyService.info({title: 'you have a new post !', msg: message.content})
+    });
+    this.connectionOfUser = this.socket.socketFunction("connect").subscribe(connection => {
+      this.auth.callRefreshUserData();
+      this.data.refreshSocketIdOfConnectedUsers(this.auth.user._id, this.socket.socket.id).subscribe((data) => {
+        console.log(data)
+
+      });
+    });
   }
 }
