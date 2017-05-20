@@ -15,7 +15,8 @@
       <input type="email" formControlName="email" placeholder="votre mail" id="email" class="form-control"
              required="required">
     </div>
+    <re-captcha (captchaResponse)="handleCorrectCaptcha($event)" site_key="6Lc9RiAUAAAAACVy4rmGhTAJX9_HuJgDkdB-aONd"></re-captcha>
     <button class="btn btn-default">Submit</button>
-    <app-toast></app-toast>
+
   </form>
 </div>

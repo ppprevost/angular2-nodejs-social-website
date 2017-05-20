@@ -23,7 +23,7 @@ import {ValidPictureDirective} from './utils/valid-picture.directive';
 import {MdRadioModule, MdInputModule, MdTooltipModule} from '@angular/material';
 import { ListOfFriendComponent } from './utils/list-of-friend/list-of-friend.component';
 import { TooltipDirective } from './utils/tooltip.directive';
-
+import { ReCaptchaModule } from 'angular2-recaptcha';
 
 const routing = RouterModule.forRoot([
   {path: '', component: HomeComponent},
@@ -67,6 +67,7 @@ const routing = RouterModule.forRoot([
     FileUploadModule,
     ReactiveFormsModule,
     MdRadioModule,
+    ReCaptchaModule,
     MdInputModule,
     MdTooltipModule,
     ToastyModule.forRoot(),

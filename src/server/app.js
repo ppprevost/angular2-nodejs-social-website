@@ -6,9 +6,6 @@ const morgan = require('morgan'); // logger
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const app = express();
-
-let server = require('http').Server(app);
-let io = require('socket.io').listen(server);
 const expressValidator = require('express-validator');
 app.use(expressValidator());
 app.use(bodyParser.json());
@@ -43,30 +40,30 @@ db.on('error', () => {
 
 db.once('open', function () {
   console.log('Connected to MongoDB');
-  const routes = require('./routes/routes.js')(app, io);
+
   // all other routes are handled by Angular
+  let server = app.listen(app.get('port'), function () {
+    console.log('Angular 4 Full Stack listening on port ' + app.get('port'));
+  });
+  let io = require('socket.io')(server);
+  const routes = require('./routes/routes.js')(app, io);
   app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '/../../dist/index.html'));
   });
 
-  app.listen(app.get('port'), function () {
-    console.log('Angular 4 Full Stack listening on port ' + app.get('port'));
+  //traitement socket
+  io.on('connection', function (socket) {
+    console.log("connection socket server ok");
+    socket.emit('news', {hello: 'bienvenue sur mon reseau'});
+    socket.on('sendPost', function (data, fn) {
+      wasteController.sendPost(data, fn);
+    });
+
+    socket.on("deconnection", function (data, fn) {
+      usersController.deconnection(data, fn);
+    })
   });
 });
 
-
-
-//traitement socket
-io.on('connection', function (socket) {
-  console.log("connection socket server ok");
-  socket.emit('news', {hello: 'bienvenue sur mon reseau'});
-  socket.on('sendPost', function (data, fn) {
-    wasteController.sendPost(data, fn);
-  });
-
-  socket.on("deconnection", function (data, fn) {
-    usersController.deconnection(data, fn);
-  })
-});
 
 module.exports = app;
