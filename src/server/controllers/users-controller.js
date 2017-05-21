@@ -1,4 +1,5 @@
 const Users = require('../datasets/users'), fs = require('fs'), UsersConnected = require('../datasets/connected-users');
+const jwt = require('jsonwebtoken');
 let uploadUtil = (req, res, callback) => {
   let userId = req.params.id;
   let directory = `${process.cwd()}\\src\\assets\\upload\\${userId}\\`;
@@ -24,15 +25,40 @@ module.exports = function (io) {
 
   let deconnection = function (req, res) {
     console.log(req.body.userId);
-    Users.update({_id: req.body.userId}, {$set: {"isConnected": false}}, function (err, result) {
-      if (!err) {
-        UsersConnected.findOneAndRemove({userId: req.body.userId}, (err) => {
-          if (!err) {
-            res.send("deconnection effectuée")
+    jwt.verify(req.body.token, process.env.SECRET_TOKEN, (err, decoded) => {
+      UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
+        if (!err) {
+          if (user) {
+            if (user.location.length <= 1) {
+              user.remove()
+            } else {
+              if (!err) {
+                let indexObj = user.location.indexOf(user.location.find(elem => {
+                  return elem._id.toString() == decoded.user.idOfLocation
+                }));
+                user.location.splice(indexObj, 1);
+                user.save()
+              }
+            }
           }
-        });
+          res.send("deconnection effectuée")
+        }
+      });
+    })
+  };
+
+  let deleteSocketIdDB = (socketId) => {
+    UsersConnected.findOne({'location.socketId': socketId}, (err, locationUser) => {
+      if (!err) {
+        if (locationUser) {
+          let indexOfLocation = locationUser.location.indexOf(locationUser.location.find(elem => {
+            return elem.socketId == socketId
+          }));
+          locationUser.location[indexOfLocation]["socketId"] = undefined;
+          locationUser.save()
+        }
       }
-    });
+    })
   };
 
   let followUser = function (req, res) {
@@ -221,6 +247,7 @@ module.exports = function (io) {
     getUsers,
     followUserOk,
     getThisUser,
+    deleteSocketIdDB,
     deconnection,
     followUser,
     unfollowUser,

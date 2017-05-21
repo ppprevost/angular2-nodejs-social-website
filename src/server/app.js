@@ -51,18 +51,7 @@ db.once('open', function () {
     res.sendFile(path.join(__dirname, '/../../dist/index.html'));
   });
 
-  //traitement socket
-  io.on('connection', function (socket) {
-    console.log("connection socket server ok");
-    socket.emit('news', {hello: 'bienvenue sur mon reseau'});
-    socket.on('sendPost', function (data, fn) {
-      wasteController.sendPost(data, fn);
-    });
 
-    socket.on("deconnection", function (data, fn) {
-      usersController.deconnection(data, fn);
-    })
-  });
 });
 
 

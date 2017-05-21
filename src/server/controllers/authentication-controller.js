@@ -157,26 +157,35 @@ module.exports = function (io) {
       } else {
         if (results && results.length == 1) {
           let userData = results[0];
-          console.log(results.length == 1 ? "nombre de resultat au login ok :" + results.length : "plus de 1 resultat attention!!");
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
-
-              Users.update({_id: userData._id}, {$set: {"isConnected": true}}, function (err, result) {
-                if (!err) {
-                  delete userData.password;
-                  const token = jwt.sign({user: userData}, process.env.SECRET_TOKEN);
+              delete userData.password;
+              let ip;
+              if (req.headers['x-forwarded-for']) {
+                ip = req.headers['x-forwarded-for'].split(",")[0];
+              } else if (req.connection && req.connection.remoteAddress) {
+                ip = req.connection.remoteAddress;
+              } else {
+                ip = req.ip;
+              }
+              UsersConnected.findOne({userId: userData._id}, (err, userAlreadyConnected) => {
+                let idOfLocation = '';
+                if (userAlreadyConnected) {
+                  userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ip});
+                  userAlreadyConnected.save(() => {
+                    locationSearch(userAlreadyConnected, req.body, userData, res)
+                  })
+                } else {
                   let newUserConnected = new UsersConnected({
                     userId: userData._id,
-                    socketId: req.body.socketId,
-                    isConnected: true
+                    location: [{socketId: req.body.socketId, IP: ip}],
+                    isConnected: true,
                   });
-                  newUserConnected.save();
-                  res.status(200).json(
-                    {token: token}
-                  );
-                } else {
-                  res.status(401).send({msg: 'problem with connection'})
+                  newUserConnected.save((err, savedUser) => {
+                    locationSearch(savedUser, req.body, userData, res)
+                  });
                 }
+
               });
             } else {
               return res.status(401).send({msg: 'Invalid email or password'});
@@ -196,18 +205,40 @@ module.exports = function (io) {
     });
   };
 
+  let locationSearch = (savedUser, reqBody, userData, res) => {
+    let idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
+      return elem.socketId == reqBody["socketId"]
+    }));
+    delete userData._doc.password;
+    userData._doc.idOfLocation = savedUser.location[idOfLocation]["_id"];
+    const token = jwt.sign({user: userData}, process.env.SECRET_TOKEN);
+    res.status(200).json({token});
+  };
+
   let refreshSocketIdOfConnectedUsers = (req, res) => {
-    let socketId = req.body.socketId
-    UsersConnected.findOne({userId: req.body.userId}, (err, user) => {
-      if (user.socketId != socketId) {
-        user.socketId = socketId
-        user.save(() => {
-          res.send(`socketnumber ${req.body.socketId} has been updated`)
+    let socketId = req.body.socketId, token = req.body.token;
+    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
+      if (!err) {
+        UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
+          if (!err) {
+            let indexOfLocation;
+            if (user) {
+              indexOfLocation = user.location.indexOf(user.location.find(elem => {
+                return elem._id.toString() == decoded.user.idOfLocation
+              }));
+              user.location[indexOfLocation]["socketId"] = socketId
+              user.save(() => {
+                res.send(`socketnumber ${req.body.socketId} has been updated`)
+              });
+            } else {
+
+            }
+          } else {
+            console.log(err)
+          }
         });
       }
-
     });
-
   };
 
 

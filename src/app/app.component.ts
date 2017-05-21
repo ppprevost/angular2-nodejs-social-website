@@ -69,7 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   logOut() {
     console.log("click sur logout avec socket");
-    this.data.logOut(this.auth.user._id).subscribe(res => {
+    this.data.logOut(this.auth.user._id, localStorage.token).subscribe(res => {
       console.log(res);
       localStorage.clear();
       this.router.navigate(['./']);
@@ -102,7 +102,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.connectionOfUser = this.socket.socketFunction("connect").subscribe(connection => {
       this.auth.callRefreshUserData();
-      this.data.refreshSocketIdOfConnectedUsers(this.auth.user._id, this.socket.socket.id).subscribe((data) => {
+      this.data.refreshSocketIdOfConnectedUsers(this.auth.user._id, this.socket.socket.id,localStorage.token).subscribe((data) => {
         console.log(data)
 
       });

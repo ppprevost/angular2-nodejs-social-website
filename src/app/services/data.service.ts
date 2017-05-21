@@ -43,8 +43,8 @@ export class DataService {
     return this.http.post('/api/user/login', JSON.stringify(user), this.options)
   }
 
-  logOut(userId: string): Observable<any> {
-    return this.http.put(`/api/user/logout/${userId}`, {userId: userId}, this.options)
+  logOut(userId, token): Observable<any> {
+    return this.http.post(`/api/user/logout/`, JSON.stringify({userId, token}), this.options)
   }
 
   deleteAccount(userId: string): Observable<any> {
@@ -63,10 +63,11 @@ export class DataService {
     return this.http.delete(`/api/users/deleteAllPicture/${userId}`, this.options);
   }
 
-  refreshSocketIdOfConnectedUsers(userId: string, socketId: string): Observable<any> {
+  refreshSocketIdOfConnectedUsers(userId: string, socketId: string, token: string): Observable<any> {
     return this.http.post('/api/user/refreshSocketId', JSON.stringify({
-      userId: userId,
-      socketId: socketId
+      userId,
+      socketId,
+      token
     }), this.options)
   }
 

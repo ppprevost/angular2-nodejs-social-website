@@ -11,6 +11,17 @@ module.exports = function (app, io) {
     optionsSuccessStatus: 200
   };
 
+  //traitement socket
+  io.on('connection', function (socket) {
+    console.log("connection socket server ok");
+    socket.emit('news', {hello: 'bienvenue sur mon reseau'});
+
+    socket.on('disconnect', () => {
+      console.log('user close the socket connection' + socket.id);
+      usersController.deleteSocketIdDB(socket.id)
+    });
+  });
+
 //Route
 //Authentication
   app.post('/api/verif', authenticationController.emailVerif);
@@ -18,7 +29,7 @@ module.exports = function (app, io) {
   app.post('/api/user/login', authenticationController.login);
   app.post('/api/user/refreshSocketId', authenticationController.refreshSocketIdOfConnectedUsers);
   app.post('/api/user/refreshUserData', authenticationController.refreshUserData);
-  app.put('/api/user/logout/:id', usersController.deconnection);
+  app.post('/api/user/logout', usersController.deconnection);
 
 //Profile profileController.updatePhoto
   app.options('api/upload', cors(corsOptions)); // enable pre-flight request for request
@@ -41,6 +52,9 @@ module.exports = function (app, io) {
   app.post('/api/users/followOk', usersController.followUserOk);
   app.post('/api/users/unfollow', usersController.unfollowUser);
   app.post('/api/users/getThisUsers', usersController.getThisUser);
+
+  //Socket
+
 
 };
 
