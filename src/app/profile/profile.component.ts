@@ -41,7 +41,7 @@ export class ProfileComponent implements OnInit {
     };
     this.uploader.onAfterAddingFile = (file: any) => {
       file.withCredentials = false;
-      file.typeUpload = this.typeUpload || "cover"
+      file.typeUpload = this.typeUpload
     };
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       this.auth.callRefreshUserData(response)
