@@ -1,16 +1,6 @@
 module.exports = function (app, io) {
   // APIs
 
-  let authenticationController = require('../controllers/authentication-controller')(io);
-  let profileController = require('../controllers/profile-controller')(io);
-  let wasteController = require('../controllers/waste-controller')(io);
-  let usersController = require('../controllers/users-controller')(io);
-  const cors = require('cors');
-  let corsOptions = {
-    origin: ["http://127.0.0.1:3000", "http://127.0.0.1:4200", "http://localhost:3000"],
-    optionsSuccessStatus: 200
-  };
-
   //traitement socket
   io.on('connection', function (socket) {
     console.log("connection socket server ok");
@@ -21,6 +11,16 @@ module.exports = function (app, io) {
       usersController.deleteSocketIdDB(socket.id)
     });
   });
+
+  let authenticationController = require('../controllers/authentication-controller')(io);
+  let profileController = require('../controllers/profile-controller')(io);
+  let wasteController = require('../controllers/waste-controller')(io);
+  let usersController = require('../controllers/users-controller')(io);
+  const cors = require('cors');
+  let corsOptions = {
+    origin: ["http://127.0.0.1:3000", "http://127.0.0.1:4200", "http://localhost:3000"],
+    optionsSuccessStatus: 200
+  };
 
 //Route
 //Authentication
@@ -54,7 +54,6 @@ module.exports = function (app, io) {
   app.post('/api/users/getThisUsers', usersController.getThisUser);
 
   //Socket
-
-
+  
 };
 

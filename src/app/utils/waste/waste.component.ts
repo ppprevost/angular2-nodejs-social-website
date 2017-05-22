@@ -1,24 +1,31 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {DataService} from '../../services/data.service'
+import {Component, OnInit, Input, OnDestroy, Injectable} from '@angular/core';
+import {DataService} from '../../services/data.service';
 
 @Component({
   selector: 'app-waste',
   templateUrl: './waste.component.html',
   styleUrls: ['./waste.component.scss']
 })
-export class WasteComponent implements OnInit {
+@Injectable()
+export class WasteComponent implements OnInit, OnDestroy {
 
   @Input() numberOfWaste;
   @Input() typePost;
   @Input() onlyOwnPost;
   @Input() userId;
   wastes;
+  connection;
 
   constructor(private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
   }
 
   ngOnInit() {
-    this.getPosts()
+    this.getPosts();
+
+  }
+
+  ngOnDestroy() {
+
   }
 
   getPosts() {
@@ -30,4 +37,5 @@ export class WasteComponent implements OnInit {
         },
         err => console.log(err))
   }
+
 }

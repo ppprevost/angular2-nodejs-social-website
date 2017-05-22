@@ -160,26 +160,18 @@ module.exports = function (io) {
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
               delete userData.password;
-              let ip;
-              if (req.headers['x-forwarded-for']) {
-                ip = req.headers['x-forwarded-for'].split(",")[0];
-              } else if (req.connection && req.connection.remoteAddress) {
-                ip = req.connection.remoteAddress;
-              } else {
-                ip = req.ip;
-              }
-              UsersConnected.findOne({userId: userData._id}, (err, userAlreadyConnected) => {
+
+              UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
                 let idOfLocation = '';
                 if (userAlreadyConnected) {
-                  userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ip});
+                  userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
                   userAlreadyConnected.save(() => {
                     locationSearch(userAlreadyConnected, req.body, userData, res)
                   })
                 } else {
                   let newUserConnected = new UsersConnected({
                     userId: userData._id,
-                    location: [{socketId: req.body.socketId, IP: ip}],
-                    isConnected: true,
+                    location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
                   });
                   newUserConnected.save((err, savedUser) => {
                     locationSearch(savedUser, req.body, userData, res)
@@ -219,6 +211,7 @@ module.exports = function (io) {
     let socketId = req.body.socketId, token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
+
         UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
           if (!err) {
             let indexOfLocation;
@@ -226,7 +219,8 @@ module.exports = function (io) {
               indexOfLocation = user.location.indexOf(user.location.find(elem => {
                 return elem._id.toString() == decoded.user.idOfLocation
               }));
-              user.location[indexOfLocation]["socketId"] = socketId
+              user.location.push({socketId: socketId, IP: ipConnection(req)});
+              // user.location[indexOfLocation]["socketId"] = socketId
               user.save(() => {
                 res.send(`socketnumber ${req.body.socketId} has been updated`)
               });
@@ -241,6 +235,18 @@ module.exports = function (io) {
     });
   };
 
+
+  let ipConnection = (req) => {
+    let ip;
+    if (req.headers['x-forwarded-for']) {
+      ip = req.headers['x-forwarded-for'].split(",")[0];
+    } else if (req.connection && req.connection.remoteAddress) {
+      ip = req.connection.remoteAddress;
+    } else {
+      ip = req.ip;
+    }
+    return ip
+  }
 
   let emailVerif = (req, res) => {
     console.log(req.body)

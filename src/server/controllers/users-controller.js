@@ -54,7 +54,8 @@ module.exports = function (io) {
           let indexOfLocation = locationUser.location.indexOf(locationUser.location.find(elem => {
             return elem.socketId == socketId
           }));
-          locationUser.location[indexOfLocation]["socketId"] = undefined;
+          //locationUser.location[indexOfLocation].remove();
+          locationUser.location.splice(indexOfLocation, 1);
           locationUser.save()
         }
       }

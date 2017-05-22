@@ -14,17 +14,17 @@ module.exports = function (io) {
       Users.findById(data.userId, (err, user) => {
         user.following.forEach(elem => {
           if (elem.statut == "accepted") {
-            UsersConnected.findOne({userId: elem.userId}, (err, userConnecteds) => {
-              if (io.sockets.connected[userConnecteds.socketId]) {
-                io.sockets.connected[userConnecteds.socketId].emit("getNewPost", waste)
-              } else {
-                console.log("users are not connected")
+            UsersConnected.findOne({userId: elem.userId.toString()}, (err, userConnecteds) => {
+              if (userConnecteds) {
+                userConnecteds.location.forEach((doc) => {
+                  if (io.sockets.connected[doc.socketId]) {
+                    io.sockets.connected[doc.socketId].emit("getNewPost", waste)
+                  } else {
+                    console.log("users are not connected")
+                  }
+                });
               }
             });
-            // for(let connected in io.sockets.connected){
-            //   io.sockets.connected[connected].emit("getNewPost",waste)
-            //
-            // }
           }
         })
       });
