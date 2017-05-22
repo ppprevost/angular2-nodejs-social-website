@@ -1,5 +1,7 @@
 import {Component, OnInit, Input, OnDestroy, Injectable} from '@angular/core';
 import {DataService} from '../../services/data.service';
+import {SocketService} from "../../services/socket.service";
+
 
 @Component({
   selector: 'app-waste',
@@ -16,12 +18,15 @@ export class WasteComponent implements OnInit, OnDestroy {
   wastes;
   connection;
 
-  constructor(private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
+  constructor(private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
   }
 
   ngOnInit() {
     this.getPosts();
-
+    this.connection = this.socket.socketFunction("getNewPost")
+      .subscribe(message => {
+        this.wastes.unshift(message);
+      });
   }
 
   ngOnDestroy() {
