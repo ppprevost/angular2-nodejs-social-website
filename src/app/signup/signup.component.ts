@@ -4,7 +4,7 @@ import {DataService} from '../services/data.service'
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {Router} from '@angular/router';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
-
+import swal from 'sweetalert2'
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -52,7 +52,12 @@ export class SignupComponent implements OnInit {
       .map(res => res.json().msg)
       .subscribe((res) => {
           this.res = res;
-
+        swal({
+          title: 'Congratulations!',
+          text: res,
+          type: 'success',
+          confirmButtonText: 'Ok'
+        });
           this.toastyService.success(toastOptions(res, "Congratulations !"));
           this.router.navigate(['./']);
         }, (err) => {

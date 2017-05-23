@@ -1,7 +1,7 @@
 <ul *ngIf="images;else noFriend" class="img-grid">
   <li *ngFor="let image of images">
-    <a href="#">
-      <img alt="image" [src]="image.image"
+    <a href="" [routerLink]="['/my-profile',image._id]" >
+      <img routerLinkActive="active" alt="image" [src]="image.image"
            [title]="image.username">
     </a>
   </li>

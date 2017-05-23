@@ -29,6 +29,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   actualUser;
   uploadPicture: string[] = [];
   @ViewChild(WasteComponent) wasteComponent: WasteComponent;
+  getThisUserSub;
 
   constructor(private _compiler: Compiler, private auth: AuthService, private activatedRoute: ActivatedRoute, private data: DataService) {
   }
@@ -38,16 +39,12 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     return this.getThisUser();
   }
 
-  ngOnChanges(changes) {
-    console.log("dd", changes)
-  }
-
   ngOnDestroy() {
-
+    this.getThisUserSub.unsubscribe();
   }
 
   getThisUser() {
-    this.activatedRoute.params.subscribe((params: Params) => {
+    this.getThisUserSub = this.activatedRoute.params.subscribe((params: Params) => {
       this.id = params['id'];
       if (this.id != this.auth.user._id) {
         this.data.getThisUser(this.id).subscribe(following => {

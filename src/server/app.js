@@ -29,7 +29,7 @@ const dotenv = require('dotenv');
 dotenv.load({path: '.env'});
 
 app.use(morgan('dev'));
-let mongoose = require('mongoose');
+let mongoose = require('mongoose');//
 mongoose.connect(process.env.MONGODB_URI);
 var db = mongoose.connection;
 mongoose.Promise = global.Promise;
