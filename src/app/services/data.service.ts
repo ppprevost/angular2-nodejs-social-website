@@ -20,11 +20,11 @@ export class DataService {
   }
 
   getThisUser(userid): Observable<any> {
-    return this.http.post('/api/users/getThisUsers', JSON.stringify({userId: userid}), this.options)
+    return this.http.post('/api/users/getThisUsers', JSON.stringify({userId: userid}), this.options);
   }
 
   refreshUserData(token): Observable<any> {
-    return this.http.post('/api/user/refreshUserData', JSON.stringify(token), this.options)
+    return this.http.post('/api/user/refreshUserData', JSON.stringify(token), this.options);
   }
 
   createAccount(user): Observable<any> {
@@ -73,6 +73,10 @@ export class DataService {
 
   sendWaste(request: Object) {
     return this.http.post('api/waste/sendPost', JSON.stringify(request), this.options)
+  }
+
+  getCaptcha(catchaToken: string) {
+    return this.http.get('/api/user/validCaptcha/' + catchaToken, this.options);
   }
 
   getPost(userId: string, numberOfWaste: number, typePost: string, onlyOwnPost: boolean) {

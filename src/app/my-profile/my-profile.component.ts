@@ -4,13 +4,7 @@ import {AuthService} from '../services/auth.service';
 import {Params, ActivatedRoute} from '@angular/router';
 import {WasteComponent} from '../utils/waste/waste.component';
 import {Compiler} from '@angular/core';
-
-interface User {
-  bio: string,
-  _id: string,
-  email: string,
-  gender: string,
-}
+import {User, Waste} from '../interface/interface';
 
 @Component({
   selector: 'app-my-profile',
@@ -19,14 +13,14 @@ interface User {
 })
 
 export class MyProfileComponent implements OnInit, OnDestroy {
-  user;
+  user: User;
   id: string;
   images;
   isLoading = true;
-  wasters;
+  wasters: [User];
   typeWaste: string;
-  newWaste;
-  actualUser;
+  newWaste: string;
+  actualUser: User;
   uploadPicture: string[] = [];
   @ViewChild(WasteComponent) wasteComponent: WasteComponent;
   getThisUserSub;
@@ -56,7 +50,6 @@ export class MyProfileComponent implements OnInit, OnDestroy {
       } else {
         this.user = this.actualUser = this.auth.user;
         this.getPictureUser(this.user._id);
-
       }
     });
   };

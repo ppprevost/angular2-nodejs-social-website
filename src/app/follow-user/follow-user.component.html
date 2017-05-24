@@ -1,38 +1,41 @@
 <div class="row userProfile" data-toggle="isotope" style="position: relative; ">
-  <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters"
-       [hidden]="auth.user._id == waste._id">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <a href="" [routerLink]="['/my-profile', waste._id]" routerLinkActive="active">
-          <div class="media">
-            <div class="pull-left" ng-click="click()">
-              <img [src]="waste.image" alt="people"
-                   class="media-object img-circle"
-                   style="width:150px;height: 150px;">
-            </div>
-            <div class="media-body">
-              <h4 class="media-heading margin-v-5"><a href="#">{{waste.username}}</a></h4>
-              <span>{{waste.message}}</span>
-              <p>{{waste.email}}</p>
-              <div class="profile-icons">
-                <span><i class="fa fa-users"></i> {{waste.friends}}</span>
-                <span><i class="fa fa-photo"></i> none</span>
+  <div class="row">
+    <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters"
+         [hidden]="auth.user._id == waste._id">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a href="" [routerLink]="['/my-profile', waste._id]" routerLinkActive="active">
+            <div class="media">
+              <div class="pull-left" ng-click="click()">
+                <img [src]="waste.image" alt="people"
+                     class="media-object img-circle"
+                     style="width:150px;height: 150px;">
               </div>
-              <h3 *ngIf="waste.isConnected" class="blink_me">Online</h3>
+              <div class="media-body">
+                <h4 class="media-heading margin-v-5"><a href="#">{{waste.username}}</a></h4>
+                <span>{{waste.message}}</span>
+                <p>{{waste.email}}</p>
+                <div class="profile-icons">
+                  <span><i class="fa fa-users"></i> {{waste.friends}}</span>
+                  <span><i class="fa fa-photo"></i> none</span>
+                </div>
+                <h3 *ngIf="waste.isConnected" class="blink_me">Online</h3>
+              </div>
             </div>
-          </div>
-        </a>
-      </div>
-      <div class="panel-body">
-        <p class="common-friends" (click)="onclick($event)">Common Friends</p>
-        <div class="user-friend-list">
-          <app-list-of-friend (notify)="waste.friends = $event" [user]="waste"></app-list-of-friend>
+          </a>
         </div>
-      </div>
-      <div *ngIf="auth.user">
-        <app-follow (notify)='waste.message = $event; onNotify($event,waste)' [waste]="waste"
-                    [user]="auth.user"></app-follow>
+        <div class="panel-body">
+          <p class="common-friends" (click)="onclick($event)">Common Friends</p>
+          <div class="user-friend-list">
+            <app-list-of-friend (notify)="waste.friends = $event" [user]="waste"></app-list-of-friend>
+          </div>
+        </div>
+        <div *ngIf="auth.user">
+          <app-follow (notify)='waste.message = $event; onNotify($event,waste)' [waste]="waste"
+                      [user]="auth.user"></app-follow>
+        </div>
       </div>
     </div>
   </div>
+
 </div>

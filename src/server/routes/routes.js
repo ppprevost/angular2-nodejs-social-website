@@ -27,6 +27,7 @@ module.exports = function (app, io) {
   app.post('/api/verif', authenticationController.emailVerif);
   app.post('/api/user/signup', authenticationController.signup);
   app.post('/api/user/login', authenticationController.login);
+  app.get('/api/user/validCaptcha/:token', authenticationController.validCaptcha);
   app.post('/api/user/refreshSocketId', authenticationController.refreshSocketIdOfConnectedUsers);
   app.post('/api/user/refreshUserData', authenticationController.refreshUserData);
   app.post('/api/user/logout', usersController.deconnection);
@@ -54,6 +55,6 @@ module.exports = function (app, io) {
   app.post('/api/users/getThisUsers', usersController.getThisUser);
 
   //Socket
-  
+
 };
 

@@ -1,10 +1,11 @@
 import{DataService} from './data.service';
 import {JwtHelper, tokenNotExpired} from 'angular2-jwt';
 import {Injectable} from '@angular/core';
+import {User} from '../interface/interface'
 
 @Injectable()
 export class AuthService {
-  user;
+  user: User;
   jwtHelper: JwtHelper = new JwtHelper();
   token;
 
@@ -34,14 +35,14 @@ export class AuthService {
     return this.jwtHelper.decodeToken(token).user;
   }
 
-  callRefreshUserData(userData?) {
+  callRefreshUserData(userData?: User) {
     if (userData) {
       return this.user = userData
     } else {
       return this.data.refreshUserData({token: this.token}).subscribe(user => {
 
         this.user = user.json();
-      })
+      });
     }
   }
 }

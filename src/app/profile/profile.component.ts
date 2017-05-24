@@ -5,7 +5,8 @@ import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {FileUploader} from 'ng2-file-upload';
 import {environment} from '../../environments/environment';
 import {FileSelectDirective, FileDropDirective} from 'ng2-file-upload';
-import swal from 'sweetalert2'
+import {User} from '../interface/interface';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -14,7 +15,7 @@ import swal from 'sweetalert2'
   providers: [FileSelectDirective, FileDropDirective]
 })
 export class ProfileComponent implements OnInit {
-  public user;
+  public user: User;
   private profile;
   public typeUpload: string;
   updatePass: FormGroup;
@@ -34,7 +35,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.auth.user;
-    this.uploader.onBuildItemForm = (item:any, form) => {
+    this.uploader.onBuildItemForm = (item: any, form) => {
       form.append("userId", this.user["_id"]);
       form.append("uploadType", this.typeUpload);
 
@@ -111,7 +112,7 @@ export class ProfileComponent implements OnInit {
 
   errMethod(err) {
     let x: string;
-    if(typeof err =="string"){
+    if (typeof err == "string") {
       x = err
     }
     if (typeof err.text() == 'string') {

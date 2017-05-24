@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const nev = require('../services/email-verification')(mongoose);
 const path = require('path');
+const request = require('request');
 const jwt = require('jsonwebtoken');
 const UsersConnected = require('../datasets/connected-users');
 
@@ -281,7 +282,21 @@ module.exports = function (io) {
     })
   };
 
+  let validCaptcha = (req, res) => {
+    let token = req.params.token;
+    var verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + process.env.SECRET_KEYCAPTCHA + "&response=" + token + "&remoteip=" + req.connection.remoteAddress;
+    request(verificationUrl, (error, response, body) => {
+      body = JSON.parse(body);
+      // Success will be true or false depending upon captcha validation.
+      if (body.success !== undefined && !body.success) {
+        return res.json({"responseCode": 1, "responseDesc": "Failed captcha verification"});
+      }
+      res.json({"responseCode": 0, "responseDesc": "Sucess"});
+    });
+  };
+
   return {
+    validCaptcha,
     emailVerif,
     refreshSocketIdOfConnectedUsers,
     login,

@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild, SimpleChanges, OnChanges} from '@angular/core';
 import {DataService} from '../services/data.service';
 import {WasteComponent} from '../utils/waste/waste.component';
-import {MdRadioModule} from '@angular/material';
+import {User} from '../interface/interface';
 import {AuthService} from '../services/auth.service';
 
 @Component({
@@ -11,7 +11,7 @@ import {AuthService} from '../services/auth.service';
 })
 
 export class HomeComponent implements OnInit {
-  user;
+  user: User;
   images: Object[] = [];
   typeWaste: string;
   newWaste: string;
@@ -34,13 +34,13 @@ export class HomeComponent implements OnInit {
   }
 
   sendWaste() {
-    let request = {
+    const request = {
       user: this.auth.user.username,
       userId: this.auth.user._id,
       userType: this.typeWaste || 'public',
       content: this.newWaste
     };
-    if(this.newWaste !=""){
+    if (this.newWaste != "") {
       return this.data.sendWaste({request: request}).map(res => res.json())
         .subscribe(data => {
             this.newWaste = '';

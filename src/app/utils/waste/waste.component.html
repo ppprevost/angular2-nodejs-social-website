@@ -7,7 +7,7 @@
           <div class="panel-heading">
             <div class="media">
               <div class="media-left">
-                <a href="">
+                <a [routerLink]="['/my-profile',waste.userId]">
                   <input type="hidden" [value]="waste._id">
                   <img [src]="waste.image" class="media-object">
                 </a>

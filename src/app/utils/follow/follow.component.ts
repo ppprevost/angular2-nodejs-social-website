@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, Output, EventEmitter, AfterViewInit} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {AuthService} from '../../services/auth.service'
 
@@ -12,7 +12,7 @@ interface Obj {
   templateUrl: './follow.component.html',
   styleUrls: ['./follow.component.scss'],
 })
-export class FollowComponent implements OnInit {
+export class FollowComponent implements OnInit, OnChanges {
   isLoading = true;
   @Input() waste;
   @Input() user;
@@ -57,7 +57,15 @@ export class FollowComponent implements OnInit {
     });
   }
 
-  getThisUser() { // pour rafraichir la liste des différents followers
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.user.previousValue) {
+      this.auth.callRefreshUserData(changes.user.currentValue);
+     // this.getThisUser();
+    }
+  }
+
+
+  getThisUser(user?) { // pour rafraichir la liste des différents followers
     if (this.auth.user.following.length) {
       this.auth.user.following.map((elem) => {
         if (elem.userId == this.waste._id) {

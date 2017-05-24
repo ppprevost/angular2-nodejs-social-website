@@ -34,7 +34,15 @@ export class SignupComponent implements OnInit {
   }
 
   handleCorrectCaptcha(event) {
-    this.eventCaptcha = true;
+
+    this.dataService.getCaptcha(event)
+      .map(res => res.json())
+      .subscribe((res) => {
+        console.log(res);
+        if (res.responseCode == 0) {
+          this.eventCaptcha = true;
+        }
+      }, err => console.log(err))
     console.log(event);
   }
 
@@ -52,12 +60,12 @@ export class SignupComponent implements OnInit {
       .map(res => res.json().msg)
       .subscribe((res) => {
           this.res = res;
-        swal({
-          title: 'Congratulations!',
-          text: res,
-          type: 'success',
-          confirmButtonText: 'Ok'
-        });
+          swal({
+            title: 'Congratulations!',
+            text: res,
+            type: 'success',
+            confirmButtonText: 'Ok'
+          });
           this.toastyService.success(toastOptions(res, "Congratulations !"));
           this.router.navigate(['./']);
         }, (err) => {
