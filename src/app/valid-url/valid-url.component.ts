@@ -11,7 +11,7 @@ import {Injectable} from '@angular/core';
 
 @Injectable()
 export class ValidUrlComponent implements OnInit {
-  welcome:string;
+  welcome:string = "plese wait, we are activating your account";
   private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
   private options = new RequestOptions({headers: this.headers});
   private url: string;
@@ -23,10 +23,12 @@ export class ValidUrlComponent implements OnInit {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.url = params['URL'];
     });
-    this.http.post('api/verif', JSON.stringify({url: this.url}), this.options).subscribe((res) => {
-
+    this.http.post('api/verif', JSON.stringify({url: this.url}), this.options).subscribe(
+      (res) => {
 this.welcome = "you can sign in";
       console.log(res)
-    });
+    }, err=>{
+        this.welcome = "we are facing a problem with your account"
+      });
   }
 }
