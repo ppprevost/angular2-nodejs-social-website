@@ -19,7 +19,9 @@ export class FollowUserComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.data.getUsers().subscribe(data => {
-      this.wasters = data.json();
+      this.wasters =data.json().filter(elem=>{
+        return elem._id != this.auth.user._id
+      });
     });
   }
 

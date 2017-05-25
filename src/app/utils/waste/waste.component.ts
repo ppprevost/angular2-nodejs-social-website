@@ -25,6 +25,7 @@ export class WasteComponent implements OnInit, OnDestroy {
     this.getPosts();
     this.connection = this.socket.socketFunction("getNewPost")
       .subscribe(message => {
+        message.user = message.username;
         this.wastes.unshift(message);
       });
   }

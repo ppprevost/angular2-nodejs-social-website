@@ -22,7 +22,7 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
-    this.followerSub.unsubscribe();
+    //this.followerSub.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {

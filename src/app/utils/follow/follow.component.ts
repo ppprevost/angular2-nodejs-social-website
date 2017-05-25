@@ -58,6 +58,7 @@ export class FollowComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes)
     if (changes.user.previousValue) {
       this.auth.callRefreshUserData(changes.user.currentValue);
      // this.getThisUser();

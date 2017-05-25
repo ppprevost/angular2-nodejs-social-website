@@ -1,7 +1,6 @@
 <div class="row userProfile" data-toggle="isotope" style="position: relative; ">
   <div class="row">
-    <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters"
-         [hidden]="auth.user._id == waste._id">
+    <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters" >
       <div class="panel panel-default">
         <div class="panel-heading">
           <a href="" [routerLink]="['/my-profile', waste._id]" routerLinkActive="active">
@@ -25,7 +24,7 @@
           </a>
         </div>
         <div class="panel-body">
-          <p class="common-friends" (click)="onclick($event)">Common Friends</p>
+          <p class="common-friends">Common Friends</p>
           <div class="user-friend-list">
             <app-list-of-friend (notify)="waste.friends = $event" [user]="waste"></app-list-of-friend>
           </div>
