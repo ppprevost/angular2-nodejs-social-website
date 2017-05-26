@@ -45,6 +45,7 @@
     "email-verification": "^0.4.6",
     "eslint": "^3.19.0",
     "express": "4.14.1",
+    "express-limiter": "^1.6.0",
     "express-validator": "^3.1.2",
     "font-awesome": "4.7.0",
     "fs-extra": "^2.1.2",

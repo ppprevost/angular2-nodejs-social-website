@@ -19,7 +19,7 @@ export class FollowUserComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.data.getUsers().subscribe(data => {
-      this.wasters =data.json().filter(elem=>{
+      this.wasters = data.json().filter(elem => {
         return elem._id != this.auth.user._id
       });
     });
@@ -31,7 +31,7 @@ export class FollowUserComponent implements OnInit, AfterViewInit {
 
   onNotify(message: string, waster) {
     console.log("response from parentData", message == "accepted");
-    if (this.listOfFriendComponent && message=="accepted") {
+    if (this.listOfFriendComponent && message == "accepted") {
       this.listOfFriendComponent.getFollowerImage(this.auth.user)
     }
   }

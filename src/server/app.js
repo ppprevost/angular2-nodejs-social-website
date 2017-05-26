@@ -6,12 +6,22 @@ const morgan = require('morgan'); // logger
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const app = express();
+const limiter = require('express-limiter')(app);
 const expressValidator = require('express-validator');
 app.use(expressValidator());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.set('port', (process.env.PORT || 3000));
 app.use('/', express.static(path.join(__dirname, '/../../dist')));
+limiter({
+  method: 'all',
+  total: 100,
+  expire: 1000 * 60 * 60,
+  lookup: 'connection.remoteAddress',
+  onRateLimited: function (req, res, next) {
+    next({message: 'Rate limit exceeded', status: 429})
+  }
+});
 
 let dirEnv = path.join(process.cwd(), '/.env');
 let contentEnv = "MONGODB_URI=mongodb://localhost:27017/test \nMAILVERIF=Gmail \nURLVERIF=http://example.com/email-verification/${URL} \nMAILACCOUNT= \nMAILPASS= \nCLIENTID= \nACCESSTOKEN= \nREFRESHTOKEN= \nCLIENTSECRET= \nSECRET_TOKEN=social\nSECRET_KEYCAPTCHA= ";

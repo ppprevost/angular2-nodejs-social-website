@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import {DataService} from '../services/data.service';
 import {AuthService} from '../services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
@@ -29,7 +29,7 @@ export class ProfileComponent implements OnInit {
     allowedMimeType: ['image/png', 'image/jpg', 'image/gif', 'image/jpeg']
   });
 
-  constructor(private auth: AuthService, private data: DataService, private passwordForm: FormBuilder) {
+  constructor(private auth: AuthService, private data: DataService, private passwordForm: FormBuilder, private zone: NgZone) {
 
   }
 
@@ -135,40 +135,42 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteAccount() {
-    let self = this;
-    swal({ //todo wrapper swal
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, cancel!',
-      confirmButtonClass: 'btn btn-success',
-      cancelButtonClass: 'btn btn-danger',
-      buttonsStyling: false
-    }).then(function () {
-      self.data.deleteAccount(self.user._id)
-        .map(res => res.json())
-        .subscribe((data) => {
-            swal('Deleted!', data, 'success');
-            localStorage.clear();
-          },
-          err => {
-            swal('Problem with your destruction!', err, 'error')
-          });
+    this.zone.runOutsideAngular(() => {
+      let self = this;
+      swal({ //todo wrapper swal
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+        confirmButtonClass: 'btn btn-success',
+        cancelButtonClass: 'btn btn-danger',
+        buttonsStyling: false
+      }).then(function () {
+        self.data.deleteAccount(self.user._id)
+          .map(res => res.json())
+          .subscribe((data) => {
+              swal('Deleted!', data, 'success');
+              localStorage.clear();
+            },
+            err => {
+              swal('Problem with your destruction!', err, 'error')
+            });
 
-    }, function (dismiss) {
-      // dismiss can be 'cancel', 'overlay',
-      // 'close', and 'timer'
-      if (dismiss === 'cancel') {
-        swal(
-          'Cancelled',
-          'Your account is safe :)',
-          'error'
-        )
-      }
-    })
+      }, function (dismiss) {
+        // dismiss can be 'cancel', 'overlay',
+        // 'close', and 'timer'
+        if (dismiss === 'cancel') {
+          swal(
+            'Cancelled',
+            'Your account is safe :)',
+            'error'
+          );
+        }
+      });
+    });
   }
 }
