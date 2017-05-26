@@ -16,6 +16,7 @@ export class SignupComponent implements OnInit {
   addUser: FormGroup;
   private email = new FormControl('', Validators.required);
   private res;
+  verifToggle = false;
   private eventCaptcha = false;
   username = new FormControl('', [Validators.required, Validators.maxLength(20)]);
   password = new FormControl('', Validators.required);
@@ -42,23 +43,24 @@ export class SignupComponent implements OnInit {
         if (res.responseCode == 0) {
           this.eventCaptcha = true;
         }
-      }, err => console.log(err))
+      }, err => console.log(err));
     console.log(event);
   }
 
   addAccount() {
-    let toastOptions = (response, title) => {
-      return {
-        title: title,
-        msg: response,
-        showClose: true,
-        timeout: 8000,
-        theme: 'material',
+    if (!this.verifToggle) {
+      let toastOptions = (response, title) => {
+        return {
+          title: title,
+          msg: response,
+          showClose: true,
+          timeout: 8000,
+          theme: 'material',
+        };
       };
-    };
-    this.dataService.createAccount(this.addUser.value)
-      .map(res => res.json().msg)
-      .subscribe((res) => {
+      this.dataService.createAccount(this.addUser.value)
+        .map(res => res.json().msg)
+        .subscribe((res) => {
           this.res = res;
           swal({
             title: 'Congratulations!',
@@ -70,7 +72,21 @@ export class SignupComponent implements OnInit {
           this.router.navigate(['./']);
         }, (err) => {
           this.toastyService.error(toastOptions(err, "An error occured"))
-        }
-      )
+        });
+    } else {
+      this.dataService.resendVerifMail(this.addUser.value.email)
+        .map(res => res.json())
+        .subscribe(data => {
+          swal({
+            title: 'warning!',
+            text: data.msg,
+            type: 'warning',
+            confirmButtonText: 'Ok'
+          });
+
+        });
+    }
+
+
   }
 }

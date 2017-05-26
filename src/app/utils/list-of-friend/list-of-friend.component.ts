@@ -32,12 +32,14 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  getFollowerImage(user) { // avatar from other friends
+  getFollowerImage(user): void { // avatar from other friends
     if (user && user.following && user.following.length > 0) {
-      return this.followerSub = this.data.ListOfFriends(user).subscribe((elem) => {
+      // this.images = user.following;
+      // this.notify.emit(this.images.length)
+        this.data.ListOfFriends(user).subscribe((elem) => {
         this.images = elem.json();
         this.notify.emit(this.images.length);
-      })
+      });
     }
   }
 

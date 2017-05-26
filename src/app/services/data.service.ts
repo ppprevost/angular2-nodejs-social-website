@@ -87,4 +87,8 @@ export class DataService {
       onlyOwnPost: onlyOwnPost
     }), this.options)
   }
+
+  resendVerifMail(email){
+    return this.http.get(`/api/user/resendVerifEmail/${email}`);
+  }
 }

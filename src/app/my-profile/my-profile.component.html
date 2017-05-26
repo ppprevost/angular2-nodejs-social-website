@@ -1,5 +1,4 @@
-<div *ngIf="!isLoading; else loading" class="st-content">
-
+<div *ngIf="!isLoading ; else loading" class="st-content">
   <!-- extra div for emulating position:fixed of the menu -->
   <div class="st-content-inner">
     <div class="media media-grid media-clearfix-xs">
@@ -18,7 +17,8 @@
               </div>
             </div>
             <div class="profile-icons margin-none">
-              <span><i class="fa fa-user" mdTooltip="Number of friends" mdTooltipPosition="below">{{user?.friends}}</i> </span>
+            <span><i class="fa fa-user" mdTooltip="Number of friends"
+                     mdTooltipPosition="below">{{user?.friends}}</i> </span>
               <span><i class="fa fa-photo" mdTooltip="Number of photos" mdTooltipPosition="below"></i> {{uploadPicture.length}}</span>
             </div>
             <div class="panel-body">
@@ -85,16 +85,16 @@
             <div id="home" class="tab-pane fade active in">
               <div *ngIf="id">
                 <div
-                *ngIf="actualUser && uploadPicture.length && actualUser?._id==id || actualUser && uploadPicture.length && user?.friendShip=='accepted';else error">
-                <div class="row">
-                <div class="col-xs-12">
-                <button *ngIf="actualUser?._id==id" class="btn btn-warning" (click)="deleteAllPictureUser()">
-                Delete files
-                </button>
-                </div>
+                  *ngIf="actualUser && uploadPicture.length && actualUser?._id==id || actualUser && uploadPicture.length && user?.friendShip=='accepted';else error">
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <button *ngIf="actualUser?._id==id" class="btn btn-warning" (click)="deleteAllPictureUser()">
+                        Delete files
+                      </button>
+                    </div>
 
-                </div>
-                <img alt="image" *ngFor="let uplPic of uploadPicture" [src]="'/assets/upload/'+user?._id+'/'+uplPic">
+                  </div>
+                  <img alt="image" *ngFor="let uplPic of uploadPicture" [src]="'/assets/upload/'+user?._id+'/'+uplPic">
                 </div>
               </div>
             </div>
@@ -167,18 +167,17 @@
   </div>
   <!-- /st-content-inner -->
 
-<ng-template #error>
-  <h4>Aucune image à afficher</h4>
-</ng-template>
-<ng-template #forbidden>
-  <h4>You can't see picture because it's not your friend</h4>
-</ng-template>
+  <ng-template #error>
+    <h4>Aucune image à afficher</h4>
+  </ng-template>
+  <ng-template #forbidden>
+    <h4>You can't see picture because it's not your friend</h4>
+  </ng-template>
+  <ng-template #loading>
+    <h4 class="card-header">Loading...</h4>
+    <div class="card-block text-xs-center">
+      <i class="fa fa-circle-o-notch fa-spin fa-3x"></i>
+    </div>
+  </ng-template>
 
-
-<ng-template #loading>
-  <h4 class="card-header">Loading...</h4>
-  <div class="card-block text-xs-center">
-    <i class="fa fa-circle-o-notch fa-spin fa-3x"></i>
-  </div>
-
-</ng-template>
+</div>

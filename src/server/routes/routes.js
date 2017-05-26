@@ -26,6 +26,7 @@ module.exports = function (app, io) {
 //Authentication
   app.post('/api/verif', authenticationController.emailVerif);
   app.post('/api/user/signup', authenticationController.signup);
+  app.get('/api/user/resendVerifEmail/:email', authenticationController.resendVerificationEmail);
   app.post('/api/user/login', authenticationController.login);
   app.get('/api/user/validCaptcha/:token', authenticationController.validCaptcha);
   app.post('/api/user/refreshSocketId', authenticationController.refreshSocketIdOfConnectedUsers);

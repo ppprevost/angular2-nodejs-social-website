@@ -18,7 +18,19 @@ module.exports = function (io) {
       if (err) {
         res.error(err);
       } else {
-        res.json(usersData);
+        let userConnected = []
+        UsersConnected.find().exec((err, userConnected) => {
+          userConnected.map(elem => {
+            usersData.map(user => {
+              if (elem.userId == user._id.toString()) {
+                return user.isConnected = true
+              } else {
+                return user.isConnected = false
+              }
+            })
+          });
+          res.json(usersData);
+        });
       }
     })
   };

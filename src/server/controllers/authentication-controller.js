@@ -122,25 +122,27 @@ module.exports = function (io) {
       }
     });
 
-    // resend verification button was clicked
-    //
-    // nev.resendVerificationEmail(email, function (err, userFound) {
-    //   if (err) {
-    //     return res.status(404).send('ERROR: resending verification email FAILED');
-    //   }
-    //   if (userFound) {
-    //     res.json({
-    //       msg: 'An email has been sent to you, yet again. Please check it to verify your account.'
-    //     });
-    //   } else {
-    //     res.json({
-    //       msg: 'Your verification code has expired. Please sign up again.'
-    //     });
-    //   }
-    // });
 
 
   };
+
+  let resendVerificationEmail = (req,res)=>{
+    // resend verification button was clicked
+    nev.resendVerificationEmail(req.params.email, function (err, userFound) {
+      if (err) {
+        return res.status(404).send('ERROR: resending verification email FAILED');
+      }
+      if (userFound) {
+        res.json({
+          msg: 'An email has been sent to you, yet again. Please check it to verify your account.'
+        });
+      } else {
+        res.json({
+          msg: 'Your verification code has expired. Please sign up again.'
+        });
+      }
+    });
+  }
 
   let login = (req, res) => {
     console.log("req.body", req.body);
@@ -222,6 +224,15 @@ module.exports = function (io) {
               }));
               user.location.push({socketId: socketId, IP: ipConnection(req)});
               // user.location[indexOfLocation]["socketId"] = socketId
+              let location = [];
+              Object.keys(io.sockets.connected).forEach(elem => {
+                user.location.forEach(theRealSocketUses => {
+                  if (theRealSocketUses.socketId == elem) {
+                    location.push(theRealSocketUses)
+                  }
+                })
+              });
+              user.location = location;
               user.save(() => {
                 res.send(`socketnumber ${req.body.socketId} has been updated`)
               });
@@ -298,6 +309,7 @@ module.exports = function (io) {
   return {
     validCaptcha,
     emailVerif,
+    resendVerificationEmail,
     refreshSocketIdOfConnectedUsers,
     login,
     refreshUserData,
