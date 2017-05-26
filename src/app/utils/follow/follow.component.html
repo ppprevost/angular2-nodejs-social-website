@@ -1,6 +1,6 @@
 
 <div *ngIf="!isLoading; else loading" class="panel-footer" [ngSwitch]="waste.status">
-  <a class="btn btn-default btn-sm" *ngSwitchDefault (click)="follow(waste._id)">Follow <i
+  <a class="btn btn-default btn-sm" *ngSwitchDefault (click)="follow(waste._id)">Add Friend <i
     class="fa fa-share"></i></a>
   <a class="btn btn-default btn-sm" *ngSwitchCase="'pending'">Waiting for connection<i
     class="fa fa-share"></i></a>
@@ -8,7 +8,7 @@
      *ngSwitchCase="'requested'" (click)="followUserOk(waste._id)">Accept friends request<i
     class="fa fa-share"></i></a>
   <a class="btn btn-danger btn-sm" (click)="unfollow(waste._id)"
-     *ngSwitchCase="'accepted'">Unfollow <i class="fa fa-low-vision"></i></a>
+     *ngSwitchCase="'accepted'">Remove Friend <i class="fa fa-low-vision"></i></a>
 </div>
 
 
