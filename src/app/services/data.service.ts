@@ -1,22 +1,27 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
+
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class DataService {
-  private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
+
+  private headers = new Headers({
+    'Content-Type': 'application/json',
+    'charset': 'UTF-8',
+    'x-access-token': localStorage.getItem('token')
+  });
   private options = new RequestOptions({headers: this.headers});
   user;
-  images;
 
   constructor(private http: Http) {
     this.user = {}
   }
 
   getUsers(): Observable<any> {
-    return this.http.get('api/users/get')
+    return this.http.get('api/users/get');
   }
 
   getThisUser(userid): Observable<any> {
@@ -27,9 +32,6 @@ export class DataService {
     return this.http.post('/api/user/refreshUserData', JSON.stringify(token), this.options);
   }
 
-  createAccount(user): Observable<any> {
-    return this.http.post('/api/user/signup', JSON.stringify(user), this.options)
-  }
 
   updateChamp(champ): Observable<any> {
     return this.http.post('/api/profile/updateChamp', JSON.stringify(champ), this.options)
@@ -39,9 +41,6 @@ export class DataService {
     return this.http.post('/api/profile/updatePassword', JSON.stringify(pass), this.options)
   }
 
-  loginAccount(user): Observable<any> {
-    return this.http.post('/api/user/login', JSON.stringify(user), this.options)
-  }
 
   logOut(userId, token): Observable<any> {
     return this.http.post(`/api/user/logout/`, JSON.stringify({userId, token}), this.options)
@@ -75,10 +74,6 @@ export class DataService {
     return this.http.post('api/waste/sendPost', JSON.stringify(request), this.options)
   }
 
-  getCaptcha(catchaToken: string) {
-    return this.http.get('/api/user/validCaptcha/' + catchaToken, this.options);
-  }
-
   getPost(userId: string, numberOfWaste: number, typePost: string, onlyOwnPost: boolean) {
     return this.http.post('/api/waste/getPost', JSON.stringify({
       following: userId,
@@ -88,7 +83,5 @@ export class DataService {
     }), this.options)
   }
 
-  resendVerifMail(email){
-    return this.http.get(`/api/user/resendVerifEmail/${email}`);
-  }
+
 }

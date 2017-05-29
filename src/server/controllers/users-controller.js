@@ -18,16 +18,16 @@ module.exports = function (io) {
       if (err) {
         res.error(err);
       } else {
-        let userConnected = []
         UsersConnected.find().exec((err, userConnected) => {
           userConnected.map(elem => {
-            usersData.map(user => {
-              if (elem.userId == user._id.toString()) {
-                return user.isConnected = true
+            for (let i = 0; i < usersData.length; i++) {
+              if (elem.userId == usersData[i]._id.toString()) {
+                usersData[i].isConnected = true;
+                continue;
               } else {
-                return user.isConnected = false
+                usersData[i].isConnected = false;
               }
-            })
+            }
           });
           res.json(usersData);
         });

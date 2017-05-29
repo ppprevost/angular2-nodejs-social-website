@@ -123,10 +123,9 @@ module.exports = function (io) {
     });
 
 
-
   };
 
-  let resendVerificationEmail = (req,res)=>{
+  let resendVerificationEmail = (req, res) => {
     // resend verification button was clicked
     nev.resendVerificationEmail(req.params.email, function (err, userFound) {
       if (err) {
@@ -206,7 +205,9 @@ module.exports = function (io) {
     }));
     delete userData._doc.password;
     userData._doc.idOfLocation = savedUser.location[idOfLocation]["_id"];
-    const token = jwt.sign({user: userData}, process.env.SECRET_TOKEN);
+    const token = jwt.sign({
+      user: userData
+    }, process.env.SECRET_TOKEN, {expiresIn: 60 * 60 * 5});
     res.status(200).json({token});
   };
 
@@ -284,12 +285,16 @@ module.exports = function (io) {
   let refreshUserData = (req, res) => {
     let token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
-      if (!err)
+      if (!err) {
         Users.findById(decoded.user).select({password: 0, __v: 0}).exec(function (err, user) {
           if (!err) {
             res.status(200).json(user)
           }
         });
+      } else {
+        res.status(401).send(err)
+      }
+
     })
   };
 

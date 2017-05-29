@@ -1,4 +1,5 @@
-import{DataService} from './data.service';
+import {DataService} from './data.service';
+import {PublicService} from './public.service';
 import {JwtHelper, tokenNotExpired} from 'angular2-jwt';
 import {Injectable} from '@angular/core';
 import {User} from '../interface/interface'
@@ -9,10 +10,10 @@ export class AuthService {
   jwtHelper: JwtHelper = new JwtHelper();
   token;
 
-  constructor(private data: DataService) {
-    this.token = localStorage.getItem('token')
+  constructor(private publicService: PublicService, private data: DataService) {
+    this.token = localStorage.getItem('token');
     if (this.token) {
-      this.user = this.decodeUserFromToken(this.token)
+      this.user = this.decodeUserFromToken(this.token);
     }
   }
 
@@ -22,7 +23,7 @@ export class AuthService {
   }
 
   loginAccount(emailAndPassword) {
-    return this.data.loginAccount(emailAndPassword)
+    return this.publicService.loginAccount(emailAndPassword)
       .map(res => res.json())
       .map(data => {
         console.log(data);

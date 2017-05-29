@@ -6,6 +6,7 @@ import {HttpModule} from '@angular/http';
 import {RouterModule, CanActivate} from '@angular/router';
 import {AppComponent} from './app.component';
 import {DataService} from './services/data.service';
+import {PublicService} from './services/public.service';
 import {AuthService} from './services/auth.service';
 import {ProfileComponent} from './profile/profile.component';
 import {SidebarComponent} from './sidebar/sidebar.component';
@@ -77,6 +78,7 @@ const routing = RouterModule.forRoot([
   providers: [
     DataService,
     AuthService,
+    PublicService,
     AuthGuard
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

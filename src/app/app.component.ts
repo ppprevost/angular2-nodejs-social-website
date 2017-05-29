@@ -1,5 +1,6 @@
 import {Component, OnInit, OnDestroy, ViewContainerRef, ViewChild} from '@angular/core';
 import {DataService} from './services/data.service';
+import {PublicService} from './services/public.service';
 import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import{Router} from '@angular/router';

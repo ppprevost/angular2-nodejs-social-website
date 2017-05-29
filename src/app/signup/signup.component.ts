@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Http} from '@angular/http';
-import {DataService} from '../services/data.service'
+import {PublicService} from '../services/public.service'
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {Router} from '@angular/router';
-import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
+import {ToastyService} from 'ng2-toasty';
 import swal from 'sweetalert2'
 import 'rxjs/add/operator/map';
 
@@ -21,7 +20,7 @@ export class SignupComponent implements OnInit {
   username = new FormControl('', [Validators.required, Validators.maxLength(20)]);
   password = new FormControl('', Validators.required);
 
-  constructor(private toastyService: ToastyService, private dataService: DataService, private addUserForm: FormBuilder, private router: Router) {
+  constructor(private toastyService: ToastyService, private publicService: PublicService, private addUserForm: FormBuilder, private router: Router) {
   }
 
   ngOnInit() {
@@ -36,7 +35,7 @@ export class SignupComponent implements OnInit {
 
   handleCorrectCaptcha(event) {
 
-    this.dataService.getCaptcha(event)
+    this.publicService.getCaptcha(event)
       .map(res => res.json())
       .subscribe((res) => {
         console.log(res);
@@ -58,7 +57,7 @@ export class SignupComponent implements OnInit {
           theme: 'material',
         };
       };
-      this.dataService.createAccount(this.addUser.value)
+      this.publicService.createAccount(this.addUser.value)
         .map(res => res.json().msg)
         .subscribe((res) => {
           this.res = res;
@@ -74,7 +73,7 @@ export class SignupComponent implements OnInit {
           this.toastyService.error(toastOptions(err, "An error occured"))
         });
     } else {
-      this.dataService.resendVerifMail(this.addUser.value.email)
+      this.publicService.resendVerifMail(this.addUser.value.email)
         .map(res => res.json())
         .subscribe(data => {
           swal({
