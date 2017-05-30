@@ -1,6 +1,7 @@
-import {Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges, OnDestroy} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {AuthService} from '../../services/auth.service'
+import {SocketService} from '../../services/socket.service';
 
 interface Obj {
   userId: string;
@@ -12,10 +13,12 @@ interface Obj {
   templateUrl: './follow.component.html',
   styleUrls: ['./follow.component.scss'],
 })
-export class FollowComponent implements OnInit, OnChanges {
+export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   isLoading = true;
+  table = ["friendRequest", "removeFriend", "friendRequestAccepted"];
   @Input() waste;
   @Input() user;
+
   @Output() notify: EventEmitter<string> = new EventEmitter<string>();
   private obj = (wasterValue) => {
     let obj: Obj = <any>{
@@ -27,11 +30,13 @@ export class FollowComponent implements OnInit, OnChanges {
   private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
   private options = new RequestOptions({headers: this.headers});
 
-  constructor(private auth: AuthService, private http: Http) {
+  constructor(private socket: SocketService, private auth: AuthService, private http: Http) {
   }
 
   ngOnInit() {
     this.getThisUser();
+    this.socketMethodUse(this.table)
+
   }
 
   followUserOk(wasterId) {
@@ -41,11 +46,28 @@ export class FollowComponent implements OnInit, OnChanges {
     });
   }
 
+  ngOnDestroy() {
+    for (var i = 0; i < this.table.length; i++) {
+      this['connection' + i].unsubscribe();
+    }
+  }
+
   follow(wasterId) {
     //  this.notify.emit('Click from nested component');
     this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
       this.auth.callRefreshUserData(data.json());
       this.getThisUser();
+    });
+  }
+
+  socketMethodUse(table) {
+    table.forEach((elem, i) => {
+      this['connection' + i] = this.socket.socketFunction(elem)
+        .subscribe(waste => {
+          this.auth.callRefreshUserData(waste);
+          this.getThisUser(waste);
+          console.log(waste);
+        });
     });
   }
 
@@ -86,5 +108,6 @@ export class FollowComponent implements OnInit, OnChanges {
       this.getThisUser();
     });
   }
+
 
 }

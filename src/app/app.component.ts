@@ -17,6 +17,7 @@ import {SocketService} from './services/socket.service';
 export class AppComponent implements OnInit, OnDestroy {
   private loginUser: FormGroup;
   private loginAndSocket;
+  private table = ["friendRequest", "removeFriend", "friendRequestAccepted"];
   private email = new FormControl('', Validators.required);
   private password = new FormControl('', Validators.required);
   private connection;
@@ -38,11 +39,15 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.loggedIn()) {
       this.initSocket()
     }
+
   }
 
   ngOnDestroy() {
     this.connectionOfUser.unsubscribe();
     this.connection.unsubscribe();
+    for (var i = 0; i < this.table.length; i++) {
+      this['connection' + i].unsubscribe();
+    }
   }
 
   loginAccount() {
@@ -65,6 +70,16 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         }
       });
+  }
+
+  socketMethodUse(table) {
+    table.forEach((elem, i) => {
+      this['connection' + i] = this.socket.socketFunction(elem)
+        .subscribe(waste => {
+          this.auth.callRefreshUserData(waste);
+          console.log(waste);
+        });
+    });
   }
 
   logOut() {
@@ -91,10 +106,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   loggedIn() {
-    return this.auth.loggedIn()
+    return this.auth.loggedIn();
   }
 
   initSocket() {
+    this.socketMethodUse(this.table);
     this.connection = this.socket.socketFunction("getNewPost")
       .subscribe(message => {
         console.log(message)

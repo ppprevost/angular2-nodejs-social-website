@@ -102,10 +102,16 @@ module.exports = function (io) {
             statut: "requested",
             date: date
           });
+
         }
       }
       waster.save(function () {
         userIdWaster = waster.username;
+        UsersConnected.findOne({userId:wasterId}, (err, userCo) => {
+          userCo.location.forEach(elem => {
+            io.sockets.connected[elem.socketId].emit('friendRequest', waster)
+          })
+        })
       })
     });
     Users.findById(userId, function (err, follower) {
@@ -153,7 +159,13 @@ module.exports = function (io) {
         }
 
       });
-      waster.save();
+      waster.save(()=>{
+        UsersConnected.findOne({userId:wasterId}, (err, userCo) => {
+          userCo.location.forEach(elem => {
+            io.sockets.connected[elem.socketId].emit('friendRequestAccepted', waster)
+          })
+        })
+      });
     });
     Users.findById(userId, function (err, follower) {
       if (err) {
@@ -181,7 +193,13 @@ module.exports = function (io) {
           waster.following.splice(doc, 1)
         }
       });
-      waster.save();
+      waster.save(()=>{
+        UsersConnected.findOne({userId:wasterId}, (err, userCo) => {
+          userCo.location.forEach(elem => {
+            io.sockets.connected[elem.socketId].emit('removeFriend', waster)
+          })
+        })
+      });
     });
     Users.findById(userId, function (err, follower) {
       follower.following.forEach(function (doc) {

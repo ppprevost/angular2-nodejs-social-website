@@ -30,7 +30,9 @@
             <a *ngIf="!auth.loggedIn()" routerLink="/signup" routerLinkActive="active">Create An Account</a>
           </div>
         </div>
+
         <ul *ngIf="auth.loggedIn()" class="nav navbar-nav navbar-right">
+
           <li class="dropdown">
             <a data-toggle="dropdown" class="navbar-avatar dropdown-toggle"> Menu<i class="caret"></i>
             </a>
@@ -44,6 +46,11 @@
             </ul>
           </li>
         </ul>
+        <ul *ngIf="auth.loggedIn()" class="nav navbar-nav navbar-right">
+          <li>
+            <a>{{auth.user.username}}</a>
+          </li>
+          </ul>
       </div>
     </div>
   </nav>
