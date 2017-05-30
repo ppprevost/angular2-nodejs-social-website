@@ -8,13 +8,13 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
+
+      </div>
+      <div id="navbar" class="navbar-collapse">
         <a href="/" class="navbar-brand">My Social Website</a>
         <a *ngIf="auth.loggedIn()" class="navbar-brand" [routerLink]="['/my-profile', auth.user._id]"
            routerLinkActive="active">My
           Profile</a>
-      </div>
-      <div id="navbar" class="navbar-collapse">
-
         <div class="nav navbar-nav navbar-right">
           <div class="form-inline">
             <form *ngIf="!auth.loggedIn()" [formGroup]="loginUser">
