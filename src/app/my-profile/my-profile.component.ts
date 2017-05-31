@@ -4,7 +4,7 @@ import {AuthService} from '../services/auth.service';
 import {Params, ActivatedRoute} from '@angular/router';
 import {WasteComponent} from '../utils/waste/waste.component';
 import {Compiler} from '@angular/core';
-import {User, Waste} from '../interface/interface';
+import {User} from '../interface/interface';
 
 @Component({
   selector: 'app-my-profile',

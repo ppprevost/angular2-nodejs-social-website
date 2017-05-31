@@ -17,10 +17,14 @@ import {SocketService} from './services/socket.service';
 export class AppComponent implements OnInit, OnDestroy {
   private loginUser: FormGroup;
   private loginAndSocket;
-  private table = ["friendRequest", "removeFriend", "friendRequestAccepted"];
+  private table = [{type: "friendRequest", see: "Friend Request"}, {
+    type: "removeFriend",
+    see: "You're not friend anymore"
+  }, {type: "friendRequestAccepted", see: "Friend Request Accepted"}];
   private email = new FormControl('', Validators.required);
   private password = new FormControl('', Validators.required);
   private connection;
+  private countFriendRequest: number = 0;
   private connectionOfUser;
   user;
 
@@ -64,9 +68,9 @@ export class AppComponent implements OnInit, OnDestroy {
           this.toastyService.error(err.json());
         } else {
           if (Array.isArray(err.json())) {
-            this.toastyService.error(err.json()[0].msg)
+            this.toastyService.error(err.json()[0].msg);
           } else {
-            this.toastyService.error(err.json().msg)
+            this.toastyService.error(err.json().msg);
           }
         }
       });
@@ -74,10 +78,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   socketMethodUse(table) {
     table.forEach((elem, i) => {
-      this['connection' + i] = this.socket.socketFunction(elem)
+      this['connection' + i] = this.socket.socketFunction(elem.type)
         .subscribe(waste => {
           this.auth.callRefreshUserData(waste);
-          console.log(waste);
+          if(elem.type == "friendRequest"){
+            this.countFriendRequest++;
+          }
+          this.toastyService.info({title: "new request from friend", msg: waste.username + ' : ' + elem.see});
         });
     });
   }
@@ -102,7 +109,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       };
       this.toastyService.info(toastOptions);
-    })
+    });
   }
 
   loggedIn() {
@@ -110,17 +117,23 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initSocket() {
-    this.socketMethodUse(this.table);
-    this.connection = this.socket.socketFunction("getNewPost")
-      .subscribe(message => {
-        console.log(message)
-        this.toastyService.info({title: 'you have a new post !', msg: message.content})
-      });
+
+
+
     this.connectionOfUser = this.socket.socketFunction("connect").subscribe(connection => {
       this.auth.callRefreshUserData();
+      this.auth.user.following.forEach(elem => {
+        if (elem.statut == "requested") {
+          this.countFriendRequest++;
+        }
+      });
       this.data.refreshSocketIdOfConnectedUsers(this.auth.user._id, this.socket.socket.id, localStorage.token).subscribe((data) => {
+        this.socketMethodUse(this.table);
         console.log(data)
-
+        this.connection = this.socket.socketFunction("getNewPost").subscribe(message => {
+          console.log(message)
+          this.toastyService.info({title: 'you have a new post !', msg: message.content})
+        });
       });
     });
   }

@@ -107,11 +107,7 @@ module.exports = function (io) {
       }
       waster.save(function () {
         userIdWaster = waster.username;
-        UsersConnected.findOne({userId:wasterId}, (err, userCo) => {
-          userCo.location.forEach(elem => {
-            io.sockets.connected[elem.socketId].emit('friendRequest', waster)
-          })
-        })
+        sendSocketNotification(waster, 'friendRequest')
       })
     });
     Users.findById(userId, function (err, follower) {
@@ -142,6 +138,16 @@ module.exports = function (io) {
     });
   };
 
+  let sendSocketNotification = ((waster, notif) => {
+    UsersConnected.findOne({userId: waster._id}, (err, userCo) => {
+      if (userCo) {
+        userCo.location.forEach(elem => {
+          io.sockets.connected[elem.socketId].emit(notif, waster)
+        })
+      }
+    })
+  });
+
   let followUserOk = function (req, res) {
     var userId = req.body.userId,
       wasterId = req.body.wasterId;
@@ -159,12 +165,8 @@ module.exports = function (io) {
         }
 
       });
-      waster.save(()=>{
-        UsersConnected.findOne({userId:wasterId}, (err, userCo) => {
-          userCo.location.forEach(elem => {
-            io.sockets.connected[elem.socketId].emit('friendRequestAccepted', waster)
-          })
-        })
+      waster.save(() => {
+        sendSocketNotification(waster, 'friendRequestAccepted')
       });
     });
     Users.findById(userId, function (err, follower) {
@@ -193,12 +195,8 @@ module.exports = function (io) {
           waster.following.splice(doc, 1)
         }
       });
-      waster.save(()=>{
-        UsersConnected.findOne({userId:wasterId}, (err, userCo) => {
-          userCo.location.forEach(elem => {
-            io.sockets.connected[elem.socketId].emit('removeFriend', waster)
-          })
-        })
+      waster.save(() => {
+        sendSocketNotification(waster, 'removeFriend');
       });
     });
     Users.findById(userId, function (err, follower) {
