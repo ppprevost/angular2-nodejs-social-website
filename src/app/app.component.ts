@@ -41,7 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     if (this.loggedIn()) {
-      this.initSocket()
+      this.initSocket();
     }
 
   }

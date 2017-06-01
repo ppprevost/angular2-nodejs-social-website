@@ -56,23 +56,49 @@ module.exports = function (io) {
           res.send("deconnection effectuée")
         }
       });
+     //TODO  deconnectionMethod('userId', decoded.user._id)
     })
   };
 
   let deleteSocketIdDB = (socketId) => {
+   //TODO  deconnectionMethod('location.socketId', socketId)
     UsersConnected.findOne({'location.socketId': socketId}, (err, locationUser) => {
       if (!err) {
         if (locationUser) {
-          let indexOfLocation = locationUser.location.indexOf(locationUser.location.find(elem => {
-            return elem.socketId == socketId
-          }));
-          //locationUser.location[indexOfLocation].remove();
-          locationUser.location.splice(indexOfLocation, 1);
-          locationUser.save()
+          if (locationUser.location.length <= 1) {
+            locationUser.remove()
+          } else {
+            let indexOfLocation = locationUser.location.indexOf(locationUser.location.find(elem => {
+              return elem.socketId == socketId
+            }));
+            //locationUser.location[indexOfLocation].remove();
+            locationUser.location.splice(indexOfLocation, 1);
+            locationUser.save()
+          }
         }
       }
     })
   };
+
+  let deconnectionMethod = (key, id, response) => {
+    UsersConnected.findOne({[key]: id}, (err, locationUser) => {
+      if (!err) {
+        if (locationUser) {
+          if (locationUser.location.length <= 1) {
+            locationUser.remove()
+          } else {
+            let indexOfLocation = locationUser.location.indexOf(locationUser.location.find(elem => {
+              return elem.socketId == socketId
+            }));
+            //locationUser.location[indexOfLocation].remove();
+            locationUser.location.splice(indexOfLocation, 1);
+            locationUser.save()
+          }
+        }
+      }
+    })
+    response("socket disconnected")
+  }
 
   let followUser = function (req, res) {
     var userId = req.body.userId,

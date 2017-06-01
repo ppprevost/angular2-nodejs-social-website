@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
       userType: this.typeWaste || 'public',
       content: this.newWaste
     };
-    if (this.newWaste != "") {
+    if (this.newWaste && this.newWaste != "") {
       return this.data.sendWaste({request: request}).map(res => res.json())
         .subscribe(data => {
             this.newWaste = '';
@@ -48,7 +48,6 @@ export class HomeComponent implements OnInit {
           (err => console.log(err)),
           () => this.wasteComponent.getPosts()); // une fois// qu'on a bien enregfistré on rappelle la méthode getost du component child
     }
-
   }
 
 }

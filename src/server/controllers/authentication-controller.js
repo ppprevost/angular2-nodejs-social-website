@@ -168,7 +168,7 @@ module.exports = function (io) {
                 if (userAlreadyConnected) {
                   userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
                   userAlreadyConnected.save(() => {
-                    locationSearch(userAlreadyConnected, req.body, userData, res)
+                    locationSearch(userAlreadyConnected, req.body.socketId, userData, res)
                   })
                 } else {
                   let newUserConnected = new UsersConnected({
@@ -176,7 +176,7 @@ module.exports = function (io) {
                     location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
                   });
                   newUserConnected.save((err, savedUser) => {
-                    locationSearch(savedUser, req.body, userData, res)
+                    locationSearch(savedUser, req.body.socketId, userData, res)
                   });
                 }
 
@@ -199,12 +199,17 @@ module.exports = function (io) {
     });
   };
 
-  let locationSearch = (savedUser, reqBody, userData, res) => {
+  let locationSearch = (savedUser, socketId, userData, res) => {
     let idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
-      return elem.socketId == reqBody["socketId"]
+      return elem.socketId == socketId
     }));
-    delete userData._doc.password;
-    userData._doc.idOfLocation = savedUser.location[idOfLocation]["_id"];
+    if (userData && userData._doc && userData._doc.password) {
+      delete userData._doc.password;
+      userData._doc.idOfLocation = savedUser.location[idOfLocation]["_id"];
+    } else {
+      userData.idOfLocation = savedUser.location[idOfLocation]["_id"];
+    }
+
     const token = jwt.sign({
       user: userData
     }, process.env.SECRET_TOKEN, {expiresIn: 60 * 60 * 5});
@@ -233,12 +238,22 @@ module.exports = function (io) {
                   }
                 })
               });
-              user.location = location;
+              if (!location.length) {
+                user.remove()
+              } else {
+                user.location = location;
+              }
               user.save(() => {
                 res.send(`socketnumber ${req.body.socketId} has been updated`)
               });
             } else {
-
+              let newUserConnected = new UsersConnected({
+                userId: decoded.user._id,
+                location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
+              });
+              newUserConnected.save((err, savedUser) => {
+                locationSearch(savedUser, socketId, decoded.user, res)
+              });
             }
           } else {
             console.log(err)

@@ -80,18 +80,21 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   }
 
   sendWaste() {
-    let request = {
-      user: this.auth.user.username,
-      userId: this.auth.user._id,
-      userType: this.typeWaste || 'public',
-      content: this.newWaste
-    };
-    return this.data.sendWaste({request: request}).map(res => res.json())
-      .subscribe(data => {
-          this.newWaste = '';
-        },
-        (err => console.log(err)),
-        () => this.wasteComponent.getPosts()); // une fois// qu'on a bien enregfistré on rappelle la méthode getost du component child
+    if (this.newWaste && this.newWaste != "") {
+      let request = {
+        user: this.auth.user.username,
+        userId: this.auth.user._id,
+        userType: this.typeWaste || 'public',
+        content: this.newWaste
+      };
+      return this.data.sendWaste({request: request}).map(res => res.json())
+        .subscribe(data => {
+            this.newWaste = '';
+          },
+          (err => console.log(err)),
+          () => this.wasteComponent.getPosts()); // une fois// qu'on a bien enregfistré on rappelle la méthode getost du component child
+    }
+
   }
 
 }
