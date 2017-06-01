@@ -36,13 +36,14 @@ export class AuthService {
     return this.jwtHelper.decodeToken(token).user;
   }
 
-  callRefreshUserData(userData?: User) {
+  callRefreshUserData(userData?: User, callback?: Function) {
     if (userData) {
       return this.user = userData
     } else {
       return this.data.refreshUserData({token: this.token}).subscribe(user => {
 
         this.user = user.json();
+        callback();
       });
     }
   }

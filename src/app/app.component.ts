@@ -80,11 +80,12 @@ export class AppComponent implements OnInit, OnDestroy {
     table.forEach((elem, i) => {
       this['connection' + i] = this.socket.socketFunction(elem.type)
         .subscribe(waste => {
-          this.auth.callRefreshUserData(waste);
-          if(elem.type == "friendRequest"){
-            this.countFriendRequest++;
-          }
-          this.toastyService.info({title: "new request from friend", msg: waste.username + ' : ' + elem.see});
+          this.auth.callRefreshUserData(waste, () => {
+            if (elem.type == "friendRequest") {
+              this.countFriendRequest++;
+              this.toastyService.info({title: "new request from friend", msg: waste.username + ' : ' + elem.see});
+            }
+          });
         });
     });
   }
@@ -117,22 +118,21 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initSocket() {
-
-
-
     this.connectionOfUser = this.socket.socketFunction("connect").subscribe(connection => {
-      this.auth.callRefreshUserData();
-      this.auth.user.following.forEach(elem => {
-        if (elem.statut == "requested") {
-          this.countFriendRequest++;
-        }
+      this.auth.callRefreshUserData(null, () => {
+        this.auth.user.following.forEach(elem => {
+          if (elem.statut == "requested") {
+            this.countFriendRequest++;
+          }
+        });
       });
+
       this.data.refreshSocketIdOfConnectedUsers(this.auth.user._id, this.socket.socket.id, localStorage.token).subscribe((data) => {
         this.socketMethodUse(this.table);
         console.log(data)
         this.connection = this.socket.socketFunction("getNewPost").subscribe(message => {
           console.log(message)
-          this.toastyService.info({title: 'you have a new post !', msg: message.content})
+          this.toastyService.info({title: 'you have a new post !', msg: message.content});
         });
       });
     });
