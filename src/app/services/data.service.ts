@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
-
+import {Waste} from "../interface/interface";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
@@ -72,6 +72,10 @@ export class DataService {
 
   sendWaste(request: Object) {
     return this.http.post('api/waste/sendPost', JSON.stringify(request), this.options)
+  }
+
+  dataCommentary(waste: Waste) {
+    return this.http.post('api/waste/getCommentary', JSON.stringify(waste), this.options)
   }
 
   getPost(userId: string, numberOfWaste: number, typePost: string, onlyOwnPost: boolean) {

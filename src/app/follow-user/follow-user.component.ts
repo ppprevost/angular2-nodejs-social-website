@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, AfterViewInit} from '@angular/core';
+import {Component, OnInit, ViewChild, AfterViewInit, OnDestroy} from '@angular/core';
 import {DataService} from '../services/data.service'
 import {AuthService} from '../services/auth.service'
 import 'rxjs/add/operator/toPromise';
@@ -10,15 +10,16 @@ import {ListOfFriendComponent} from '../utils/list-of-friend/list-of-friend.comp
   styleUrls: ['./follow-user.component.css']
 })
 
-export class FollowUserComponent implements OnInit, AfterViewInit {
+export class FollowUserComponent implements OnInit, AfterViewInit, OnDestroy {
   wasters;
+  unsub;
   @ViewChild(ListOfFriendComponent) listOfFriendComponent: ListOfFriendComponent;
 
   constructor(private auth: AuthService, private data: DataService) {
   }
 
   ngOnInit() {
-    this.data.getUsers().subscribe(data => {
+    this.unsub = this.data.getUsers().subscribe(data => {
       this.wasters = data.json().filter(elem => {
         return elem._id != this.auth.user._id
       });
@@ -27,6 +28,10 @@ export class FollowUserComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
 
+  }
+
+  ngOnDestroy() {
+    this.unsub.unsubscribe()
   }
 
   onNotify(message: string, waster) {

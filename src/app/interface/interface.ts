@@ -20,8 +20,16 @@ export interface User {
 export interface Waste {
   readonly _id: string
   userId: string;
-  commentary:[{userId:string,content:{type:string}, data:string, date:Date}]
+  commentary: [Commentary]
   content: string;
   date: Date;
-  userType: string;
+  userType: string
+  isOpeningCommentary?: boolean;
+}
+
+export interface Commentary {
+  readonly _id: string,
+  userId: string,
+  type: string,
+  data: string
 }

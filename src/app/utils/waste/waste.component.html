@@ -26,40 +26,48 @@
           <div class="panel-body">
             <p>{{waste.content}}</p>
           </div>
-          <div class="view-all-comments">
-            <a *ngIf="waste.commentary" href="#">
+          <div
+               class="view-all-comments">
+            <div *ngIf="waste.commentary.length" (click)="waste.isOpeningCommentary = !waste.isOpeningCommentary; dataCommentaryWanted(waste)">
+            <a *ngIf="waste.commentary">
               <i class="fa fa-comments-o"></i> View all
             </a>
-            <span *ngIf="waste.commentary">{{waste.commentary.length}} commment</span>
-            <ul class="comments">
-              <li *ngFor="let comment of waste.commentary" class="media">
-                <div class="media-left">
-                  <a href="">
-                    <img [src]="comment.image" class="media-object">
-                  </a>
-                </div>
-                <div class="media-body">
-                  <div class="pull-right dropdown" data-show-hover="li" style="display: none;">
-                    <a href="#" data-toggle="dropdown" class="toggle-button">
-                      <i class="fa fa-pencil"></i>
+            <span *ngIf="waste.commentary">{{waste.commentary.length}} comment</span>
+
+            </div>
+            <ul class="comments" >
+              <div *ngIf="waste.isOpeningCommentary">
+                <li *ngFor="let comment of waste.commentary" class="media">
+                  <div class="media-left">
+                    <a href="">
+                      <img [src]="comment.image" class="media-object">
                     </a>
-                    <ul class="dropdown-menu" role="menu">
-                      <li><a href="#">Edit</a></li>
-                      <li><a href="#">Delete</a></li>
-                    </ul>
                   </div>
-                  <a href="" class="comment-author pull-left">{{comment.username}}</a>
-                  <span>{{comment.data}}</span>
-                  <div class="comment-date">{{comment.date}}</div>
-                </div>
-              </li>
+                  <div class="media-body">
+                    <div class="pull-right dropdown" data-show-hover="li" style="display: none;">
+                      <a href="#" data-toggle="dropdown" class="toggle-button">
+                        <i class="fa fa-pencil"></i>
+                      </a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Edit</a></li>
+                        <li><a href="#">Delete</a></li>
+                      </ul>
+                    </div>
+                    <a href="" class="comment-author pull-left">{{comment.username}}</a>
+                    <span>{{comment.data}}</span>
+                    <div class="comment-date">{{comment.date}}</div>
+                  </div>
+                </li>
+              </div>
+
               <li class="comment-form">
                 <form action="" (ngSubmit)="sendWasteComments(waste._id,value)">
                   <div class="input-group">
                              <span class="input-group-btn">
-                   <a href="" class="btn btn-default"><i  class="fa fa-photo"></i></a>
+                   <a href="" class="btn btn-default"><i class="fa fa-photo"></i></a>
                 </span>
-                    <input name="newComment" #value value="" placeholder="leave a comment" type="text" class="form-control">
+                    <input name="newComment" #value value="" placeholder="leave a comment" type="text"
+                           class="form-control">
                   </div>
                 </form>
               </li>

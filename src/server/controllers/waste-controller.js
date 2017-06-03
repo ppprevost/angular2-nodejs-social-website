@@ -89,6 +89,28 @@ module.exports = function (io) {
     });
   };
 
+  let getCommentary = (req, res) => {
+    let commentary = req.body.commentary
+    let tableUserCommentary = commentary.map(elem => {
+      return elem.userId
+    }).filter((v, i, a) => {
+      return a.indexOf(v) === i
+    });
+    Users.find({_id:{$in: tableUserCommentary}}).exec((err, users) => {
+      users.forEach(user => {
+        commentary.map(comment => {
+          if (user._id == comment.userId) {
+            comment.image = user.image;
+            comment.username = user.username
+          }
+          return comment
+        })
+      });
+      req.body.commentary = commentary
+      res.json(req.body)
+    })
+  };
+
   let sendComments = (req, res) => {
     let comments = req.body.comments;
     Waste.findById(comments.wasteId, (err, waste) => {
@@ -146,6 +168,7 @@ module.exports = function (io) {
 
   return {
     listOfFriends,
+    getCommentary,
     sendComments,
     sendPost,
     getPost

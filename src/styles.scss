@@ -60,7 +60,7 @@ article {
 }
 
 header {
-  height:70px;
+  height: 70px;
 }
 
 .waste-section img {
@@ -3386,9 +3386,6 @@ input {
     padding-right: 15px;
   }
 }
-
-
-
 
 ul.icon-list {
   list-style: none;
@@ -15964,7 +15961,7 @@ html.app-mobile {
   line-height: 50px;
   padding: 0 15px;
   font-size: 1.265rem;
-  font-weight: 700;
+  //font-weight: 700;
   &:hover, a:hover {
     text-decoration: none;
   }

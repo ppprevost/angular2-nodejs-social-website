@@ -14,12 +14,14 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
   @Input() numberOfWaste: number;
   @Input() typePost;
   @Input() onlyOwnPost;
+  isSwitchingComment;
   @Input() userId: string;
   wastes: [Waste];
   newComment: string;
   connection;
 
   constructor(private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
+
   }
 
   ngOnInit() {
@@ -48,8 +50,26 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
       .subscribe(
         data => {
           this.wastes = data;
+          this.wastes.forEach(waste => {
+            waste.isOpeningCommentary = false
+          })
         },
         err => console.log(err))
+  }
+
+  dataCommentaryWanted(waste) {
+    if (waste.isOpeningCommentary) {
+      this.data.dataCommentary(waste)
+        .map(res => res.json())
+        .subscribe(res => {
+          return this.wastes.map(elem => {
+            if (elem._id == res._id) {
+              elem = res
+            }
+            return elem
+          })
+        })
+    }
   }
 
   sendWasteComments(wasteId, value) {
