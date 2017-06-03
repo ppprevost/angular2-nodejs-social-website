@@ -89,6 +89,30 @@ module.exports = function (io) {
     });
   };
 
+  let sendComments = (req, res) => {
+    Waste.findOne({_id: mongoose.Types.ObjectId(req.body.wasteId)}, (err, waste) => {
+      let comments = req.body.comments;
+      waste.commentary.push(comments);
+      waste.save(() => {
+        Users.findOne(waste.userId, (err, user) => {
+          user = user.following.map(elem => {
+            return elem.status == "accepted"
+          }).map(doc => {
+            return doc.userId
+          });
+          UsersConnected.find({userId: {$in: user}}).exec((err, userCo) => {
+            userCo.forEach(userConected => {
+              userConected.location.forEach(socketId => {
+                io.sockets.connected[socketId].emit('newComments', comments)
+              });
+            })
+          });
+          res.json(comments)
+        });
+      });
+    })
+  };
+
   /**
    *
    * @param req
@@ -116,6 +140,7 @@ module.exports = function (io) {
 
   return {
     listOfFriends,
+    sendComments,
     sendPost,
     getPost
   }

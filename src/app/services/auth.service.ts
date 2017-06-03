@@ -43,7 +43,7 @@ export class AuthService {
       return this.data.refreshUserData({token: this.token}).subscribe(user => {
 
         this.user = user.json();
-        callback();
+      if(callback)  callback();
       });
     }
   }

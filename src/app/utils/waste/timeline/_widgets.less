@@ -1,0 +1,160 @@
+.status-share {
+	.form-control {
+		border: none;
+		box-shadow: none;
+	}
+}
+
+// TIMELINE > COMMENT
+.user-comment {
+	border-top: 1px solid #ecf0f1;
+	&:first-of-type {
+		border-top: 0;
+	}
+	padding: 10px;
+	.media-body {
+		padding-top: 5px;
+		p.text-muted {
+			margin-top: -4px;
+			font-size: 12px;
+		}
+	}
+}
+
+// TIMELINE > AUTHOR INFO
+.post-author {
+	margin-bottom: 10px;
+	color: #6e7882;
+	.media-body {
+		padding-top: 5px;
+		a.bookmark-post {
+			color: #6e7882;
+			font-weight: bold;
+
+			&:hover {
+				color: darken(#6e7882, 20%);
+				text-decoration: none;
+				cursor: pointer;
+			}
+		}
+	}
+	p {
+		margin-bottom: 0;
+		font-size: 12px;
+	}
+}
+
+// TIMELINE > LEAVE COMMENT INPUT
+.leave-comment {
+	border-top: 1px solid #ecf0f1;
+	padding: 10px;
+
+	.form-control {
+		background: #ecf0f1;
+		border-color: #ecf0f1;
+		box-shadow: none;
+	}
+}
+
+// TIMELINE > PLACE MEDIA
+.post-place {
+	.fa.pull-left {
+		padding: 20px 30px;
+		color: #d2dce4;
+		border: 1px solid #ecf0f1;
+	}
+	margin-bottom: 10px;
+	h4 {
+		margin-bottom: 5px;
+	}
+	p.text-muted {
+		font-size: 13px;
+	}
+	a {
+		color: #6e7882;
+		margin-right: 10px;
+		&:hover {
+			color: @primary-color;
+			text-decoration: none;
+		}
+	}
+}
+
+// TIMELINE > EXPERIENCE
+.timeline-experience {
+	list-style: none;
+	padding-left: 20px;
+	margin-bottom: 0;
+	li {
+		padding: 0 20px 20px;
+
+		border-left: 1px solid #D2DCE5;
+		position: relative;
+		&:before {
+			font-family: FontAwesome;
+			font-style: normal;
+			font-weight: normal;
+			line-height: 0.8;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			content: "\f10c";
+			font-size: 14px;
+			position: absolute;
+			left: -6px;
+			background: #ffffff;
+			border-radius: 50%;
+			color: @gray-light;
+		}
+		.date {
+			color: @gray;
+			top: -5px;
+			position: relative;
+		}
+		&:hover {
+			&:before {
+				color: @gray;
+			}
+		}
+	}
+
+	.item-media {
+		.fa.pull-left {
+			padding: 12px 0;
+			width: 80px;
+			text-align: center;
+			color: #d2dce4;
+			border: 1px solid #ecf0f1;
+			border-radius: 5px;
+		}
+		h4 {
+			margin-bottom: 5px;
+		}
+		p.text-muted {
+			font-size: 13px;
+		}
+		a {
+			color: #6e7882;
+			margin-right: 10px;
+			&:hover {
+				color: @btn-primary-bg;
+				text-decoration: none;
+			}
+		}
+	}
+}
+
+// TIMELINE > ATTACHMENT
+.timeline-attachment {
+	.fa {
+		font-size: 20px;
+	}
+	font-size: 13px;
+	a {
+		color: @inverse-color;
+		padding: 0 5px;
+	}
+	&:hover {
+		background: #ffffff;
+	}
+}
+

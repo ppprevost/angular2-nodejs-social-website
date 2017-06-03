@@ -1,0 +1,73 @@
+
+.panel.panel-default ul.comments {
+    li {
+        .pull-right.dropdown {
+            .dropdown-menu {
+                &:before {
+                    left: 6px;
+                    right: auto;
+                }
+            }
+        }
+    }
+    a.comment-author {
+        padding-left:5px;
+        padding-right: 0;
+    }
+}
+.pull-right > .dropdown-menu {
+    left: 0;
+    right: auto;
+}
+
+// _timeline-list.less
+ul.timeline-list {
+    > li {
+        .share-button {
+            margin-right: 26px;
+            margin-left: 0;
+            @media (max-width: @screen-xs) {
+                right: 50%;
+                left: auto;
+                margin-right: -13px;
+                margin-left: 0;
+            }
+        }
+    }
+
+    > li.media {
+        &:before {
+            margin-right: 58px;
+            margin-left: 0;
+            @media (max-width: @screen-xs) {
+                margin-right: 50%;
+                margin-left: 0;
+            }
+            border-right: 5px solid darken(@grey-100,5%);
+            border-left: none;
+        }
+        > .media-left {
+            @media (min-width: @screen-xs) {
+                margin-right:-20px;
+                margin-left: 0;
+
+            }
+            @media (max-width: @screen-xs) {
+                right: 50%;
+                left: auto;
+                margin-right: -60px;
+                margin-left: 0;
+            }
+        }
+        > .media-body {
+            .panel {
+                float: right;
+            }
+        }
+    }
+}
+
+.timeline-months {
+    border-right: 2px solid darken(@body-bg, 3%);
+    border-left: none;
+}

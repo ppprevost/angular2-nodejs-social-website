@@ -1,0 +1,30 @@
+.timeline-block {
+	.panel-heading {
+		padding: 0;
+		background: @primary-color;
+		color: #fff;
+		border-bottom: 0;
+		img {
+			border-top-left-radius: @panel-border-radius;
+		}
+		&.title {
+			font-size: 18px;
+			padding: 10px;
+		}
+		.media-body {
+			padding: 5px;
+			a {
+				display: block;
+				font-weight: bold;
+				color: #fff;
+			}
+			i {
+				padding: 10px 5px 0 0;
+			}
+		}
+	}
+	.panel-body.panel-boxed {
+		border-top: 1px solid @panel-default-border;
+		border-bottom: 1px solid @panel-default-border;
+	}
+}

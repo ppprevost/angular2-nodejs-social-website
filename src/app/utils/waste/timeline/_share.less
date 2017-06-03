@@ -1,0 +1,54 @@
+.panel {
+	&.share {
+		.panel-body {
+			textarea.form-control {
+				padding: 0px;
+			}
+		}
+	}
+	.share-text {
+		box-shadow: none;
+		border: none;
+		background: #fff;
+		&:focus {
+			box-shadow: none;
+			border: none;
+		}
+	}
+	.share-buttons {
+		border-top-color: @panel-default-border;
+		padding: 0px;
+		a {
+			display: inline-block;
+			width: 30px;
+			height: 30px;
+			text-align: center;
+			line-height: 30px;
+			i {
+				color: @icon-gray;
+				font-size: 16px;
+				vertical-align: middle;
+			}
+			&:hover {
+				i {
+					color: @primary-color;
+				}
+				background: #fff;
+				border-left: 1px solid @panel-default-border;
+				border-right: 1px solid @panel-default-border;
+			}
+		}
+		button {
+			margin: 0px;
+			border-radius: 0;
+			position: relative;
+			z-index: 1;
+			top: -1px;
+			right: -1px;
+			height: 32px;
+			line-height: 32px;
+			padding: 0px 10px;
+		}
+
+	}
+}

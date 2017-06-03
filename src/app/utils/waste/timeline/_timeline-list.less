@@ -1,0 +1,134 @@
+ul.timeline-list {
+	position: relative;
+	list-style: none;
+	padding:0;
+	> li {
+		.share-button {
+			position: absolute;
+			margin-left: 26px;
+			display: block;
+			z-index: 3;
+			@media (max-width: @screen-xs) {
+				left: 50%;
+				margin-left: -13px;
+			}
+		}
+	}
+
+	> li.media {
+		&:before {
+			position: absolute;
+			display: block;
+			top: 0;
+			content: '';
+			height: 100%;
+			margin-left: 58px;
+			@media (max-width: @screen-xs) {
+				margin-left: 50%;
+			}
+
+			border-left: 5px solid darken(@grey-100,5%);
+			z-index: 1;
+		}
+		> .media-left {
+			text-align: center;
+			position:relative;
+			z-index:2;
+			.user-wrapper {
+				width: 120px;
+			}
+			@media (min-width: @screen-xs) {
+				margin-left:-20px;
+				img {
+					margin-top: 20px;
+				}
+			}
+			@media (max-width: @screen-xs) {
+				left: 50%;
+				margin-left: -60px;
+				margin-top: 0px !important;
+			}
+			a {
+				background: #ffffff;
+				font-weight: bold;
+				border: 1px solid darken(@grey-100,5%);
+				padding: 4px 4px;
+				border-radius: 5px;
+				margin-top: 5px;
+				display: inline-block;
+			}
+			.date {
+				background: #ffffff;
+				font-weight: bold;
+				padding: 4px;
+				border: 1px solid darken(@grey-100,5%);;
+				color: @grey-400;
+				border-radius: 5px;
+				font-size: 12px;
+				margin-top: 5px;
+				display: inline-block;
+			}
+		}
+		> .media-body {
+			min-height: 130px;
+			.media-body-wrapper	{
+				padding: 20px 0 10px;
+			}
+			.panel {
+				float: left;
+				position: relative;
+				min-width: 300px;
+
+			}
+			@media (max-width: @screen-xs) {
+				position: relative;
+				z-index: 2;
+			}
+		}
+	}
+	.media-body.fixed {
+		max-width: 500px;
+	}
+}
+
+.affix {
+	position: fixed;
+	top: 74px;
+	width: 263px;
+	@media (max-width: @screen-md) {
+		display: none;
+	}
+}
+
+#scroll-spy {
+	position: relative;
+	overflow: hidden;
+	height: 100%;
+}
+
+.timeline-months {
+	list-style: none;
+	margin-top: 20px;
+	border-left: 2px solid darken(@body-bg, 3%);
+	li {
+		&.active a, &.active:hover a {
+			color: @primary-color;
+			i {
+				color: @primary-color;
+			}
+		}
+		a {
+			color: darken(@grey-100,15%);
+			font-weight: bold;
+		}
+		&:hover {
+			a {
+				color: darken(@grey-100,35%);
+				text-decoration: none;
+				background: none;
+
+			}
+
+		}
+	}
+}

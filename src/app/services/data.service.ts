@@ -83,5 +83,7 @@ export class DataService {
     }), this.options)
   }
 
-
+  sendWasteComments(wasteId, comments) {
+    return this.http.post('/api/waste/sendComments', JSON.stringify({wasteId, comments}), this.options)
+  }
 }

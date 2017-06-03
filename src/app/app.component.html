@@ -50,7 +50,8 @@
           </li>
         </ul>
         <ul class="countFriendRequest nav navbar-nav navbar-right" *ngIf="countFriendRequest !=0">
-          <li><a href="">{{countFriendRequest}}</a></li>
+          <li><a href="" [routerLink]="['/app-follow-user']" routerLinkActive="active"><span
+            class="fa fa-user-circle"></span>{{countFriendRequest}}</a></li>
         </ul>
       </div>
     </div>
