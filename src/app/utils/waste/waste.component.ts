@@ -52,19 +52,24 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
         err => console.log(err))
   }
 
-  sendWasteComments(wasteId: string, value) {
+  sendWasteComments(wasteId, value) {
     let comments = {
+      wasteId: wasteId,
       userId: this.userId,
-      content: {
-        type: "text",
-        data: value.value,
-      },
+      typeWaste: "text",
+      data: value.value,
     };
-
-    return this.data.sendWasteComments(wasteId, comments)
+    return this.data.sendWasteComments(comments)
       .map(res => res.json())
       .subscribe(res => {
-
+        this.wastes.map(waste => {
+          if (waste._id == res.wasteId) {
+            delete res.wasteId;
+            delete res.userId;
+            waste.commentary.push(res)
+          }
+          return waste
+        })
       })
   }
 }

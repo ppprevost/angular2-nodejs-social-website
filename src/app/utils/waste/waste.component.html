@@ -27,15 +27,15 @@
             <p>{{waste.content}}</p>
           </div>
           <div class="view-all-comments">
-            <a *ngIf="waste.comments" href="#">
+            <a *ngIf="waste.commentary" href="#">
               <i class="fa fa-comments-o"></i> View all
             </a>
-            <span *ngIf="waste.comments">number of commment</span>
+            <span *ngIf="waste.commentary">{{waste.commentary.length}} commment</span>
             <ul class="comments">
-              <li *ngFor="let comment of waste.comments" class="media">
+              <li *ngFor="let comment of waste.commentary" class="media">
                 <div class="media-left">
                   <a href="">
-                    <img src="images/people/50/guy-5.jpg" class="media-object">
+                    <img [src]="comment.image" class="media-object">
                   </a>
                 </div>
                 <div class="media-body">
@@ -48,7 +48,7 @@
                       <li><a href="#">Delete</a></li>
                     </ul>
                   </div>
-                  <a href="" class="comment-author pull-left">{{comment.userId}}</a>
+                  <a href="" class="comment-author pull-left">{{comment.username}}</a>
                   <span>{{comment.data}}</span>
                   <div class="comment-date">{{comment.date}}</div>
                 </div>

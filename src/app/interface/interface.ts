@@ -18,7 +18,9 @@ export interface User {
 }
 
 export interface Waste {
+  readonly _id: string
   userId: string;
+  commentary:[{userId:string,content:{type:string}, data:string, date:Date}]
   content: string;
   date: Date;
   userType: string;

@@ -11,7 +11,7 @@
     "start": "node --harmony src/server/app.js",
     "postinstall": "ng build -aot -prod",
     "prod": "concurrently \"ng build -aot -prod\" \"node src/server/app.js\"",
-    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"nodemon --debug \"",
+    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"nodemon \"",
     "dev2": "concurrently \"ng build -w\" \"nodemon \"",
     "test": "ng test",
     "lint": "ng lint",
