@@ -127,9 +127,9 @@ export class AppComponent implements OnInit, OnDestroy {
         });
       });
 
-      this.data.refreshSocketIdOfConnectedUsers(this.auth.user._id, this.socket.socket.id, localStorage.token).subscribe((data) => {
-        this.socketMethodUse(this.table);
-        console.log(data)
+      this.data.refreshSocketIdOfConnectedUsers(this.auth.user._id, this.socket.socket.id, localStorage.token).subscribe((refreshStorage) => {
+        //this.socketMethodUse(this.table);
+        console.log(refreshStorage)
         this.connection = this.socket.socketFunction("getNewPost").subscribe(message => {
           console.log(message)
           this.toastyService.info({title: 'you have a new post !', msg: message.content});

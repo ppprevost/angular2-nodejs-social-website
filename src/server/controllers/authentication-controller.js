@@ -253,6 +253,7 @@ module.exports = function (io) {
               });
               newUserConnected.save((err, savedUser) => {
                 locationSearch(savedUser, socketId, decoded.user, res)
+
               });
             }
           } else {
