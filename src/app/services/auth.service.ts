@@ -17,7 +17,6 @@ export class AuthService {
     }
   }
 
-
   loggedIn() {
     return tokenNotExpired()
   }
@@ -41,9 +40,8 @@ export class AuthService {
       return this.user = userData
     } else {
       return this.data.refreshUserData({token: this.token}).subscribe(user => {
-
         this.user = user.json();
-      if(callback)  callback();
+      if(callback)  callback(this.user);
       });
     }
   }

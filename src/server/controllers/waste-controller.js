@@ -113,12 +113,13 @@ module.exports = function (io) {
 
   let sendComments = (req, res) => {
     let comments = req.body.comments;
+    let userId = req.body.userId;
     Waste.findById(comments.wasteId, (err, waste) => {
       comments.date = new Date();
       //delete comments.wasteId
       waste.commentary.push(comments);
       waste.save(() => {
-        Users.findById(waste.userId, (err, user) => {
+        Users.findById(comments.userId, (err, user) => {
           comments.username = user.username;
           comments.image = user.image;
           let socketUser = user.following.filter(elem => {

@@ -16,7 +16,7 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
   @Input() onlyOwnPost;
   isSwitchingComment;
   @Input() userId: string;
-  wastes: [Waste];
+  wastes: Array<Waste>;
   newComment: string;
   connection;
 
@@ -39,7 +39,7 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes) {
     console.log(changes);
-    if (changes.userId.currentValue && changes.userId.currentValue != changes.userId.previousValue) {
+    if (changes.userId && changes.userId.currentValue && changes.userId.currentValue != changes.userId.previousValue) {
       this.getPosts();
     }
   }
@@ -57,18 +57,18 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
         err => console.log(err))
   }
 
-  dataCommentaryWanted(waste) {
+  dataCommentaryWanted(waste: Waste, userId: string) {
     if (waste.isOpeningCommentary) {
-      this.data.dataCommentary(waste)
+      this.data.dataCommentary(waste, userId)
         .map(res => res.json())
         .subscribe(res => {
-          return this.wastes.map(elem => {
+          return this.wastes = this.wastes.map(elem => {
             if (elem._id == res._id) {
-              elem = res
+              elem = res as Waste;
             }
-            return elem
-          })
-        })
+            return elem;
+          });
+        });
     }
   }
 
@@ -86,10 +86,12 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
           if (waste._id == res.wasteId) {
             delete res.wasteId;
             delete res.userId;
-            waste.commentary.push(res)
+            waste.commentary.push(res);
+            waste.isOpeningCommentary = true;
+            this.dataCommentaryWanted(waste, this.userId);
           }
-          return waste
-        })
-      })
+          return waste;
+        });
+      });
   }
 }

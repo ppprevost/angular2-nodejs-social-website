@@ -42,13 +42,13 @@
             </div>
             <ul class="icon-list icon-list-block">
               <li><i class="fa fa-envelope fa-fw"></i>
-                <span href="#" class="notSendYet" *ngIf="!user?.email">your email</span>
-                <a href="#">{{user?.email}}</a></li>
+                <span href="" class="notSendYet" *ngIf="!user?.email">your email</span>
+                <a href="">{{user?.email}}</a></li>
               <li><i class="fa fa-globe fa-fw"></i>
 
-                <span href="#" class="notSendYet"
+                <span href="" class="notSendYet"
                       *ngIf="!user?.website">your website</span>
-                <a href="#">{{user?.website}}</a></li>
+                <a [href]="user?.website">{{user?.website}}</a></li>
             </ul>
           </div>
         </div>

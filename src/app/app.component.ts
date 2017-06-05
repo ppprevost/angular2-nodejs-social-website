@@ -34,7 +34,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.loginUser = this.addUserForm.group({
       email: this.email,
       password: this.password
@@ -49,13 +48,14 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.connectionOfUser.unsubscribe();
     this.connection.unsubscribe();
-    for (var i = 0; i < this.table.length; i++) {
+    for (let i = 0; i < this.table.length; i++) {
       this['connection' + i].unsubscribe();
     }
   }
 
   loginAccount() {
     this.loginAndSocket = this.loginUser.value;
+    this.loginUser.value.email =  this.loginUser.value.email.trim();
     this.loginAndSocket.socketId = this.socket.socket.id;
     this.auth.loginAccount(this.loginAndSocket).subscribe(
       data => {

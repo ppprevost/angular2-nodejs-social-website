@@ -152,7 +152,6 @@ module.exports = function (io) {
     if (errors) {
       return res.status(400).send(errors);
     }
-
     Users.find({email: req.body.email}, (err, results) => {
       if (err) {
         console.log(err);
@@ -162,9 +161,7 @@ module.exports = function (io) {
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
               delete userData.password;
-
               UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
-                let idOfLocation = '';
                 if (userAlreadyConnected) {
                   userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
                   userAlreadyConnected.save(() => {
@@ -179,7 +176,10 @@ module.exports = function (io) {
                     locationSearch(savedUser, req.body.socketId, userData, res)
                   });
                 }
-
+                const token = jwt.sign({
+                  user: userData
+                }, process.env.SECRET_TOKEN, {expiresIn: 60 * 60 * 5});
+                res.status(200).json({token});
               });
             } else {
               return res.status(401).send({msg: 'Invalid email or password'});
@@ -210,17 +210,13 @@ module.exports = function (io) {
       userData.idOfLocation = savedUser.location[idOfLocation]["_id"];
     }
 
-    const token = jwt.sign({
-      user: userData
-    }, process.env.SECRET_TOKEN, {expiresIn: 60 * 60 * 5});
-    res.status(200).json({token});
+
   };
 
   let refreshSocketIdOfConnectedUsers = (req, res) => {
     let socketId = req.body.socketId, token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
-
         UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
           if (!err) {
             let indexOfLocation;
@@ -244,7 +240,7 @@ module.exports = function (io) {
                 user.location = location;
               }
               user.save(() => {
-                res.send(`socketnumber ${req.body.socketId} has been updated`)
+                res.send(`socketnumber ${req.body.socketId} has been updated as an existing user`)
               });
             } else {
               let newUserConnected = new UsersConnected({
@@ -252,7 +248,8 @@ module.exports = function (io) {
                 location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
               });
               newUserConnected.save((err, savedUser) => {
-                locationSearch(savedUser, socketId, decoded.user, res)
+                //locationSearch(savedUser, socketId, decoded.user, res)
+                res.send(`socketnumber ${req.body.socketId} has been updated as a new user`)
               });
             }
           } else {
@@ -301,7 +298,7 @@ module.exports = function (io) {
     let token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
-        Users.findById(decoded.user).select({password: 0, __v: 0}).exec(function (err, user) {
+        Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec(function (err, user) {
           if (!err) {
             res.status(200).json(user)
           }
