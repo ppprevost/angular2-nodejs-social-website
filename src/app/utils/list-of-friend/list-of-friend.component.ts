@@ -18,7 +18,7 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
-    this.getFollowerImage(this.user);
+
   }
 
   ngOnDestroy() {
@@ -26,21 +26,20 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.user.previousValue) {
-      this.user = changes.user.currentValue;
-      this.getFollowerImage(this.user);
+    if (changes.user.currentValue) {
+      this.user = changes.user.currentValue
     }
   }
 
   getFollowerImage(user): void { // avatar from other friends
-    if (user && user.following && user.following.length > 0) {
-      // this.images = user.following;
-      // this.notify.emit(this.images.length)
-        this.data.ListOfFriends(user).subscribe((elem) => {
-        this.images = elem.json();
-        this.notify.emit(this.images.length);
-      });
-    }
+    // if (user && user.following && user.following.length > 0 ) {
+    //   // this.images = user.following;
+    //   // this.notify.emit(this.images.length)
+    //     this.data.ListOfFriends(user).subscribe((elem) => {
+    //     this.images = elem.json() || [];
+    //     this.notify.emit(this.images.length);
+    //   });
+    // }
   }
 
 }

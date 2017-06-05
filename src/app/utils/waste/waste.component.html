@@ -27,15 +27,16 @@
             <p>{{waste.content}}</p>
           </div>
           <div
-               class="view-all-comments">
-            <div *ngIf="waste.commentary.length" (click)="waste.isOpeningCommentary = !waste.isOpeningCommentary; dataCommentaryWanted(waste)">
-            <a *ngIf="waste.commentary">
-              <i class="fa fa-comments-o"></i> View all
-            </a>
-            <span *ngIf="waste.commentary">{{waste.commentary.length}} comment</span>
+            class="view-all-comments">
+            <div *ngIf="waste.commentary.length"
+                 (click)="waste.isOpeningCommentary = !waste.isOpeningCommentary; dataCommentaryWanted(waste, userId)">
+              <a *ngIf="waste.commentary">
+                <i class="fa fa-comments-o"></i> View all
+              </a>
+              <span *ngIf="waste.commentary">{{waste.commentary.length}} comment</span>
 
             </div>
-            <ul class="comments" >
+            <ul class="comments">
               <div *ngIf="waste.isOpeningCommentary">
                 <li *ngFor="let comment of waste.commentary" class="media">
                   <div class="media-left">

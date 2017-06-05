@@ -1,12 +1,18 @@
-<ul *ngIf="images;else noFriend" class="img-grid">
-  <li *ngFor="let image of images">
-    <a href="" [routerLink]="['/my-profile',image._id]" >
-      <img routerLinkActive="active" alt="image" [src]="image.image"
-           [title]="image.username">
-    </a>
+<ul *ngIf="user.following && user.following.length;else noFriend" class="img-grid">
+  <li *ngFor="let follower of user.following">
+    <div *ngIf="follower.statut == 'accepted'">
+      <a href="" [routerLink]="['/my-profile',follower.userId]">
+        <img routerLinkActive="active" alt="image" [src]="follower.image"
+             [title]="follower.username">
+      </a>
+    </div>
   </li>
 </ul>
 
 <ng-template #noFriend>
   <p>No friends yet</p>
+</ng-template>
+
+<ng-template #noAcceptedFriend>
+  <p>You're waiting for friend request ! But none of them answered</p>
 </ng-template>

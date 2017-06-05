@@ -17,7 +17,6 @@ export class AuthService {
     }
   }
 
-
   loggedIn() {
     return tokenNotExpired()
   }
@@ -26,8 +25,8 @@ export class AuthService {
     return this.publicService.loginAccount(emailAndPassword)
       .map(res => res.json())
       .map(data => {
-        console.log(data);
-        localStorage.setItem('token', data.token);
+        this.token = data.token;
+        localStorage.setItem('token', this.token);
         return this.user = this.decodeUserFromToken(data.token);
       });
   }
@@ -41,9 +40,8 @@ export class AuthService {
       return this.user = userData
     } else {
       return this.data.refreshUserData({token: this.token}).subscribe(user => {
-
         this.user = user.json();
-      if(callback)  callback();
+      if(callback)  callback(this.user);
       });
     }
   }

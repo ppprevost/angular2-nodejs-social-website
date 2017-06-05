@@ -5,7 +5,17 @@ var validateEmail = function (email) {
   return re.test(email);
 };
 
-var schema = new mongoose.Schema({
+
+let follower = new mongoose.Schema(
+  {
+    userId: {required: true, type: String},
+    date: Date,
+    statut: String,
+    image:String,
+    username:String
+  });
+
+let schema = new mongoose.Schema({
   email: {
     type: String,
     trim: true,
@@ -32,7 +42,7 @@ var schema = new mongoose.Schema({
   role: Number,
   mail: String,
   isConnected: Boolean,
-  following: [{userId: String, date: Date, statut: String}]
+  following: [follower]
 });
 
 schema.plugin(friends({pathName: "friendManagement"}));

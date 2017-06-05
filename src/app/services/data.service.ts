@@ -74,7 +74,7 @@ export class DataService {
     return this.http.post('api/waste/sendPost', JSON.stringify(request), this.options)
   }
 
-  dataCommentary(waste: Waste) {
+  dataCommentary(waste: Waste,userId:string) {
     return this.http.post('api/waste/getCommentary', JSON.stringify(waste), this.options)
   }
 

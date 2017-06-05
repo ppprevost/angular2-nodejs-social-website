@@ -2,6 +2,7 @@ let Waste = require('../datasets/wastes');
 let Users = require('../datasets/users');
 let UsersConnected = require('../datasets/connected-users');
 let mongoose = require('mongoose');
+let utils = require('../utils/utils')();
 
 module.exports = function (io) {
 
@@ -96,7 +97,7 @@ module.exports = function (io) {
     }).filter((v, i, a) => {
       return a.indexOf(v) === i
     });
-    Users.find({_id:{$in: tableUserCommentary}}).exec((err, users) => {
+    Users.find({_id: {$in: tableUserCommentary}}).exec((err, users) => {
       users.forEach(user => {
         commentary.map(comment => {
           if (user._id == comment.userId) {
@@ -113,12 +114,13 @@ module.exports = function (io) {
 
   let sendComments = (req, res) => {
     let comments = req.body.comments;
+    let userId = req.body.userId;
     Waste.findById(comments.wasteId, (err, waste) => {
       comments.date = new Date();
       //delete comments.wasteId
       waste.commentary.push(comments);
       waste.save(() => {
-        Users.findById(waste.userId, (err, user) => {
+        Users.findById(comments.userId, (err, user) => {
           comments.username = user.username;
           comments.image = user.image;
           let socketUser = user.following.filter(elem => {
@@ -147,23 +149,9 @@ module.exports = function (io) {
    * @param res
    */
   let listOfFriends = function (req, res) {
-    let following = req.body.following || [];
-    let newTable = [];
-    if (!following.length) {
-      res.json([]);
-    } else {
-      following.forEach(doc => {
-        if (doc.statut == 'accepted')
-          newTable.push(mongoose.Types.ObjectId(doc.userId))
-      });
-      if (newTable.length) {
-        Users.find({_id: {$in: newTable}}).select({image: 1, _id: 1, username: 1})
-          .exec(function (err, waster) {
-            res.json(waster);
-          });
-      }
-    }
-
+    return utils.listOfFriends(req, res, req.body.following, (waster) => {
+      res.json(waster);
+    });
   };
 
   return {

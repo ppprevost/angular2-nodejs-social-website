@@ -55,8 +55,10 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   follow(wasterId) {
     //  this.notify.emit('Click from nested component');
     this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      this.auth.callRefreshUserData(data.json());
-      this.getThisUser();
+      this.auth.callRefreshUserData(data.json(), () => {
+        this.getThisUser();
+      });
+
     });
   }
 
@@ -64,9 +66,9 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     table.forEach((elem, i) => {
       this['connection' + i] = this.socket.socketFunction(elem)
         .subscribe(waste => {
-          this.auth.callRefreshUserData(waste);
-          this.getThisUser(waste);
-          console.log(waste);
+          this.auth.callRefreshUserData(waste,()=>{
+            this.getThisUser(waste);
+          });
         });
     });
   }
@@ -74,8 +76,10 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   unfollow(wasterId) {
     //this.notify.emit('Click from nested component');
     this.http.post('/api/users/unfollow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      this.auth.callRefreshUserData(data.json());
-      this.getThisUser();
+      this.auth.callRefreshUserData(data.json(),()=>{
+        this.getThisUser();
+      });
+
     });
   }
 

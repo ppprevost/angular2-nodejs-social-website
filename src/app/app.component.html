@@ -49,7 +49,7 @@
             <a>{{auth.user.username}}</a>
           </li>
         </ul>
-        <ul class="countFriendRequest nav navbar-nav navbar-right" *ngIf="countFriendRequest !=0">
+        <ul class="countFriendRequest nav navbar-nav navbar-right" *ngIf="auth.loggedIn() && countFriendRequest !=0">
           <li><a href="" [routerLink]="['/app-follow-user']" routerLinkActive="active"><span
             class="fa fa-user-circle"></span>{{countFriendRequest}}</a></li>
         </ul>

@@ -1,6 +1,8 @@
 export interface Friends {
   userId: string;
   date: Date;
+  username?:string;
+  image?:string;
   statut: string;
 }
 

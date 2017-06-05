@@ -1,5 +1,6 @@
 const Users = require('../datasets/users'), fs = require('fs'), UsersConnected = require('../datasets/connected-users');
 const jwt = require('jsonwebtoken');
+const utils = require('../utils/utils')();
 let uploadUtil = (req, res, callback) => {
   let userId = req.params.id;
   let directory = `${process.cwd()}\\src\\assets\\upload\\${userId}\\`;
@@ -18,19 +19,32 @@ module.exports = function (io) {
       if (err) {
         res.error(err);
       } else {
-        UsersConnected.find().exec((err, userConnected) => {
-          userConnected.map(elem => {
-            for (let i = 0; i < usersData.length; i++) {
-              if (elem.userId == usersData[i]._id.toString()) {
-                usersData[i].isConnected = true;
-                continue;
-              } else {
-                usersData[i].isConnected = false;
-              }
+        let asyncLoop = (i, usersData)=>{
+          utils.listOfFriends(req, res, usersData[i].following,10, (waster) => {
+              usersData[i].following = waster;
+            if(i == usersData.length - 1){
+              UsersConnected.find().exec((err, userConnected) => {
+                userConnected.map(elem => {
+                  for (let i = 0; i < usersData.length; i++) {
+                    if (elem.userId == usersData[i]._id.toString()) {
+                      usersData[i].isConnected = true;
+                      continue;
+                    } else {
+                      usersData[i].isConnected = false;
+                    }
+                  }
+                });
+                 res.json(usersData);
+              });
+            }else{
+              asyncLoop(++i, usersData)
             }
           });
-          res.json(usersData);
-        });
+        };
+        asyncLoop(i=0,usersData);
+
+
+
       }
     })
   };
@@ -56,12 +70,12 @@ module.exports = function (io) {
           res.send("deconnection effectuée")
         }
       });
-     //TODO  deconnectionMethod('userId', decoded.user._id)
+      //TODO  deconnectionMethod('userId', decoded.user._id)
     })
   };
 
   let deleteSocketIdDB = (socketId) => {
-   //TODO  deconnectionMethod('location.socketId', socketId)
+    //TODO  deconnectionMethod('location.socketId', socketId)
     UsersConnected.findOne({'location.socketId': socketId}, (err, locationUser) => {
       if (!err) {
         if (locationUser) {
@@ -79,26 +93,6 @@ module.exports = function (io) {
       }
     })
   };
-
-  let deconnectionMethod = (key, id, response) => {
-    UsersConnected.findOne({[key]: id}, (err, locationUser) => {
-      if (!err) {
-        if (locationUser) {
-          if (locationUser.location.length <= 1) {
-            locationUser.remove()
-          } else {
-            let indexOfLocation = locationUser.location.indexOf(locationUser.location.find(elem => {
-              return elem.socketId == socketId
-            }));
-            //locationUser.location[indexOfLocation].remove();
-            locationUser.location.splice(indexOfLocation, 1);
-            locationUser.save()
-          }
-        }
-      }
-    })
-    response("socket disconnected")
-  }
 
   let followUser = function (req, res) {
     var userId = req.body.userId,
@@ -236,10 +230,13 @@ module.exports = function (io) {
     })
   };
   let getThisUser = function (req, res) {
-    var userId = req.body.userId;
+    let userId = req.body.userId;
     Users.findById(userId).select({password: 0, __v: 0}).exec(function (err, user) {
       if (!err) {
-        res.json(user)
+        utils.listOfFriends(req, res, user.following,10, (waster) => {
+          user.following = waster
+          res.json(user)
+        });
       }
     });
   };
