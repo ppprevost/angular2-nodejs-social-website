@@ -15,7 +15,7 @@
               <div class="media-body">
                 <a href="#" class="pull-right text-muted"><i
                   class="icon-reply-all-fill fa fa-2x "></i></a>
-
+                <a (click)="data.deletePost(waste._id)" *ngIf="auth.user._id == waste.userId" class="fa fa-close pull-right"></a>
                 <a href="">{{waste.user}}</a>
                 <p>{{waste.userType}} post</p>
                 <span>on {{waste.date | date: 'MM/dd/yyyy hh:mm'}}</span>
@@ -45,6 +45,7 @@
                     </a>
                   </div>
                   <div class="media-body">
+                    <a *ngIf="comment.userId == auth.user._id"_ngcontent-c5="" class="fa fa-close pull-right"></a>
                     <div class="pull-right dropdown" data-show-hover="li" style="display: none;">
                       <a href="#" data-toggle="dropdown" class="toggle-button">
                         <i class="fa fa-pencil"></i>

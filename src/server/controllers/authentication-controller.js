@@ -162,36 +162,28 @@ module.exports = function (io) {
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
               delete userData.password;
-              utils.listOfFriends(req, res,userData.following, 10, (waster) => {
-                waster.map(elem => {
-                  userData.following.map(doc => {
-                    if (doc.userId == elem._id) {
-                      doc = elem
-                    }
-                    return doc
-                  })
-                })
-              });
-              UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
-                if (userAlreadyConnected) {
-                  userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
-                  userAlreadyConnected.save(() => {
-                    locationSearch(userAlreadyConnected, req.body.socketId, userData, res)
-                  })
-                } else {
-                  let newUserConnected = new UsersConnected({
-                    userId: userData._id,
-                    location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
-                  });
-                  newUserConnected.save((err, savedUser) => {
-                    locationSearch(savedUser, req.body.socketId, userData, res)
-                  });
-                }
-                const token = jwt.sign({
-                  user: userData
-                }, process.env.SECRET_TOKEN, {expiresIn: '5h'});
-                res.status(200).json({token});
-              });
+              utils.expandFriendInfo(req, res, 10, userData, userData => {
+                UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
+                  if (userAlreadyConnected) {
+                    userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
+                    userAlreadyConnected.save(() => {
+                      locationSearch(userAlreadyConnected, req.body.socketId, userData, res)
+                    })
+                  } else {
+                    let newUserConnected = new UsersConnected({
+                      userId: userData._id,
+                      location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
+                    });
+                    newUserConnected.save((err, savedUser) => {
+                      locationSearch(savedUser, req.body.socketId, userData, res)
+                    });
+                  }
+                  const token = jwt.sign({
+                    user: userData
+                  }, process.env.SECRET_TOKEN, {expiresIn: '5h'});
+                  res.status(200).json({token});
+                });
+              })
             } else {
               return res.status(401).send({msg: 'Invalid email or password'});
             }

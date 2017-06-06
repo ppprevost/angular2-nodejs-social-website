@@ -50,10 +50,6 @@ export class DataService {
     return this.http.delete(`api/profile/deleteAccount/${userId}`, this.options)
   }
 
-  ListOfFriends(user): Observable<any> {
-    return this.http.post('/api/waste/listOfFriend', JSON.stringify(user), this.options)
-  };
-
   getYourOwnPicture(userId: Object): Observable<any> {
     return this.http.get(`api/users/uploadPicture/${userId}`, this.options)
   }
@@ -74,7 +70,7 @@ export class DataService {
     return this.http.post('api/waste/sendPost', JSON.stringify(request), this.options)
   }
 
-  dataCommentary(waste: Waste,userId:string) {
+  dataCommentary(waste: Waste, userId: string) {
     return this.http.post('api/waste/getCommentary', JSON.stringify(waste), this.options)
   }
 
@@ -84,10 +80,14 @@ export class DataService {
       numberOfWaste: numberOfWaste,
       typePost: typePost,
       onlyOwnPost: onlyOwnPost
-    }), this.options)
+    }), this.options);
   }
 
   sendWasteComments(comments) {
-    return this.http.post('/api/waste/sendComments', JSON.stringify({comments}), this.options)
+    return this.http.post('/api/waste/sendComments', JSON.stringify({comments}), this.options);
+  }
+
+  deletePost(wasteId) {
+    return this.http.delete('/api/waste/deletePost/' + wasteId, this.options);
   }
 }

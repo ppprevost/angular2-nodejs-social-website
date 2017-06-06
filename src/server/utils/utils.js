@@ -62,7 +62,24 @@ module.exports = () => {
     }
   };
 
-  return {listOfFriends, listOfFriends2};
+  let expandFriendInfo = (req, res, numberOfFriends, userData, callback) => {
+    listOfFriends(req, res, userData.following, numberOfFriends, (waster) => {
+      waster.map(elem => {
+        if (userData.following) {
+         userData.following.map(doc => {
+            if (doc.userId == elem._id.toString()) {
+              doc = elem
+            }
+            return doc
+          })
+        }
+      });
+      return callback(userData);
+    });
+  };
+
+
+  return {listOfFriends, listOfFriends2, expandFriendInfo};
 
 
   /**

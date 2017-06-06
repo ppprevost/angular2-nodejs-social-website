@@ -26,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private connection;
   private countFriendRequest: number = 0;
   private connectionOfUser;
+  private commentarySub;
   user;
 
   constructor(private socket: SocketService, public auth: AuthService, private toastyService: ToastyService, private toastyConfig: ToastyConfig, private data: DataService, private addUserForm: FormBuilder, private router: Router, vcr: ViewContainerRef) {
@@ -48,6 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.connectionOfUser.unsubscribe();
     this.connection.unsubscribe();
+    this.commentarySub.unsubscribe();
     for (let i = 0; i < this.table.length; i++) {
       this['connection' + i].unsubscribe();
     }
@@ -55,7 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   loginAccount() {
     this.loginAndSocket = this.loginUser.value;
-    this.loginUser.value.email =  this.loginUser.value.email.trim();
+    this.loginUser.value.email = this.loginUser.value.email.trim();
     this.loginAndSocket.socketId = this.socket.socket.id;
     this.auth.loginAccount(this.loginAndSocket).subscribe(
       data => {
@@ -126,15 +128,19 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         });
       });
-
-      this.data.refreshSocketIdOfConnectedUsers(this.auth.user._id, this.socket.socket.id, localStorage.token).subscribe((refreshStorage) => {
-        this.socketMethodUse(this.table);
-        console.log(refreshStorage)
-        this.connection = this.socket.socketFunction("getNewPost").subscribe(message => {
-          console.log(message)
-          this.toastyService.info({title: 'you have a new post !', msg: message.content});
+      this.data.refreshSocketIdOfConnectedUsers(
+        this.auth.user._id, this.socket.socket.id, localStorage.token)
+        .subscribe((refreshStorage) => {
+          this.socketMethodUse(this.table);
+          console.log(refreshStorage)
+          this.connection = this.socket.socketFunction("getNewPost").subscribe(message => {
+            console.log(message)
+            this.toastyService.info({title: 'you have a new post !', msg: message.content});
+          });
+          this.commentarySub = this.socket.socketFunction("newComments").subscribe(message => {
+            this.toastyService.info({title: message.username + ' answered to your comment', msg: message.content});
+          });
         });
-      });
     });
   }
 }

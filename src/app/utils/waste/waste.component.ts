@@ -2,6 +2,7 @@ import {Component, OnInit, Input, OnDestroy, Injectable, OnChanges} from '@angul
 import {DataService} from '../../services/data.service';
 import {SocketService} from "../../services/socket.service";
 import {Waste} from "../../interface/interface";
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-waste',
@@ -14,22 +15,25 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
   @Input() numberOfWaste: number;
   @Input() typePost;
   @Input() onlyOwnPost;
-  isSwitchingComment;
   @Input() userId: string;
   wastes: Array<Waste>;
   newComment: string;
   connection;
+  private subComment;
 
-  constructor(private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
+  constructor(private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
 
   }
 
   ngOnInit() {
-    //this.getPosts();
     this.connection = this.socket.socketFunction("getNewPost")
       .subscribe(message => {
         message.user = message.username;
         this.wastes.unshift(message);
+      });
+    this.subComment = this.socket.socketFunction("newComments")
+      .subscribe(message => {
+        this.getBackPosts(this.wastes, message);
       });
   }
 
@@ -51,10 +55,10 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
         data => {
           this.wastes = data;
           this.wastes.forEach(waste => {
-            waste.isOpeningCommentary = false
-          })
+            waste.isOpeningCommentary = false;
+          });
         },
-        err => console.log(err))
+        err => console.log(err));
   }
 
   dataCommentaryWanted(waste: Waste, userId: string) {
@@ -82,16 +86,21 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
     return this.data.sendWasteComments(comments)
       .map(res => res.json())
       .subscribe(res => {
-        this.wastes.map(waste => {
-          if (waste._id == res.wasteId) {
-            delete res.wasteId;
-            delete res.userId;
-            waste.commentary.push(res);
-            waste.isOpeningCommentary = true;
-            this.dataCommentaryWanted(waste, this.userId);
-          }
-          return waste;
-        });
+        this.getBackPosts(this.wastes, res);
       });
   }
+
+  getBackPosts(wasters, res) {
+    wasters.map(waste => {
+      if (waste._id == res.wasteId) {
+        delete res.wasteId;
+        delete res.userId;
+        waste.commentary.push(res);
+        waste.isOpeningCommentary = true;
+        this.dataCommentaryWanted(waste, this.userId);
+      }
+      return waste;
+    });
+  }
+
 }

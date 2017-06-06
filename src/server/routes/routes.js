@@ -63,7 +63,6 @@ module.exports = function (app, io) {
 
 //Profile profileController.updatePhoto
   app.options('api/upload', cors(corsOptions)); // enable pre-flight request for request
-
   app.post('/api/upload', profileController.updatePhoto);
   app.post('/api/profile/updateChamp', profileController.updateChamp);
   app.post('/api/profile/updatePassword', profileController.updatePassword);
@@ -72,6 +71,7 @@ module.exports = function (app, io) {
   app.post('/api/waste/getPost', wasteController.getPost);
   app.post('/api/waste/listOfFriend', wasteController.listOfFriends);
   app.post('/api/waste/sendPost', wasteController.sendPost);
+  app.delete('/api/waste/deletePost/:wasteId', wasteController.deletePost);
   app.post('/api/waste/sendComments', wasteController.sendComments);
   app.post('/api/waste/getCommentary', wasteController.getCommentary);
 

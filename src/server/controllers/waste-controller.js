@@ -107,7 +107,7 @@ module.exports = function (io) {
           return comment
         })
       });
-      req.body.commentary = commentary
+      req.body.commentary = commentary;
       res.json(req.body)
     })
   };
@@ -143,6 +143,14 @@ module.exports = function (io) {
     })
   };
 
+  let deletePost = (req, res) => {
+    Waste.findByIdAndRemove(req.params.wasteId, (err, result) => {
+      if (!err) {
+        res.json('suppression effectuée')
+      }
+    })
+  };
+
   /**
    *
    * @param req
@@ -157,6 +165,7 @@ module.exports = function (io) {
   return {
     listOfFriends,
     getCommentary,
+    deletePost,
     sendComments,
     sendPost,
     getPost
