@@ -15,7 +15,8 @@ import {SignupComponent} from './signup/signup.component';
 import {ValidUrlComponent} from './valid-url/valid-url.component';
 import {AuthGuard} from './services/guard.service';
 import {FollowUserComponent} from './follow-user/follow-user.component';
-import {HomeComponent} from './home/home.component'
+import {FollowUserResolverService} from './follow-user/follow-user-resolver.service';
+import {HomeComponent} from './home/home.component';
 import {FileUploadModule} from 'ng2-file-upload';
 import {MyProfileComponent} from './my-profile/my-profile.component';
 import {FollowComponent} from './utils/follow/follow.component';
@@ -39,10 +40,14 @@ const routing = RouterModule.forRoot([
   {
     path: 'my-profile/:id',
     component: MyProfileComponent,
-    canActivate: [AuthGuard]//,
-    // resolve: {user: MyProfileResolve}
+    canActivate: [AuthGuard]
   },
-  {path: 'app-follow-user', component: FollowUserComponent, canActivate: [AuthGuard]},
+  {
+    path: 'app-follow-user',
+    component: FollowUserComponent,
+    canActivate: [AuthGuard],
+    resolve: {follow: FollowUserResolverService}
+  },
   {path: '404', component: HomeComponent},
   {path: '**', redirectTo: '404'}
 ]);
@@ -80,6 +85,7 @@ const routing = RouterModule.forRoot([
   providers: [
     DataService,
     AuthService,
+    FollowUserResolverService,
     PublicService,
     AuthGuard
   ],

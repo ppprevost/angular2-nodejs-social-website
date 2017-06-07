@@ -3,6 +3,7 @@ import {DataService} from '../services/data.service'
 import {AuthService} from '../services/auth.service'
 import 'rxjs/add/operator/toPromise';
 import {ListOfFriendComponent} from '../utils/list-of-friend/list-of-friend.component';
+import {ActivatedRoute, Router} from '@angular/router'
 
 @Component({
   selector: 'app-follow-user',
@@ -15,13 +16,14 @@ export class FollowUserComponent implements OnInit, AfterViewInit, OnDestroy {
   unsub;
   @ViewChild(ListOfFriendComponent) listOfFriendComponent: ListOfFriendComponent;
 
-  constructor(private auth: AuthService, private data: DataService) {
+  constructor(private route: ActivatedRoute,
+              private router: Router, private auth: AuthService, private data: DataService) {
   }
 
   ngOnInit() {
-    this.unsub = this.data.getUsers().subscribe(data => {
+    this.unsub = this.route.snapshot.data['follow'].subscribe(data => {
       this.wasters = data.json().filter(elem => {
-        return elem._id != this.auth.user._id
+        return elem._id !== this.auth.user._id;
       });
     });
   }

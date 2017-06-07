@@ -74,6 +74,20 @@ module.exports = () => {
   };
 
 
+  let getListOfFriendAndSentSocket = (req,res)=>{
+    listOfFriends(req, res, userData.following, 0)
+
+    UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
+      userCo.forEach(userConected => {
+        userConected.location.forEach(socketId => {
+          if (io.sockets.connected[socketId.socketId]) {
+            io.sockets.connected[socketId.socketId].emit('newComments', comments)
+          }
+        });
+      })
+    });
+  }
+
   return {listOfFriends, listOfFriends2, expandFriendInfo};
 
 

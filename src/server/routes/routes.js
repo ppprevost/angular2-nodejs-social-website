@@ -48,7 +48,7 @@ module.exports = function (app, io) {
     }
   };
 
- // app.all('/api/*', jwtAuth);
+  // app.all('/api/*', jwtAuth);
 
 //Route
 //Authentication
@@ -84,8 +84,6 @@ module.exports = function (app, io) {
   app.post('/api/users/followOk', usersController.followUserOk);
   app.post('/api/users/unfollow', usersController.unfollowUser);
   app.post('/api/users/getThisUsers', usersController.getThisUser);
-
-  //Socket
 
 };
 

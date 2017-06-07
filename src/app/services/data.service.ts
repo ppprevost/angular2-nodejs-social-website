@@ -20,8 +20,8 @@ export class DataService {
     this.user = {}
   }
 
-  getUsers(): Observable<any> {
-    return this.http.get('api/users/get');
+  getUsers(): Promise<any> {
+    return Promise.resolve(this.http.get('api/users/get'));
   }
 
   getThisUser(userid): Observable<any> {
