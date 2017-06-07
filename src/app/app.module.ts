@@ -22,9 +22,9 @@ import {FollowComponent} from './utils/follow/follow.component';
 import {WasteComponent} from './utils/waste/waste.component';
 import {ValidPictureDirective} from './utils/valid-picture.directive';
 import {MdRadioModule, MdInputModule, MdTooltipModule} from '@angular/material';
-import { ListOfFriendComponent } from './utils/list-of-friend/list-of-friend.component';
-import { TooltipDirective } from './utils/tooltip.directive';
-import { ReCaptchaModule } from 'angular2-recaptcha';
+import {ListOfFriendComponent} from './utils/list-of-friend/list-of-friend.component';
+import {TooltipDirective} from './utils/tooltip.directive';
+import {ReCaptchaModule} from 'angular2-recaptcha';
 
 const routing = RouterModule.forRoot([
   {path: '', component: HomeComponent},
@@ -42,7 +42,9 @@ const routing = RouterModule.forRoot([
     canActivate: [AuthGuard]//,
     // resolve: {user: MyProfileResolve}
   },
-  {path: 'app-follow-user', component: FollowUserComponent, canActivate: [AuthGuard]}
+  {path: 'app-follow-user', component: FollowUserComponent, canActivate: [AuthGuard]},
+  {path: '404', component: HomeComponent},
+  {path: '**', redirectTo: '404'}
 ]);
 
 @NgModule({
