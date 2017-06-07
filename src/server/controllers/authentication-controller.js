@@ -104,16 +104,33 @@ module.exports = function (io) {
       if (newTempUser) {
         var URL = newTempUser[nev.options.URLFieldName];
 
-        nev.sendVerificationEmail(email, URL, function (err, info) {
-          if (err) {
-            console.log(err)
-            return res.status(404).send('ERROR: sending verification email FAILED');
-          }
-          res.json({
-            msg: 'An email has been sent to you. Please check it to verify your account.',
-            info: info
+        // nev.sendVerificationEmail(email, URL, function (err, info) {
+        //   if (err) {
+        //     console.log(err)
+        //     return res.status(404).send('ERROR: sending verification email FAILED');
+        //   }
+
+          nev.confirmTempUser(URL, function (err, user) {
+            console.log(user);
+            if (err) {
+
+            }
+            if (user) {
+              nev.sendConfirmationEmail(user['email'], function (data) {
+                console.log(data);
+                res.json(data);
+              });
+
+            } else {
+              return res.status(404).send('ERROR: confirming temp user FAILED' + err);
+            }
           });
-        });
+
+          // res.json({
+          //   msg: 'An email has been sent to you. Please check it to verify your account.',
+          //   info: info
+          // });
+        // });
 
         // user already exists in temporary collection!
       } else {

@@ -28,10 +28,10 @@
     </div>
 
     <div *ngIf="!verifToggle" class="form-group">
-      <re-captcha (captchaResponse)="handleCorrectCaptcha($event)"
-                  site_key="6Lc9RiAUAAAAACVy4rmGhTAJX9_HuJgDkdB-aONd"></re-captcha>
+      <!--<re-captcha (captchaResponse)="handleCorrectCaptcha($event)"-->
+                  <!--site_key="6Lc9RiAUAAAAACVy4rmGhTAJX9_HuJgDkdB-aONd"></re-captcha>-->
     </div>
-    <button *ngIf="!verifToggle" [disabled]="!addUser.valid && !eventCaptcha" class="btn btn-default">Submit</button>
+    <button *ngIf="!verifToggle" [disabled]="!addUser.valid && eventCaptcha" class="btn btn-default">Submit</button>
     <button *ngIf="verifToggle" class="btn btn-default">Submit</button>
 
     <a *ngIf="!verifToggle" (click)="verifToggle = !verifToggle" style="float:right">Resend verification email</a>

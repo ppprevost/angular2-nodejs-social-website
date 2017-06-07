@@ -38,7 +38,6 @@ export class SignupComponent implements OnInit {
     this.publicService.getCaptcha(event)
       .map(res => res.json())
       .subscribe((res) => {
-        console.log(res);
         if (res.responseCode == 0) {
           this.eventCaptcha = true;
         }
