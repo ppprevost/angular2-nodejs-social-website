@@ -19,30 +19,29 @@ module.exports = function (io) {
       if (err) {
         res.error(err);
       } else {
-        let asyncLoop = (i, usersData)=>{
-          utils.listOfFriends(req, res, usersData[i].following,10, (waster) => {
-              usersData[i].following = waster;
-            if(i == usersData.length - 1){
+        let asyncLoop = (i, usersData) => {
+          utils.listOfFriends(req, res, usersData[i].following, 10, (waster) => {
+            usersData[i].following = waster;
+            if (i == usersData.length - 1) {
               UsersConnected.find().exec((err, userConnected) => {
-                userConnected.map(elem => {
-                  for (let i = 0; i < usersData.length; i++) {
-                    if (elem.userId == usersData[i]._id.toString()) {
-                      usersData[i].isConnected = true;
-                      continue;
-                    } else {
-                      usersData[i].isConnected = false;
-                    }
+                let connectedId = userConnected.map(elem => {
+                  return elem.userId
+                });
+                usersData.map(doc => {
+                  if (doc && doc._id) {
+                    connectedId.forEach(elem => {
+                      return doc._doc.isConnected = elem == doc._id.toString()
+                    })
                   }
                 });
-                 res.json(usersData);
+                res.json(usersData);
               });
-            }else{
+            } else {
               asyncLoop(++i, usersData)
             }
           });
         };
-        asyncLoop(i=0,usersData);
-
+        asyncLoop(i = 0, usersData);
 
 
       }
@@ -233,7 +232,7 @@ module.exports = function (io) {
     let userId = req.body.userId;
     Users.findById(userId).select({password: 0, __v: 0}).exec(function (err, user) {
       if (!err) {
-        utils.listOfFriends(req, res, user.following,10, (waster) => {
+        utils.listOfFriends(req, res, user.following, 10, (waster) => {
           user.following = waster
           res.json(user)
         });

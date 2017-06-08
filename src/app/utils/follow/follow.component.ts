@@ -41,6 +41,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
   followUserOk(wasterId) {
     this.http.post('/api/users/followOk', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
+      this.auth.countFriendRequest--;
       this.auth.callRefreshUserData(data.json());
       this.getThisUser();
     });

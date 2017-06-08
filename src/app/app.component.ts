@@ -24,7 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private email = new FormControl('', Validators.required);
   private password = new FormControl('', Validators.required);
   private connection;
-  private countFriendRequest: number = 0;
+
   private connectionOfUser;
   private commentarySub;
   user;
@@ -84,7 +84,7 @@ export class AppComponent implements OnInit, OnDestroy {
         .subscribe(waste => {
           this.auth.callRefreshUserData(waste, () => {
             if (elem.type == "friendRequest") {
-              this.countFriendRequest++;
+              this.auth.countFriendRequest++;
               this.toastyService.info({title: "new request from friend", msg: waste.username + ' : ' + elem.see});
             }
           });
@@ -124,7 +124,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.auth.callRefreshUserData(null, () => {
         this.auth.user.following.forEach(elem => {
           if (elem.statut == "requested") {
-            this.countFriendRequest++;
+            this.auth.countFriendRequest++;
           }
         });
       });
