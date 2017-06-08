@@ -144,13 +144,21 @@ module.exports = function (io) {
   };
 
   let deletePost = (req, res) => {
-    Waste.findByIdAndRemove(req.params.wasteId, (err, result) => {
+    let wasteId = req.params.wasteId
+    Waste.findById(wasteId, (err, result) => {
       if (!err) {
+        if (!req.params.commentId) {
+          result.remove()
+        } else {
+         let index =  result.commentary.indexOf(result.commentary.find(elem => {
+            return req.params.commentId == elem._id
+          }));
+           result.commentary.splice(index,1)
+        }
         res.json('suppression effectuée')
       }
-    })
+    });
   };
-
   /**
    *
    * @param req

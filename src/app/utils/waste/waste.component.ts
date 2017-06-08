@@ -28,6 +28,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   @Input() typePost;
   @Input() onlyOwnPost;
   @Input() userId: string;
+  masonry;
   wastes: Array<Waste>;
   connection;
   private subComment;
@@ -52,7 +53,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   ngAfterViewChecked() {
     if (this.wasteCompo) {
       const item = this.wasteCompo.nativeElement;
-      return new Masonry(item, {
+      return this.masonry = new Masonry(item, {
         itemSelector: '.item'
       });
     }
@@ -93,9 +94,9 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
     function debounce(func, wait, immediate, context?) {
       var result;
       var timeout = null;
-      return function() {
+      return function () {
         var ctx = context || this, args = arguments;
-        var later = function() {
+        var later = function () {
           timeout = null;
           if (!immediate) result = func.apply(ctx, args);
         };
@@ -107,8 +108,9 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
         return result;
       };
     }
+
     if (getDocHeight() - 20 <= getScrollXY()[1] + window.innerHeight) {
-      debounce((d) => console.log(d), 250,false);
+      debounce((d) => console.log(d), 250, false);
       console.log('edeors debounce');
     }
   }
@@ -176,4 +178,9 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
     });
   }
 
+  deleteWasteOrPost(wasteId, wasteOrComment?) {
+    return this.data.deletePost(wasteId, wasteOrComment ?)
+      .map(res => res.json())
+      .subscribe(data => console.log(data));
+  }
 }
