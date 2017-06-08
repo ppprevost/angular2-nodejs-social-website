@@ -1,9 +1,10 @@
-import {Component, OnInit, ViewChild, AfterViewInit, OnDestroy} from '@angular/core';
-import {DataService} from '../services/data.service'
-import {AuthService} from '../services/auth.service'
+import {Component, OnInit, ViewChild, AfterViewChecked, OnDestroy} from '@angular/core';
+import {DataService} from '../services/data.service';
+import {AuthService} from '../services/auth.service';
 import 'rxjs/add/operator/toPromise';
 import {ListOfFriendComponent} from '../utils/list-of-friend/list-of-friend.component';
-import {ActivatedRoute, Router} from '@angular/router'
+import {ActivatedRoute, Router} from '@angular/router';
+import * as Masonry from 'masonry-layout';
 
 @Component({
   selector: 'app-follow-user',
@@ -11,10 +12,11 @@ import {ActivatedRoute, Router} from '@angular/router'
   styleUrls: ['./follow-user.component.css']
 })
 
-export class FollowUserComponent implements OnInit, AfterViewInit, OnDestroy {
+export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy {
   wasters;
   unsub;
   @ViewChild(ListOfFriendComponent) listOfFriendComponent: ListOfFriendComponent;
+  @ViewChild('wasteMasonry') wasteCompo;
 
   constructor(private route: ActivatedRoute,
               private router: Router, private auth: AuthService, private data: DataService) {
@@ -28,8 +30,13 @@ export class FollowUserComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
-
+  ngAfterViewChecked() {
+    if (this.wasteCompo) {
+      const item = this.wasteCompo.nativeElement;
+      return new Masonry(item, {
+        itemSelector: '.item'
+      });
+    }
   }
 
   ngOnDestroy() {

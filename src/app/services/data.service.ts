@@ -63,7 +63,7 @@ export class DataService {
       userId,
       socketId,
       token
-    }), this.options)
+    }), this.options);
   }
 
   sendWaste(request: Object) {
@@ -87,7 +87,7 @@ export class DataService {
     return this.http.post('/api/waste/sendComments', JSON.stringify({comments}), this.options);
   }
 
-  deletePost(wasteId) {
-    return this.http.delete('/api/waste/deletePost/' + wasteId, this.options);
+  deletePost(wasteId, commentOrWaste) {
+    return this.http.delete(`/api/waste/deletePost/${wasteId}/${commentOrWaste}`, this.options);
   }
 }

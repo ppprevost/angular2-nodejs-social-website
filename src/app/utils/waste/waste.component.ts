@@ -1,8 +1,9 @@
-import {Component, OnInit, Input, OnDestroy, Injectable, OnChanges} from '@angular/core';
+import {Component, OnInit, Input, OnDestroy, Injectable, OnChanges, AfterViewChecked, ViewChild} from '@angular/core';
 import {DataService} from '../../services/data.service';
 import {SocketService} from "../../services/socket.service";
 import {Waste} from "../../interface/interface";
 import {AuthService} from '../../services/auth.service';
+import * as Masonry from 'masonry-layout';
 
 @Component({
   selector: 'app-waste',
@@ -10,14 +11,13 @@ import {AuthService} from '../../services/auth.service';
   styleUrls: ['./waste.component.scss']
 })
 @Injectable()
-export class WasteComponent implements OnInit, OnDestroy, OnChanges {
-
+export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnChanges {
+  @ViewChild('wasteMasonry') wasteCompo;
   @Input() numberOfWaste: number;
   @Input() typePost;
   @Input() onlyOwnPost;
   @Input() userId: string;
   wastes: Array<Waste>;
-  newComment: string;
   connection;
   private subComment;
 
@@ -35,6 +35,15 @@ export class WasteComponent implements OnInit, OnDestroy, OnChanges {
       .subscribe(message => {
         this.getBackPosts(this.wastes, message);
       });
+  }
+
+  ngAfterViewChecked() {
+    if (this.wasteCompo) {
+      const item = this.wasteCompo.nativeElement;
+      return new Masonry(item, {
+        itemSelector: '.item'
+      });
+    }
   }
 
   ngOnDestroy() {

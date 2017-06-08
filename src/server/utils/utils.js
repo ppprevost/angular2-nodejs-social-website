@@ -37,9 +37,6 @@ module.exports = () => {
   let listOfFriends2 = function (query) {
     let following = query['followingTable'] || [];
     let newTable = [];
-    if (!following.length) {
-      query['res'].json([]);
-    } else {
       newTable = following.filter(elem => {
         return elem.statut == 'accepted'
       }).map(doc => {
@@ -54,7 +51,6 @@ module.exports = () => {
         .exec(function (err, waster) {
           query['afterCheck'](waster)
         });
-    }
   };
 
   let expandFriendInfo = (req, res, numberOfFriends, userData, callback) => {
@@ -73,22 +69,33 @@ module.exports = () => {
     });
   };
 
-
-  let getListOfFriendAndSentSocket = (req,res)=>{
-    listOfFriends(req, res, userData.following, 0)
-
-    UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
-      userCo.forEach(userConected => {
-        userConected.location.forEach(socketId => {
-          if (io.sockets.connected[socketId.socketId]) {
-            io.sockets.connected[socketId.socketId].emit('newComments', comments)
-          }
+  let getListOfFriendAndSentSocket = (req, res, userData, message) => {
+    return new Promise((rej, resolve) => {
+      listOfFriends(req, res, userData.following, 0, waster => {
+        let socketUser = waster.map(elem => {
+          return elem.userId
         });
+        let socketIds = [];
+        UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
+          userCo.forEach(userConected => {
+            userConected.location.forEach(socketId => {
+              if (io.sockets.connected[socketId.socketId]) {
+                socketIds = [...socketIds, socketId.socketId];
+                io.sockets.connected[socketId.socketId].emit('newComments', message)
+              }
+            });
+          })
+        });
+        socketIds.forEach(elem => {
+          console.log('send to friend==>', elem)
+        });
+        resolve(waster)
       })
-    });
-  }
 
-  return {listOfFriends, listOfFriends2, expandFriendInfo};
+    });
+  };
+
+  return {listOfFriends, listOfFriends2, expandFriendInfo, getListOfFriendAndSentSocket};
 
 
   /**
