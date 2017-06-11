@@ -94,6 +94,82 @@ module.exports = function (io) {
     })
   };
 
+
+  let functionFollowing = (req,res)=> {
+
+    let obj ={
+      follow : {socketNotification:'', user:'pending',waster:'requested'},
+      followUserOk:{socketNotification:'', user:accepted,waster:'accepted'},
+      unfollow:{socketNotification:''}
+    };
+
+    let typeFollower = req.body.typeFollo
+    var userId = req.body.userId,
+      wasterId = req.body.wasterId;
+    var userIdWaster;
+    var date = new Date();
+    console.log("req.body", req.body);
+    Users.findById(wasterId, function (err, waster) {
+      if (!waster.following.length) { //init s tableau vide
+        waster.following.push({
+          userId: userId,
+          statut: "requested",
+          date: date
+        })
+      } else {
+        console.log(waster);
+        var already = false; // test si l'user ID est deja présent
+        waster.following.forEach(function (doc) {
+          if (doc && doc.userId == userId) {
+            already = true;
+            console.log("deja présent");
+          }
+        });
+        if (!already) {
+          waster.following.push({
+            userId: userId,
+            statut: "requested",
+            date: date
+          });
+
+        }
+      }
+      waster.save(function () {
+        userIdWaster = waster.username;
+        sendSocketNotification(waster, 'friendRequest')
+      })
+    });
+    Users.findById(userId, function (err, follower) {
+      if (!follower.following.length) { //init
+        follower.following.push({
+          userId: wasterId,
+          statut: "pending",
+          date: date
+        })
+      } else {
+        var already = false; // test si l'user ID est deja présent
+        follower.following.forEach(function (doc) {
+          if (doc.userId && doc.userId == wasterId) {
+            already = true;
+          }
+        });
+        if (!already) {
+          follower.following.push({
+            userId: wasterId,
+            statut: "pending",
+            date: date
+          });
+        }
+      }
+      follower.save(function () {
+        res.json(follower);
+      })
+    });
+
+
+  };
+
+
   let followUser = function (req, res) {
     var userId = req.body.userId,
       wasterId = req.body.wasterId;

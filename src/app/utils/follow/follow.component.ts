@@ -20,11 +20,15 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   @Input() user;
 
   @Output() notify: EventEmitter<string> = new EventEmitter<string>();
-  private obj = (wasterValue) => {
-    let obj: Obj = <any>{
+  private obj = (wasterValue,typeFollowing?) => {
+    let obj:any = {
       userId: this.user._id,
       wasterId: wasterValue
     };
+    if(typeFollowing){
+      obj.typeFollowing = typeFollowing
+    }
+
     return obj;
   };
   private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
@@ -42,7 +46,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   followUserOk(wasterId) {
     this.http.post('/api/users/followOk', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
       this.auth.callRefreshUserData(data.json());
-      this.getThisUser();
+      this.getThisUser(data.json());
     });
   }
 
@@ -56,8 +60,8 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     //  this.notify.emit('Click from nested component');
     this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
       this.auth.callRefreshUserData(data.json(), () => {
-        this.getThisUser();
       });
+      this.getThisUser(data.json());
 
     });
   }
@@ -66,7 +70,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     table.forEach((elem, i) => {
       this['connection' + i] = this.socket.socketFunction(elem)
         .subscribe(waste => {
-          this.auth.callRefreshUserData(waste,()=>{
+          this.auth.callRefreshUserData(waste, () => {
             this.getThisUser(waste);
           });
         });
@@ -76,10 +80,9 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   unfollow(wasterId) {
     //this.notify.emit('Click from nested component');
     this.http.post('/api/users/unfollow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      this.auth.callRefreshUserData(data.json(),()=>{
-        this.getThisUser();
+      this.auth.callRefreshUserData(data.json(), () => {
       });
-
+      this.getThisUser(data.json());
     });
   }
 
@@ -92,8 +95,9 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
 
   getThisUser(user?) { // pour rafraichir la liste des différents followers
-    if (this.auth.user.following.length) {
-      this.auth.user.following.map((elem) => {
+    let waster = user ? user : this.auth.user;
+    if (waster.following.length) {
+      waster.following.map((elem) => {
         if (elem.userId == this.waste._id) {
           this.waste.status = elem.statut;
           this.notify.emit(this.waste.status);
@@ -107,9 +111,9 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   typeFollowing(typeFollowing, wasterId) {
-    return this.http.post(`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
+    return this.http.post(`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId,typeFollowing)), this.options).toPromise().then(data => {
       this.auth.callRefreshUserData(data.json());
-      this.getThisUser();
+      this.getThisUser(data.json());
     });
   }
 
