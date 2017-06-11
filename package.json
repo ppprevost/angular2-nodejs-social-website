@@ -34,6 +34,7 @@
     "@types/node": "^6.0.77",
     "@types/socket.io-client": "^1.4.29",
     "angular2-jwt": "^0.2.3",
+    "angular2-lightbox": "^1.1.2",
     "angular2-recaptcha": "^0.4.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "1.16.1",

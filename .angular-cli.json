@@ -27,6 +27,7 @@
         "./styles.scss",
         "./assets/styles/utils.scss",
         "./assets/styles/helpers.scss",
+        "./node_modules/angular2-lightbox/lightbox.css",
         "./assets/styles/sidebar.scss"
 
       ],
