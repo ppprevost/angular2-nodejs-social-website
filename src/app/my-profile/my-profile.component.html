@@ -94,8 +94,8 @@
                     </div>
 
                   </div>
-                  <div *ngFor="let image of uploadPicture; let i=index">
-                    <img [src]="'/assets/upload/'+user?._id+'/'+uplPic" (click)="open(i)"/>
+                  <div *ngFor="let uplPic of uploadPicture; let i=index">
+                    <img [src]="'/assets/upload/'+user?._id+'/'+uplPic"/>
                   </div>
                 </div>
               </div>
