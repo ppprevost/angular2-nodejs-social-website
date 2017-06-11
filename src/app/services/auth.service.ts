@@ -9,6 +9,7 @@ export class AuthService {
   user: User;
   jwtHelper: JwtHelper = new JwtHelper();
   token;
+  countFriendRequest: number = 0;
 
   constructor(private publicService: PublicService, private data: DataService) {
     this.token = localStorage.getItem('token');

@@ -1,4 +1,4 @@
-<div class="row userProfile" data-toggle="isotope" style="position: relative; ">
+<div #wasteMasonry class="row userProfile" data-toggle="isotope" style="position: relative; ">
   <div class="row">
     <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters" >
       <div class="panel panel-default">
@@ -15,7 +15,7 @@
                 <span>{{waste.message}}</span>
                 <p>{{waste.email}}</p>
                 <div class="profile-icons">
-                  <span><i class="fa fa-users"></i> {{waste.friends || 0}}</span>
+                  <span><i class="fa fa-users"></i> {{waste.following.length}}</span>
                   <span><i class="fa fa-photo"></i> none</span>
                 </div>
                 <h3 *ngIf="waste.isConnected" class="blink_me">Online</h3>

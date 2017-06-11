@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, SimpleChanges, OnChanges} from '@angular/core';
+import {Component, OnInit, ViewChild, HostListener} from '@angular/core';
 import {DataService} from '../services/data.service';
 import {WasteComponent} from '../utils/waste/waste.component';
 import {User} from '../interface/interface';
@@ -32,6 +32,7 @@ export class HomeComponent implements OnInit {
       return this.user = this.auth.user
     }
   }
+
 
   sendWaste() {
     const request = {

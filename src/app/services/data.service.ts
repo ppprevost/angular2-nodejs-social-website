@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
-import {Waste} from "../interface/interface";
+import {Commentary, Waste} from "../interface/interface";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
@@ -63,7 +63,7 @@ export class DataService {
       userId,
       socketId,
       token
-    }), this.options)
+    }), this.options);
   }
 
   sendWaste(request: Object) {
@@ -87,7 +87,7 @@ export class DataService {
     return this.http.post('/api/waste/sendComments', JSON.stringify({comments}), this.options);
   }
 
-  deletePost(wasteId) {
-    return this.http.delete('/api/waste/deletePost/' + wasteId, this.options);
+  deletePost(wasteId, commentId?): Observable<any> {
+    return this.http.delete(`/api/waste/deletePost/${wasteId}/${commentId}`, this.options);
   }
 }
