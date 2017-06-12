@@ -88,6 +88,6 @@ export class DataService {
   }
 
   deletePost(wasteId, commentId?): Observable<any> {
-    return this.http.delete(`/api/waste/deletePost/${wasteId}/${commentId}`, this.options);
+    return this.http.delete('/api/waste/deletePost/' + wasteId + (commentId ? '/' + commentId : ''), this.options);
   }
 }

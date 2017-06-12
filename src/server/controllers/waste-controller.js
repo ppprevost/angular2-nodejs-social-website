@@ -149,13 +149,18 @@ module.exports = function (io) {
       if (!err) {
         if (!req.params.commentId) {
           result.remove()
+          res.json(result)
         } else {
-         let index =  result.commentary.indexOf(result.commentary.find(elem => {
+          let index = result.commentary.indexOf(result.commentary.find(elem => {
             return req.params.commentId == elem._id
           }));
-           result.commentary.splice(index,1)
+          result.commentary.splice(index, 1)
+          result.save(() => {
+            res.json(result)
+          })
         }
-        res.json('suppression effectuée')
+
+
       }
     });
   };

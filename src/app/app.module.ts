@@ -26,7 +26,6 @@ import {MdRadioModule, MdInputModule, MdTooltipModule} from '@angular/material';
 import {ListOfFriendComponent} from './utils/list-of-friend/list-of-friend.component';
 import {TooltipDirective} from './utils/tooltip.directive';
 import {ReCaptchaModule} from 'angular2-recaptcha';
-import { LightboxModule } from 'angular2-lightbox';
 
 
 const routing = RouterModule.forRoot([
@@ -75,7 +74,6 @@ const routing = RouterModule.forRoot([
     BrowserAnimationsModule,
     FormsModule,
     FileUploadModule,
-    LightboxModule,
     ReactiveFormsModule,
     MdRadioModule,
     ReCaptchaModule,
