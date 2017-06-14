@@ -9,7 +9,7 @@ export interface Friends {
 export interface User {
   username: string;
   readonly _id: string;
-  mail: string;
+  email: string;
   role: number;
   following: Array<Friends>;
   website?: string;
