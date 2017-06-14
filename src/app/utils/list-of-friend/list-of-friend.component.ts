@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges} from '@angular/core';
 import {DataService} from '../../services/data.service';
-import {User} from '../../interface/interface'
+import {User} from '../../interface/interface';
 
 @Component({
   selector: 'app-list-of-friend',
@@ -11,8 +11,6 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() user: User;
   @Output() notify: EventEmitter<number> = new EventEmitter<number>();
-  images: [Object];
-  followerSub
 
   constructor(private data: DataService) {
   }
@@ -27,7 +25,7 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.currentValue) {
-      this.user = changes.user.currentValue
+      this.user = changes.user.currentValue;
     }
   }
 

@@ -1,8 +1,8 @@
 export interface Friends {
   userId: string;
   date: Date;
-  username?:string;
-  image?:string;
+  username?: string;
+  image?: string;
   statut: string;
 }
 
@@ -11,7 +11,7 @@ export interface User {
   readonly _id: string;
   mail: string;
   role: number;
-  following: [Friends];
+  following: Array<Friends>;
   website?: string;
   gender?: string;
   location?: string;
@@ -20,18 +20,18 @@ export interface User {
 }
 
 export interface Waste {
-  readonly _id: string
+  readonly _id: string;
   userId: string;
-  commentary: [Commentary]
+  commentary: Array<Commentary>;
   content: string;
   date: Date;
-  userType: string
+  userType: string;
   isOpeningCommentary?: boolean;
 }
 
 export interface Commentary {
-  readonly _id: string,
-  userId: string,
-  type: string,
-  data: string
+  readonly _id: string;
+  userId: string;
+  type: string;
+  data: string;
 }

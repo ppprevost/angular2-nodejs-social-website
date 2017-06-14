@@ -28,7 +28,6 @@ export class HomeComponent implements OnInit {
 
   loggedIn() {
     if (this.auth.loggedIn()) {
-
       return this.user = this.auth.user
     }
   }

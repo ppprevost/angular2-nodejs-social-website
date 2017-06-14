@@ -15,9 +15,7 @@ import {User} from '../interface/interface';
 export class MyProfileComponent implements OnInit, OnDestroy {
   user: User;
   id: string;
-  images;
   isLoading = true;
-  wasters: [User];
   typeWaste: string;
   newWaste: string;
   actualUser: User;
@@ -50,6 +48,9 @@ export class MyProfileComponent implements OnInit, OnDestroy {
       } else {
         this.user = this.actualUser = this.auth.user;
         this.getPictureUser(this.user._id);
+        this.user.following = this.user.following.filter(elem => {
+          return elem.statut == "accepted"
+        });
       }
     });
   };
@@ -74,9 +75,9 @@ export class MyProfileComponent implements OnInit, OnDestroy {
       data => {
         this.auth.callRefreshUserData(data.json());
         this._compiler.clearCache();
-        this.uploadPicture = []
+        this.uploadPicture = [];
       },
-      err => console.log(err))
+      err => console.log(err));
   }
 
   sendWaste() {

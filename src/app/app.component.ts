@@ -97,6 +97,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.data.logOut(this.auth.user._id, localStorage.token).subscribe(res => {
       console.log(res);
       localStorage.clear();
+      this.auth.countFriendRequest = 0;
       this.router.navigate(['./']);
       var toastOptions: ToastOptions = {
         title: "Deconnection",
@@ -120,27 +121,28 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initSocket() {
-    this.connectionOfUser = this.socket.socketFunction("connect").subscribe(connection => {
-      this.auth.callRefreshUserData(null, () => {
-        this.auth.user.following.forEach(elem => {
-          if (elem.statut == "requested") {
-            this.auth.countFriendRequest++;
-          }
-        });
+    this.auth.callRefreshUserData(null, () => {
+      this.auth.user.following.forEach(elem => {
+        if (elem.statut == "requested") {
+          this.auth.countFriendRequest++;
+        }
       });
-      this.data.refreshSocketIdOfConnectedUsers(
-        this.auth.user._id, this.socket.socket.id, localStorage.token)
-        .subscribe((refreshStorage) => {
-          this.socketMethodUse(this.table);
-          console.log(refreshStorage)
-          this.connection = this.socket.socketFunction("getNewPost").subscribe(message => {
-            console.log(message)
-            this.toastyService.info({title: 'you have a new post !', msg: message.content});
-          });
-          this.commentarySub = this.socket.socketFunction("newComments").subscribe(message => {
-            this.toastyService.info({title: message.username + ' answered to your comment', msg: message.content});
-          });
-        });
     });
+    this.connectionOfUser = this.socket.socketFunction("connect")
+      .subscribe(connection => {
+        this.data.refreshSocketIdOfConnectedUsers(
+          this.auth.user._id, this.socket.socket.id, localStorage.token)
+          .subscribe((refreshStorage) => {
+            this.socketMethodUse(this.table);
+            console.log(refreshStorage);
+            this.connection = this.socket.socketFunction("getNewPost").subscribe(message => {
+              console.log(message)
+              this.toastyService.info({title: 'you have a new post !', msg: message.content});
+            });
+            this.commentarySub = this.socket.socketFunction("newComments").subscribe(message => {
+              this.toastyService.info({title: message.username + ' answered to your comment', msg: message.content});
+            });
+          });
+      });
   }
 }

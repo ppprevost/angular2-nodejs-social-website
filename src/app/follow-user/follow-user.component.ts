@@ -1,5 +1,6 @@
-import {Component, OnInit, ViewChild, AfterViewChecked, OnDestroy} from '@angular/core';
+import {Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, HostListener} from '@angular/core';
 import {DataService} from '../services/data.service';
+import {InfiniteScrollService} from '../services/infinite-scroll.service';
 import {AuthService} from '../services/auth.service';
 import 'rxjs/add/operator/toPromise';
 import {ListOfFriendComponent} from '../utils/list-of-friend/list-of-friend.component';
@@ -9,7 +10,8 @@ import * as Masonry from 'masonry-layout';
 @Component({
   selector: 'app-follow-user',
   templateUrl: './follow-user.component.html',
-  styleUrls: ['./follow-user.component.css']
+  styleUrls: ['./follow-user.component.css'],
+  providers: [InfiniteScrollService]
 })
 
 export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy {
@@ -18,7 +20,7 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy 
   @ViewChild(ListOfFriendComponent) listOfFriendComponent: ListOfFriendComponent;
   @ViewChild('wasteMasonry') wasteCompo;
 
-  constructor(private route: ActivatedRoute,
+  constructor(private infinite: InfiniteScrollService, private route: ActivatedRoute,
               private router: Router, private auth: AuthService, private data: DataService) {
   }
 
@@ -28,6 +30,10 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy 
         return elem._id !== this.auth.user._id;
       });
     });
+  }
+
+  @HostListener('window:scroll', ['$event']) onScroll($event) {
+    this.infinite.getInfiniteScroll();
   }
 
   ngAfterViewChecked() {
