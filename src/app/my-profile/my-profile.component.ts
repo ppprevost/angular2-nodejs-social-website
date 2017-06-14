@@ -15,6 +15,7 @@ import {User} from '../interface/interface';
 export class MyProfileComponent implements OnInit, OnDestroy {
   user: User;
   id: string;
+  loading;
   isLoading = true;
   typeWaste: string;
   newWaste: string;
