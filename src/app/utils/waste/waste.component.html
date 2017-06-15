@@ -31,9 +31,9 @@
             class="view-all-comments">
             <div class="likes">
 <a (click)="likeThisPostOrComment(waste._id)"><i class="fa fa-thumbs-up">like</i></a>
-              <div class="number-of-like">
+              <span *ngIf="waste.likes" class="number-of-like">
                 {{waste.likes}}
-              </div>
+              </span>
             </div>
             <div *ngIf="waste.commentary.length"
                  (click)="waste.isOpeningCommentary = !waste.isOpeningCommentary; dataCommentaryWanted(waste, userId)">
