@@ -74,6 +74,7 @@ module.exports = function (app, io) {
   app.delete('/api/waste/deletePost/:wasteId/:commentId?', wasteController.deletePost);
   app.post('/api/waste/sendComments', wasteController.sendComments);
   app.post('/api/waste/getCommentary', wasteController.getCommentary);
+  app.post('/api/waste/likeThisPostOrComment', wasteController.likeThisPostOrComment);
 
 //User
 

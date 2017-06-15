@@ -143,18 +143,27 @@ module.exports = function (io) {
     })
   };
 
-  let deletePost = (req, res) => {
-    let wasteId = req.params.wasteId
+
+  let likeOrDeletePost = (req,res,typeOfFunction)=>{
+    let wasteId = req.params.wasteId;
     Waste.findById(wasteId, (err, result) => {
       if (!err) {
         if (!req.params.commentId) {
-          result.remove()
+          if(typeOfFunction=="likes"){
+            result.likes++;
+          }else{
+            result.remove();
+          }
           res.json(result)
         } else {
           let index = result.commentary.indexOf(result.commentary.find(elem => {
             return req.params.commentId == elem._id
           }));
-          result.commentary.splice(index, 1)
+          if(typeOfFunction=="likes"){
+          result.commentary[index].likes++;
+          }else{
+            result.commentary.splice(index, 1)
+          }
           result.save(() => {
             res.json(result)
           })
@@ -163,6 +172,14 @@ module.exports = function (io) {
 
       }
     });
+  };
+
+  let likeThisPostOrComment = (req, res) => {
+   return likeOrDeletePost(req,res,'likes')
+  };
+
+  let deletePost = (req, res) => {
+    return likeOrDeletePost(req,res,'delete')
   };
   /**
    *
@@ -180,6 +197,7 @@ module.exports = function (io) {
     getCommentary,
     deletePost,
     sendComments,
+    likeThisPostOrComment,
     sendPost,
     getPost
   }

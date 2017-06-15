@@ -34,7 +34,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   connection;
   private subComment;
 
-  constructor(private infinite:InfiniteScrollService, private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
+  constructor(private infinite: InfiniteScrollService, private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
 
   }
 
@@ -102,6 +102,22 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
           });
         });
     }
+  }
+
+  likeThisPostOrComment(wasteId, commentId?) {
+    return this.data.likeThisPostOrComment(wasteId, commentId).map(res => res.json())
+      .subscribe(data => {
+        return this.wastes.map(elem => {
+          if (elem._id == data._id) {
+            if (commentId) {
+              elem.likes = data.likes;
+            } else {
+              this.wastes[this.wastes.indexOf(elem)].likes++ ;
+            }
+            return elem;
+          }
+        });
+      });
   }
 
   sendWasteComments(wasteId, value) {

@@ -25,6 +25,7 @@ export interface Waste {
   commentary: Array<Commentary>;
   content: string;
   date: Date;
+  likes: number;
   userType: string;
   isOpeningCommentary?: boolean;
 }
@@ -32,6 +33,7 @@ export interface Waste {
 export interface Commentary {
   readonly _id: string;
   userId: string;
+  likes: number;
   type: string;
   data: string;
 }
