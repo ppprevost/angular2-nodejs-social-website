@@ -25,7 +25,8 @@ export interface Waste {
   commentary: Array<Commentary>;
   content: string;
   date: Date;
-  likes: number;
+  likes: Array<string>;
+  likeItVeryMuch: boolean;
   userType: string;
   isOpeningCommentary?: boolean;
 }

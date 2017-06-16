@@ -144,24 +144,38 @@ module.exports = function (io) {
   };
 
 
-  let likeOrDeletePost = (req,res,typeOfFunction)=>{
+  let likeOrDeletePost = (req, res, typeOfFunction) => {
     let wasteId = req.params.wasteId;
     Waste.findById(wasteId, (err, result) => {
       if (!err) {
         if (!req.params.commentId) {
-          if(typeOfFunction=="likes"){
-            result.likes++;
-          }else{
+          if (typeOfFunction == "likes") {
+            let testIfExist = result.likes.find(elem => {
+              return elem == result.userId
+            });
+            if (!testIfExist) {
+              result.likes = [...result.likes, result.userId];
+            } else {
+              console.log('user alreqdy like this post ');
+            }
+          } else {
             result.remove();
           }
-          res.json(result)
+          result.save(() => {
+            res.json(result)
+          })
         } else {
           let index = result.commentary.indexOf(result.commentary.find(elem => {
             return req.params.commentId == elem._id
           }));
-          if(typeOfFunction=="likes"){
-          result.commentary[index].likes++;
-          }else{
+          if (typeOfFunction == "likes") {
+            let testIfComment = result.commentary[index].likes.find(elem => {
+              return elem == result.commentary[index].userId
+            });
+            if (!testIfComment) {
+              result.commentary[index].likes = [...result.commentary[index].likes, result.commentary[index].userId];
+            }
+          } else {
             result.commentary.splice(index, 1)
           }
           result.save(() => {
@@ -175,11 +189,11 @@ module.exports = function (io) {
   };
 
   let likeThisPostOrComment = (req, res) => {
-   return likeOrDeletePost(req,res,'likes')
+    return likeOrDeletePost(req, res, 'likes')
   };
 
   let deletePost = (req, res) => {
-    return likeOrDeletePost(req,res,'delete')
+    return likeOrDeletePost(req, res, 'delete')
   };
   /**
    *

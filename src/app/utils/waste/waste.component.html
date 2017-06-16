@@ -30,9 +30,19 @@
           <div
             class="view-all-comments">
             <div class="likes">
-<a (click)="likeThisPostOrComment(waste._id)"><i class="fa fa-thumbs-up">like</i></a>
-              <span *ngIf="waste.likes" class="number-of-like">
-                {{waste.likes}}
+              <a (click)="likeThisPostOrComment(waste._id)"><i class="fa fa-thumbs-up">like</i></a>
+              <span *ngIf="waste.likes.length" class="number-of-like">
+                <span *ngIf="waste.likes.length ==1 && waste.likeItVeryMuch">
+                  You like this
+                </span>
+                <span *ngIf="waste.likeItVeryMuch;else allPeople">
+                  You and {{waste.likes.length- 1 }}users like this
+                </span>
+                <ng-template #allPeople>
+                   <span>
+                  {{waste.likes.length}} users likes this
+                </span>
+                </ng-template>
               </span>
             </div>
             <div *ngIf="waste.commentary.length"

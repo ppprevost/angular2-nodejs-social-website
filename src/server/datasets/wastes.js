@@ -3,15 +3,11 @@ module.exports = mongoose.model('Waste', {
   userId: {type: String, required: true},
   userType: {type: String, enum: ['public', 'private']},
   content: String,
-  likes: {
-    type: Number,
-    default: 0
-  },
+  likes: [String],
   commentary: [{
-    userId: String, typeWaste: String, likes: {
-      type: Number,
-      default: 0
-    }, data: String, date: {type: Date, default: Date.now}
+    userId: String, typeWaste: String,
+    likes: [String],
+    data: String, date: {type: Date, default: Date.now}
   }],
   date: {type: Date, default: Date.now}
 });

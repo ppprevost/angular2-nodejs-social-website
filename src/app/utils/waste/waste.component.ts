@@ -109,16 +109,22 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
       .subscribe(data => {
         return this.wastes.map(elem => {
           if (elem._id == data._id) {
-            if (commentId) {
-              elem.likes = data.likes;
+            if (!commentId) {
+              elem.likes = data.likes.map(doc => {
+                if (doc == this.auth.user._id) {
+                  doc.likeItVeryMuch = true;
+                }
+                return doc;
+              });
             } else {
-              this.wastes[this.wastes.indexOf(elem)].likes++ ;
+              this.wastes[this.wastes.indexOf(elem)].likes = this.wastes[this.wastes.indexOf(data)].likes;
             }
             return elem;
           }
         });
       });
   }
+
 
   sendWasteComments(wasteId, value) {
     let comments = {
