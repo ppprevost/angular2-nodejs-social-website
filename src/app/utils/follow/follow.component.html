@@ -1,5 +1,5 @@
 
-<div *ngIf="!isLoading; else loading" class="panel-footer" [ngSwitch]="waste.status">
+<div *ngIf="!isLoading; else loading" class="panel-footer" [ngSwitch]="waste.statut">
   <a class="btn btn-default btn-sm" *ngSwitchDefault (click)="follow(waste._id)">Add Friend <i
     class="fa fa-share"></i></a>
   <a class="btn btn-default btn-sm" *ngSwitchCase="'pending'">Waiting for connection<i

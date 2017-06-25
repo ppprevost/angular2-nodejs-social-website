@@ -82,12 +82,11 @@ export class AppComponent implements OnInit, OnDestroy {
     table.forEach((elem, i) => {
       this['connection' + i] = this.socket.socketFunction(elem.type)
         .subscribe(waste => {
-          this.auth.callRefreshUserData(waste, () => {
-            if (elem.type == "friendRequest") {
-              this.auth.countFriendRequest++;
-              this.toastyService.info({title: "new request from friend", msg: waste.username + ' : ' + elem.see});
-            }
-          });
+          this.auth.callRefreshUserData(waste);
+          if (elem.type == "friendRequest") {
+            this.auth.countFriendRequest++;
+            this.toastyService.info({title: "new request from friend", msg: waste.username + ' : ' + elem.see});
+          }
         });
     });
   }

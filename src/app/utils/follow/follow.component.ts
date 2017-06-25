@@ -20,12 +20,12 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   @Input() user;
 
   @Output() notify: EventEmitter<string> = new EventEmitter<string>();
-  private obj = (wasterValue,typeFollowing?) => {
-    let obj:any = {
+  private obj = (wasterValue, typeFollowing?) => {
+    let obj: any = {
       userId: this.user._id,
       wasterId: wasterValue
     };
-    if(typeFollowing){
+    if (typeFollowing) {
       obj.typeFollowing = typeFollowing
     }
 
@@ -46,7 +46,6 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   followUserOk(wasterId) {
     this.http.post('/api/users/followOk', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
       this.auth.countFriendRequest--;
-      this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
     });
   }
@@ -60,8 +59,6 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   follow(wasterId) {
     //  this.notify.emit('Click from nested component');
     this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      this.auth.callRefreshUserData(data.json(), () => {
-      });
       this.getThisUser(data.json());
 
     });
@@ -79,10 +76,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   unfollow(wasterId) {
-    //this.notify.emit('Click from nested component');
     this.http.post('/api/users/unfollow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      this.auth.callRefreshUserData(data.json(), () => {
-      });
       this.getThisUser(data.json());
     });
   }
@@ -90,7 +84,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.previousValue) {
       this.auth.callRefreshUserData(changes.user.currentValue);
-      this.getThisUser();
+      // this.getThisUser();
     }
   }
 
@@ -100,19 +94,22 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     if (waster.following.length) {
       waster.following.map((elem) => {
         if (elem.userId == this.waste._id) {
-          this.waste.status = elem.statut;
+          this.waste.statut = elem.statut;
           this.notify.emit(this.waste.status);
+        } else {
+          this.waste.statut = ""
         }
+        return elem
       });
+      this.auth.user = waster
     } else {
       this.waste.status = ""
-
     }
     this.isLoading = false;
   }
 
   typeFollowing(typeFollowing, wasterId) {
-    return this.http.post(`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId,typeFollowing)), this.options).toPromise().then(data => {
+    return this.http.post(`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId, typeFollowing)), this.options).toPromise().then(data => {
       this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
     });

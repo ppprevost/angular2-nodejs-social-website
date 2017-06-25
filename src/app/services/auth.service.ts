@@ -39,10 +39,11 @@ export class AuthService {
   callRefreshUserData(userData?: User, callback?: Function) {
     if (userData) {
       return this.user = userData
+
     } else {
       return this.data.refreshUserData({token: this.token}).subscribe(user => {
         this.user = user.json();
-      if(callback)  callback(this.user);
+        if (callback) callback(this.user);
       });
     }
   }

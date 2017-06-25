@@ -10,9 +10,9 @@ let follower = new mongoose.Schema(
   {
     userId: {required: true, type: String},
     date: Date,
-    statut: String,
-    image:String,
-    username:String
+    statut: {type: String, enum: ['pending', 'requested', 'accepted']},
+    image: String,
+    username: String
   });
 
 let schema = new mongoose.Schema({

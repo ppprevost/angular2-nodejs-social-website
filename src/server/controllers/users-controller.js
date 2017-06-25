@@ -94,12 +94,12 @@ module.exports = function (io) {
   };
 
 
-  let functionFollowing = (req,res)=> {
+  let functionFollowing = (req, res) => {
 
-    let obj ={
-      follow : {socketNotification:'', user:'pending',waster:'requested'},
-      followUserOk:{socketNotification:'', user:accepted,waster:'accepted'},
-      unfollow:{socketNotification:''}
+    let obj = {
+      follow: {socketNotification: '', user: 'pending', waster: 'requested'},
+      followUserOk: {socketNotification: '', user: accepted, waster: 'accepted'},
+      unfollow: {socketNotification: ''}
     };
 
     let typeFollower = req.body.typeFollo
@@ -284,25 +284,23 @@ module.exports = function (io) {
       wasterId = req.body.wasterId;
     Users.findById(wasterId, function (err, waster) {
       console.log(waster);
-      waster.following.forEach(function (doc) {
-        if (doc.userId == userId) {
-          console.log(doc);
-          waster.following.splice(doc, 1)
-        }
+      let index = waster.following.findIndex(function (doc) {
+        return doc.userId == userId
       });
+      waster.following.splice(index, 1)
       waster.save(() => {
         sendSocketNotification(waster, 'removeFriend');
+        Users.findById(userId, function (err, follower) {
+          let wasterIndex = follower.following.findIndex(function (doc) {
+            return doc.userId == wasterId;
+          });
+          follower.following.splice(wasterIndex, 1);
+          follower.save();
+          res.json(follower);
+        })
       });
     });
-    Users.findById(userId, function (err, follower) {
-      follower.following.forEach(function (doc) {
-        if (doc.userId == wasterId) {
-          follower.following.splice(doc, 1)
-        }
-      });
-      follower.save();
-      res.json(follower);
-    })
+
   };
   let getThisUser = function (req, res) {
     let userId = req.body.userId;
