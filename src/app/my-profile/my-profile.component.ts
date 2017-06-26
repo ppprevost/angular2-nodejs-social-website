@@ -28,7 +28,6 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.user = this.activatedRoute.snapshot.data['user'];
     return this.getThisUser();
   }
 
@@ -43,7 +42,6 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         this.data.getThisUser(this.id).subscribe(following => {
           this.user = following.json();
           this.actualUser = this.auth.user;
-
           this.getPictureUser(this.user._id);
         });
       } else {

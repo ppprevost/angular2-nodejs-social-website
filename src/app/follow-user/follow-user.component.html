@@ -7,7 +7,7 @@
 </ng-template>
 <div #wasteMasonry class="row userProfile" data-toggle="isotope" style="position: relative; ">
   <div class="row">
-    <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters" >
+    <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters">
       <div class="panel panel-default">
         <div class="panel-heading">
           <a href="" [routerLink]="['/my-profile', waste._id]" routerLinkActive="active">
@@ -19,7 +19,7 @@
               </div>
               <div class="media-body">
                 <h4 class="media-heading margin-v-5"><a href="#">{{waste.username}}</a></h4>
-                <span>{{waste.message}}</span>
+                <span>{{waste.statut}}</span>
                 <p>{{waste.email}}</p>
                 <div class="profile-icons">
                   <span><i class="fa fa-users"></i> {{waste.following.length}}</span>
@@ -37,11 +37,11 @@
           </div>
         </div>
         <div *ngIf="auth.user">
-          <app-follow (notify)='waste.message = $event; onNotify($event,waste)' [waste]="waste"
-                      [user]="auth.user"></app-follow>
+          <app-follow (follower)='waste.following.length=$event' (notify)='waste.statut = $event; onNotify($event,waste)
+          ' [waste]="waste"
+          [user]="auth.user"></app-follow>
         </div>
       </div>
     </div>
   </div>
-
 </div>

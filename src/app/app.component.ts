@@ -50,9 +50,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.connectionOfUser.unsubscribe();
     this.connection.unsubscribe();
     this.commentarySub.unsubscribe();
-    for (let i = 0; i < this.table.length; i++) {
-      this['connection' + i].unsubscribe();
-    }
+    // for (let i = 0; i < this.table.length; i++) {
+    //   this['connection' + i].unsubscribe();
+    // }
   }
 
   loginAccount() {
@@ -120,13 +120,13 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initSocket() {
-    this.auth.callRefreshUserData(null, () => {
+    this.auth.callRefreshUserData()
       this.auth.user.following.forEach(elem => {
         if (elem.statut == "requested") {
           this.auth.countFriendRequest++;
         }
       });
-    });
+
     this.connectionOfUser = this.socket.socketFunction("connect")
       .subscribe(connection => {
         this.data.refreshSocketIdOfConnectedUsers(

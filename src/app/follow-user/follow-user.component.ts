@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, HostListener} from '@angular/core';
+import {Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, HostListener, OnChanges} from '@angular/core';
 import {DataService} from '../services/data.service';
 import {InfiniteScrollService} from '../services/infinite-scroll.service';
 import {AuthService} from '../services/auth.service';
@@ -14,7 +14,7 @@ import * as Masonry from 'masonry-layout';
   providers: [InfiniteScrollService]
 })
 
-export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,OnChanges {
   wasters;
   unsub;
   @ViewChild(ListOfFriendComponent) listOfFriendComponent: ListOfFriendComponent;
@@ -26,9 +26,15 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy 
 
   ngOnInit() {
     this.unsub = this.route.snapshot.data['follow'].subscribe(data => {
-      this.wasters = data.json().filter(elem => {
-        return elem._id !== this.auth.user._id;
-      });
+      this.wasters = data.json()
+        .filter(elem => {
+          return elem._id !== this.auth.user._id;
+        })
+        .map(follower => {
+          follower.following.filter(contact => contact.statut == 'accepted');
+          return follower
+        })
+      console.log(this.wasters)
     });
   }
 
@@ -45,11 +51,15 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy 
     }
   }
 
+  ngOnChanges(changes) {
+    console.log("changes from parent data", changes)
+  }
+
   ngOnDestroy() {
     this.unsub.unsubscribe()
   }
 
-  onNotify(message: string, waster) {
+  onNotify(message: string) {
     console.log("response from parentData", message == "accepted");
     if (this.listOfFriendComponent && message == "accepted") {
       this.listOfFriendComponent.getFollowerImage(this.auth.user)

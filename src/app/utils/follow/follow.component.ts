@@ -19,7 +19,8 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   @Input() waste;
   @Input() user;
 
-  @Output() notify: EventEmitter<string> = new EventEmitter<string>();
+  @Output() follower: EventEmitter<any> = new EventEmitter<any>();
+  @Output() notify: EventEmitter<any> = new EventEmitter<any>();
   private obj = (wasterValue, typeFollowing?) => {
     let obj: any = {
       userId: this.user._id,
@@ -46,21 +47,18 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   followUserOk(wasterId) {
     this.http.post('/api/users/followOk', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
       this.auth.countFriendRequest--;
-      //this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
     });
   }
 
   ngOnDestroy() {
-    for (var i = 0; i < this.table.length; i++) {
-      this['connection' + i].unsubscribe();
-    }
+    // for (var i = 0; i < this.table.length; i++) {
+    //   this['connection' + i].unsubscribe();
+    // }
   }
 
   follow(wasterId) {
-    //  this.notify.emit('Click from nested component');
     this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
 
     });
@@ -78,15 +76,12 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
   unfollow(wasterId) {
     this.http.post('/api/users/unfollow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
-      //this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
     }, err => console.log(err));
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.previousValue) {
-      //this.auth.callRefreshUserData(changes.user.currentValue);
-      this.getThisUser(changes.user.currentValue);
     }
   }
 
@@ -98,7 +93,6 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
       waster.following.map((elem) => {
         if (elem.userId == this.waste._id) {
           this.waste.statut = elem.statut;
-          this.notify.emit(this.waste.statut);
           ok = true;
         }
         return elem;
@@ -109,6 +103,8 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.waste.statut = '';
     }
+    this.follower.emit(this.waste.following.length);
+    this.notify.emit(this.waste.statut);
     this.isLoading = false;
   }
 
