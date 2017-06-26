@@ -164,8 +164,6 @@ module.exports = function (io) {
         res.json(follower);
       })
     });
-
-
   };
 
 
@@ -287,7 +285,7 @@ module.exports = function (io) {
       let index = waster.following.findIndex(function (doc) {
         return doc.userId == userId
       });
-      waster.following.splice(index, 1)
+      waster.following.splice(index, 1);
       waster.save(() => {
         sendSocketNotification(waster, 'removeFriend');
         Users.findById(userId, function (err, follower) {
@@ -300,7 +298,6 @@ module.exports = function (io) {
         })
       });
     });
-
   };
   let getThisUser = function (req, res) {
     let userId = req.body.userId;

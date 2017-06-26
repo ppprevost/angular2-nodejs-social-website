@@ -34,11 +34,11 @@ export class DataService {
 
 
   updateChamp(champ): Observable<any> {
-    return this.http.post('/api/profile/updateChamp', JSON.stringify(champ), this.options)
+    return this.http.post('/api/profile/updateChamp', JSON.stringify(champ), this.options);
   }
 
   updatePassword(pass): Observable<any> {
-    return this.http.post('/api/profile/updatePassword', JSON.stringify(pass), this.options)
+    return this.http.post('/api/profile/updatePassword', JSON.stringify(pass), this.options);
   }
 
 

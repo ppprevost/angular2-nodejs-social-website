@@ -46,6 +46,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   followUserOk(wasterId) {
     this.http.post('/api/users/followOk', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
       this.auth.countFriendRequest--;
+      //this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
     });
   }
@@ -59,6 +60,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   follow(wasterId) {
     //  this.notify.emit('Click from nested component');
     this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
+      this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
 
     });
@@ -68,42 +70,44 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     table.forEach((elem, i) => {
       this['connection' + i] = this.socket.socketFunction(elem)
         .subscribe(waste => {
-          this.auth.callRefreshUserData(waste, () => {
-            this.getThisUser(waste);
-          });
+          this.auth.callRefreshUserData(waste);
+          this.getThisUser(waste);
         });
     });
   }
 
   unfollow(wasterId) {
     this.http.post('/api/users/unfollow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
+      //this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
-    });
+    }, err => console.log(err));
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.previousValue) {
-      this.auth.callRefreshUserData(changes.user.currentValue);
-      // this.getThisUser();
+      //this.auth.callRefreshUserData(changes.user.currentValue);
+      this.getThisUser(changes.user.currentValue);
     }
   }
 
 
   getThisUser(user?) { // pour rafraichir la liste des différents followers
     let waster = user ? user : this.auth.user;
+    let ok = false;
     if (waster.following.length) {
       waster.following.map((elem) => {
         if (elem.userId == this.waste._id) {
           this.waste.statut = elem.statut;
-          this.notify.emit(this.waste.status);
-        } else {
-          this.waste.statut = ""
+          this.notify.emit(this.waste.statut);
+          ok = true;
         }
-        return elem
+        return elem;
       });
-      this.auth.user = waster
+      if (!ok) {
+        this.waste.statut = '';
+      }
     } else {
-      this.waste.status = ""
+      this.waste.statut = '';
     }
     this.isLoading = false;
   }
