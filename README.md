@@ -25,6 +25,7 @@ Then  install all node modules
 npm install -g nodemon angular-cli
 npm install
 ```
+Your application is listening to localhost:4200
 
 ### Installing
 
