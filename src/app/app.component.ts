@@ -66,7 +66,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.initSocket();
       },
       err => {
-        if (typeof err.json() == 'string') {
+        if (typeof err.json() === 'string') {
           this.toastyService.error(err.json());
         } else {
           if (Array.isArray(err.json())) {

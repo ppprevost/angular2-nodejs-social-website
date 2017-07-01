@@ -28,7 +28,7 @@ let contentEnv = "MONGODB_URI=mongodb://localhost:27017/test \nMAILVERIF=Gmail \
 try {
   fs.statSync(dirEnv).isFile()
 } catch (err) {
-  if (err.code == 'ENOENT') {
+  if (err.code === 'ENOENT') {
     if (!process.env.MONGODB_URI) {
       console.log('environment file does not exist, please fulfill the information in the dot env file at the root folder');
       fs.writeFileSync(dirEnv, contentEnv, 'utf8')

@@ -6,7 +6,7 @@ module.exports = () => {
     let following = followingTable || [];
     let newTable = [];
     newTable = following.filter(elem => {
-      return elem.statut == 'accepted'
+      return elem.statut === 'accepted'
     }).map(doc => {
       return doc.userId
     });
@@ -14,14 +14,14 @@ module.exports = () => {
       .exec(function (err, waster) {
         following = following.map(follow => {
           waster.forEach(elem => {
-            if (follow.userId == elem._id.toString()) {
+            if (follow.userId === elem._id.toString()) {
               follow.image = elem.image;
               follow.username = elem.username
             }
           });
           return follow
         }).filter(filt => {
-          return filt.statut == "accepted"
+          return filt.statut === "accepted"
         });
         callback(following)
       });
@@ -38,7 +38,7 @@ module.exports = () => {
     let following = query['followingTable'] || [];
     let newTable = [];
       newTable = following.filter(elem => {
-        return elem.statut == 'accepted'
+        return elem.statut === 'accepted'
       }).map(doc => {
         return doc.userId
       });
@@ -58,7 +58,7 @@ module.exports = () => {
       waster.map(elem => {
         if (userData.following) {
           userData.following.map(doc => {
-            if (doc.userId == elem._id.toString()) {
+            if (doc.userId === elem._id.toString()) {
               doc = elem
             }
             return doc

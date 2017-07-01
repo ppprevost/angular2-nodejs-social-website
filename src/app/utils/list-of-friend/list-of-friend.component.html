@@ -1,6 +1,6 @@
 <ul *ngIf="user.following && user.following.length;else noFriend" class="img-grid">
   <li *ngFor="let follower of user.following">
-    <div *ngIf="follower.statut == 'accepted'">
+    <div *ngIf="follower.statut === 'accepted'">
       <a href="" [routerLink]="['/my-profile',follower.userId]">
         <img routerLinkActive="active" alt="image" [src]="follower.image"
              [title]="follower.username">

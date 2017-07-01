@@ -323,7 +323,7 @@ module.exports = function (io) {
             utils.listOfFriends(req, res, user.following, 10, (waster) => {
               waster.map(elem => {
                 user.following.map(doc => {
-                  if (doc.userId == elem._id) {
+                  if (doc.userId === elem._id) {
                     doc = elem
                   }
                   return doc

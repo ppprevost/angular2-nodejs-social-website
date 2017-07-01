@@ -95,7 +95,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
         .map(res => res.json())
         .subscribe(res => {
           return this.wastes = this.wastes.map(elem => {
-            if (elem._id == res._id) {
+            if (elem._id === res._id) {
               elem = res as Waste;
             }
             return elem;
@@ -108,10 +108,10 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
     return this.data.likeThisPostOrComment(wasteId, commentId).map(res => res.json())
       .subscribe(data => {
         return this.wastes.map(elem => {
-          if (elem._id == data._id) {
+          if (elem._id === data._id) {
             if (!commentId) {
               elem.likes = data.likes.map(doc => {
-                if (doc == this.auth.user._id) {
+                if (doc === this.auth.user._id) {
                   doc.likeItVeryMuch = true;
                 }
                 return doc;
@@ -142,7 +142,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
 
   getBackPosts(wasters, res) {
     wasters.map(waste => {
-      if (waste._id == res.wasteId) {
+      if (waste._id === res.wasteId) {
         delete res.wasteId;
         delete res.userId;
         waste.commentary.push(res);
@@ -158,7 +158,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
       .map(res => res.json())
       .subscribe(data => {
         return this.wastes.map(elem => {
-          if (elem._id == data._id) {
+          if (elem._id === data._id) {
             if (wasteOrComment) {
               elem.commentary = data.commentary;
             } else {

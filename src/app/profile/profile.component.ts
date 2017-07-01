@@ -76,7 +76,7 @@ export class ProfileComponent implements OnInit {
   updatePassword() {
     try {
       Object.keys(this.updatePass.value).forEach(elem => {
-        if (this.updatePass.value[elem] == "") {
+        if (this.updatePass.value[elem] === "") {
           throw new Error('Fields are required');
         }
       });

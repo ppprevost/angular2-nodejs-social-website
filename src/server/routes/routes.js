@@ -39,7 +39,7 @@ module.exports = function (app, io) {
         return res.end('no good token', 400);
       }
     } else {
-      if (req.url == '/api/verif' || req.url == '/api/user/signup' || req.url == '/api/user/login') {
+      if (req.url === '/api/verif' || req.url == '/api/user/signup' || req.url == '/api/user/login') {
         next();
       } else {
         res.end('no token provided', 400);

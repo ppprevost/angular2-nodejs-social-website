@@ -22,7 +22,7 @@ module.exports = function (io) {
         let asyncLoop = (i, usersData) => {
           utils.listOfFriends(req, res, usersData[i].following, 10, (waster) => {
             usersData[i].following = waster;
-            if (i == usersData.length - 1) {
+            if (i === usersData.length - 1) {
               UsersConnected.find().exec((err, userConnected) => {
                 let connectedId = userConnected.map(elem => {
                   return elem.userId
@@ -30,7 +30,7 @@ module.exports = function (io) {
                 usersData.map(doc => {
                   if (doc && doc._id) {
                     connectedId.forEach(elem => {
-                      return doc._doc.isConnected = elem == doc._id.toString()
+                      return doc._doc.isConnected = elem === doc._id.toString()
                     })
                   }
                 });
@@ -59,7 +59,7 @@ module.exports = function (io) {
             } else {
               if (!err) {
                 let indexObj = user.location.indexOf(user.location.find(elem => {
-                  return elem._id.toString() == decoded.user.idOfLocation
+                  return elem._id.toString() === decoded.user.idOfLocation
                 }));
                 user.location.splice(indexObj, 1);
                 user.save()
@@ -82,7 +82,7 @@ module.exports = function (io) {
             locationUser.remove()
           } else {
             let indexOfLocation = locationUser.location.indexOf(locationUser.location.find(elem => {
-              return elem.socketId == socketId
+              return elem.socketId === socketId
             }));
             //locationUser.location[indexOfLocation].remove();
             locationUser.location.splice(indexOfLocation, 1);
@@ -119,7 +119,7 @@ module.exports = function (io) {
         console.log(waster);
         var already = false; // test si l'user ID est deja présent
         waster.following.forEach(function (doc) {
-          if (doc && doc.userId == userId) {
+          if (doc && doc.userId === userId) {
             already = true;
             console.log("deja présent");
           }
@@ -148,7 +148,7 @@ module.exports = function (io) {
       } else {
         var already = false; // test si l'user ID est deja présent
         follower.following.forEach(function (doc) {
-          if (doc.userId && doc.userId == wasterId) {
+          if (doc.userId && doc.userId === wasterId) {
             already = true;
           }
         });
@@ -184,7 +184,7 @@ module.exports = function (io) {
         console.log(waster);
         var already = false; // test si l'user ID est deja présent
         waster.following.forEach(function (doc) {
-          if (doc && doc.userId == userId) {
+          if (doc && doc.userId === userId) {
             already = true;
             console.log("deja présent");
           }
@@ -213,7 +213,7 @@ module.exports = function (io) {
       } else {
         var already = false; // test si l'user ID est deja présent
         follower.following.forEach(function (doc) {
-          if (doc.userId && doc.userId == wasterId) {
+          if (doc.userId && doc.userId === wasterId) {
             already = true;
           }
         });
@@ -267,7 +267,7 @@ module.exports = function (io) {
         console.log("failed save");
       } else {
         follower.following.forEach(function (doc) {
-          if (doc.userId == wasterId) {
+          if (doc.userId === wasterId) {
             doc.statut = "accepted"
           }
         });
@@ -283,14 +283,14 @@ module.exports = function (io) {
     Users.findById(wasterId, function (err, waster) {
       console.log(waster);
       let index = waster.following.findIndex(function (doc) {
-        return doc.userId == userId
+        return doc.userId === userId
       });
       waster.following.splice(index, 1);
       waster.save(() => {
         sendSocketNotification(waster, 'removeFriend');
         Users.findById(userId, function (err, follower) {
           let wasterIndex = follower.following.findIndex(function (doc) {
-            return doc.userId == wasterId;
+            return doc.userId === wasterId;
           });
           follower.following.splice(wasterIndex, 1);
           follower.save();
