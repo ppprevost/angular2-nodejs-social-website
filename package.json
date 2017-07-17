@@ -18,7 +18,6 @@
   },
   "private": true,
   "dependencies": {
-<<<<<<< HEAD
     "@angular/animations": "^4.2.5",
     "@angular/cli": "^1.2.0",
     "@angular/common": "^4.2.5",
@@ -34,7 +33,6 @@
     "@types/masonry-layout": "^4.0.5",
     "@types/node": "^6.0.79",
     "@types/socket.io-client": "^1.4.29",
-=======
     "@angular/animations": "^4.1.2",
     "@angular/cli": "^1.1.0",
     "@angular/common": "^4.1.2",
@@ -47,7 +45,6 @@
     "@angular/platform-browser": "^4.1.2",
     "@angular/platform-browser-dynamic": "^4.1.2",
     "@angular/router": "^4.1.2",
->>>>>>> a542601... delete jquery and fix masonry @types
     "angular2-jwt": "^0.2.3",
     "angular2-recaptcha": "^0.4.1",
     "bcryptjs": "^2.4.3",
@@ -86,12 +83,8 @@
   "devDependencies": {
     "@types/jasmine": "2.5.38",
     "@types/node": "~6.0.60",
-<<<<<<< HEAD
-
-=======
     "@types/masonry-layout": "^4.0.4",
     "@types/jquery":"2.0.46",
->>>>>>> a542601... delete jquery and fix masonry @types
     "@types/socket.io-client": "^1.4.29",
     "codelyzer": "~2.0.0",
     "concurrently": "^3.3.0",
