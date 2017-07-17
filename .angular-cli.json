@@ -29,6 +29,7 @@
 
       ],
       "scripts": [
+        "../node_modules/jquery/dist/jquery.min.js",
         "../node_modules/tether/dist/js/tether.min.js",
         "../node_modules/sweetalert2/dist/sweetalert2.js",
         "../node_modules/masonry-layout/dist/masonry.pkgd.min.js",
