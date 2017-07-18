@@ -23,15 +23,15 @@ Then  install all node modules
 npm install -g nodemon angular-cli
 npm install
 ```
-### Installing
+## Installing
 
-## Development mode
+### Development mode
 * Please fulfill the information in the .env file. It contains all variables uses by node.js ( mongodb_uri, gmail, amazon etc...)
 ```
 npm run dev
 ```
 Your application is listening to localhost:4200
-## Production mode
+### Production mode
 
 ```
 npm run prod
