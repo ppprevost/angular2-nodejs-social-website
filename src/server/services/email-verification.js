@@ -1,16 +1,16 @@
 'use strict';
 
-var randtoken = require('rand-token'),
+const randtoken = require('rand-token'),
   nodemailer = require('nodemailer');
 
 
 module.exports = function (mongoose) {
 
-  var isPositiveInteger = function (x) {
+  let isPositiveInteger = function (x) {
     return ((parseInt(x, 10) === x) && (x >= 0));
   };
 
-  var createOptionError = function (optionName, optionValue, expectedType) {
+  let createOptionError = function (optionName, optionValue, expectedType) {
     return new TypeError('Expected ' + optionName + ' to be a ' + expectedType + ', got ' + typeof optionValue);
   };
 
@@ -22,7 +22,7 @@ module.exports = function (mongoose) {
    * @param {string} path - path to value
    * @param {string} def - default value to return if not found
    */
-  var getNestedValue = function (obj, path, def) {
+  let getNestedValue = function (obj, path, def) {
     path = path.split('.');
     for (let i = 0, len = path.length; i < len; i++) {
       if (!obj || typeof obj !== 'object') {
@@ -39,7 +39,7 @@ module.exports = function (mongoose) {
 
 
   // default options
-  var options = {
+  let options = {
     verificationURL: 'http://example.com/email-verification/${URL}',
     URLLength: 48,
 
@@ -92,7 +92,7 @@ module.exports = function (mongoose) {
   };
 
 
-  var transporter;
+  let transporter;
 
   /**
    * Modify the default configuration.
@@ -100,7 +100,7 @@ module.exports = function (mongoose) {
    * @func configure
    * @param {object} o - options to be changed
    */
-  var configure = function (optionsToConfigure, callback) {
+  let configure = function (optionsToConfigure, callback) {
     for (let key in optionsToConfigure) {
       if (optionsToConfigure.hasOwnProperty(key)) {
         options[key] = optionsToConfigure[key];
@@ -165,7 +165,7 @@ module.exports = function (mongoose) {
     if (!User) {
       return callback(new TypeError('Persistent user model undefined.'), null);
     }
-    var tempUserSchemaObject = {}, // a copy of the schema
+    let tempUserSchemaObject = {}, // a copy of the schema
       tempUserSchema;
 
     // copy over the attributes of the schema

@@ -98,7 +98,7 @@ export class AppComponent implements OnInit, OnDestroy {
       localStorage.clear();
       this.auth.countFriendRequest = 0;
       this.router.navigate(['./']);
-      var toastOptions: ToastOptions = {
+      let toastOptions: ToastOptions = {
         title: "Deconnection",
         msg: "See you soon !",
         showClose: true,

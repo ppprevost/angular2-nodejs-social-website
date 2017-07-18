@@ -22,12 +22,12 @@ let storage = multer.diskStorage({ //multers disk storage settings
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       return cb(new Error('Only image files are allowed!'), false);
     }
-    var datetimestamp = Date.now();
+    let datetimestamp = Date.now();
     cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length - 1]);
   }
 });
 
-var upload = multer({ //multer settings
+let upload = multer({ //multer settings
   storage: storage
 }).single('file');
 
@@ -60,18 +60,18 @@ module.exports = function (io) {
     console.log(req.body)
     delete req.body.userId;
     let champ = Object.keys(req.body)[0];
-    if (champ == "email") {
+    if (champ === "email") {
       req.assert('email', 'Email is not valid').isEmail();
       req.assert('email', 'Email cannot be blank').notEmpty();
       req.sanitize('email').normalizeEmail({remove_dots: false});
-      var errors = req.validationErrors();
+      let errors = req.validationErrors();
       if (errors) {
         return res.status(400).send(errors);
       }
     }
     let value = Object.values(req.body)[0];
     User.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
-      var user = userData;
+      let user = userData;
       user[champ] = [value];
 
       user.save(function (err) {

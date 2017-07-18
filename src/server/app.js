@@ -1,6 +1,6 @@
 const http = require('http');
 const path = require('path');
-var express = require('express');
+const express = require('express');
 const multer = require('multer');
 const morgan = require('morgan'); // logger
 const bodyParser = require('body-parser');
@@ -41,7 +41,7 @@ dotenv.load({path: '.env'});
 app.use(morgan('dev'));
 let mongoose = require('mongoose');//
 mongoose.connect(process.env.MONGODB_URI);
-var db = mongoose.connection;
+const db = mongoose.connection;
 mongoose.Promise = global.Promise;
 db.on('error', () => {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');

@@ -1,9 +1,6 @@
-var mongoose = require('mongoose');
-var friends = require("mongoose-friends");
-var validateEmail = function (email) {
-  var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  return re.test(email);
-};
+const mongoose = require('mongoose');
+const friends = require("mongoose-friends");
+
 
 
 let follower = new mongoose.Schema(

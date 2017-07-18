@@ -69,12 +69,12 @@ nev.generateTempUserModel(Users, function (err, tempUserModel) {
 });
 
 module.exports = function (io) {
-  var signup = function (req, res, next) {
+  let signup = function (req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('email', 'Email cannot be blank').notEmpty();
     req.assert('pass', 'Password must be at least 4 characters long').len(4);
     req.sanitize('email').normalizeEmail({remove_dots: false});
-    var errors = req.validationErrors();
+    let errors = req.validationErrors();
 
     if (errors) {
       return res.status(400).send(errors);
@@ -102,7 +102,7 @@ module.exports = function (io) {
       }
       // new user created
       if (newTempUser) {
-        var URL = newTempUser[nev.options.URLFieldName];
+        let URL = newTempUser[nev.options.URLFieldName];
 
         // nev.sendVerificationEmail(email, URL, function (err, info) {
         //   if (err) {
@@ -166,7 +166,7 @@ module.exports = function (io) {
     req.assert('email', 'Email cannot be blank and must be a correct email').notEmpty().isEmail();
     req.assert('password', 'Password cannot be blank').notEmpty();
     req.sanitize('email').normalizeEmail({remove_dots: false});
-    var errors = req.validationErrors();
+    let errors = req.validationErrors();
     if (errors) {
       return res.status(400).send(errors);
     }
@@ -295,7 +295,7 @@ module.exports = function (io) {
 
   let emailVerif = (req, res) => {
     console.log(req.body)
-    var url = req.body.url;
+    let url = req.body.url;
     console.log(url);
     nev.confirmTempUser(url, function (err, user) {
       console.log(user);
@@ -352,7 +352,7 @@ module.exports = function (io) {
 
   let validCaptcha = (req, res) => {
     let token = req.params.token;
-    var verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + process.env.SECRET_KEYCAPTCHA + "&response=" + token + "&remoteip=" + req.connection.remoteAddress;
+    let verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + process.env.SECRET_KEYCAPTCHA + "&response=" + token + "&remoteip=" + req.connection.remoteAddress;
     request(verificationUrl, (error, response, body) => {
       body = JSON.parse(body);
       // Success will be true or false depending upon captcha validation.

@@ -85,7 +85,7 @@
             <div id="home" class="tab-pane fade active in">
               <div *ngIf="id">
                 <div
-                  *ngIf="actualUser && uploadPicture.length && actualUser?._id==id || actualUser && uploadPicture.length && user?.friendShip=='accepted';else error">
+                  *ngIf="actualUser && uploadPicture.length && actualUser?._id===id || actualUser && uploadPicture.length && user?.friendShip=='accepted';else error">
                   <div class="row">
                     <div class="col-xs-12">
                       <button *ngIf="actualUser?._id==id" class="btn btn-warning" (click)="deleteAllPictureUser()">
@@ -152,7 +152,7 @@
           <app-waste [numberOfWaste]="3"
                      [userId]="user._id"
                      [onlyOwnPost]="true"
-                     [typePost]="(actualUser._id==id || user?.friendShip=='accepted')? 'all':'publicOnly'"></app-waste>
+                     [typePost]="(actualUser._id===id || user?.friendShip=='accepted')? 'all':'publicOnly'"></app-waste>
         </div>
       </div>
     </div>

@@ -48,7 +48,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         this.user = this.actualUser = this.auth.user;
         this.getPictureUser(this.user._id);
         this.user.following = this.user.following.filter(elem => {
-          return elem.statut == "accepted"
+          return elem.statut === "accepted"
         });
       }
     });

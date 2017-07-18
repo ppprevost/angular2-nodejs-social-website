@@ -15,7 +15,7 @@
               <div class="media-body">
                 <a href="#" class="pull-right text-muted"><i
                   class="icon-reply-all-fill fa fa-2x "></i></a>
-                <a (click)="deleteWasteOrPost(waste._id)" *ngIf="auth.user._id == waste.userId"
+                <a (click)="deleteWasteOrPost(waste._id)" *ngIf="auth.user._id === waste.userId"
                    class="fa fa-close pull-right"></a>
                 <a href="">{{waste.user}}</a>
                 <p>{{waste.userType}} post</p>

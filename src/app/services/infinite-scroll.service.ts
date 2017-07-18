@@ -8,7 +8,7 @@ export class InfiniteScrollService {
 
 
   getDocHeight() {
-    var D = document;
+    let D = document;
     return Math.max(
       D.body.scrollHeight, D.documentElement.scrollHeight,
       D.body.offsetHeight, D.documentElement.offsetHeight,
@@ -17,7 +17,7 @@ export class InfiniteScrollService {
   }
 
   getScrollXY() {
-    var scrOfX = 0, scrOfY = 0;
+    let scrOfX = 0, scrOfY = 0;
     if (typeof( window.pageYOffset ) == 'number') {
       //Netscape compliant
       scrOfY = window.pageYOffset;
@@ -35,11 +35,11 @@ export class InfiniteScrollService {
   }
 
   debounce(func, wait, immediate, context?) {
-    var result;
-    var timeout = null;
+    let result;
+    let timeout = null;
     return function () {
-      var ctx = context || this, args = arguments;
-      var later = function () {
+      let ctx = context || this, args = arguments;
+      let later = function () {
         timeout = null;
         if (!immediate) result = func.apply(ctx, args);
       };

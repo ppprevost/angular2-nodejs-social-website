@@ -91,7 +91,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     let ok = false;
     if (waster.following.length) {
       waster.following.map((elem) => {
-        if (elem.userId == this.waste._id) {
+        if (elem.userId === this.waste._id) {
           this.waste.statut = elem.statut;
           ok = true;
         }

@@ -16,7 +16,7 @@ module.exports = function (io) {
         waste._doc.username = user.username;
         waste._doc.image = user.image;
         user.following.forEach(elem => {
-          if (elem.statut == "accepted") {
+          if (elem.statut === "accepted") {
             UsersConnected.findOne({userId: elem.userId.toString()}, (err, userConnecteds) => {
               if (userConnecteds) {
                 userConnecteds.location.forEach((doc) => {
