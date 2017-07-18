@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {PublicService} from '../services/public.service'
+import {Component, OnInit, ElementRef, AfterViewInit} from '@angular/core';
+import {PublicService} from '../services/public.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {Router} from '@angular/router';
 import {ToastyService} from 'ng2-toasty';
-import swal from 'sweetalert2'
+import swal from 'sweetalert2';
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -20,18 +20,21 @@ export class SignupComponent implements OnInit {
   username = new FormControl('', [Validators.required, Validators.maxLength(20)]);
   password = new FormControl('', Validators.required);
 
-  constructor(private toastyService: ToastyService, private publicService: PublicService, private addUserForm: FormBuilder, private router: Router) {
+  constructor(private toastyService: ToastyService,
+              private publicService: PublicService,
+              private addUserForm: FormBuilder,
+              private router: Router) {
   }
 
   ngOnInit() {
-
     this.addUser = this.addUserForm.group({
       email: this.email,
       username: this.username,
       pass: this.password
 
-    })
+    });
   }
+
 
   handleCorrectCaptcha(event) {
 
@@ -47,7 +50,7 @@ export class SignupComponent implements OnInit {
 
   addAccount() {
     if (!this.verifToggle) {
-      let toastOptions = (response, title) => {
+      const toastOptions = (response, title) => {
         return {
           title: title,
           msg: response,
@@ -66,10 +69,10 @@ export class SignupComponent implements OnInit {
             type: 'success',
             confirmButtonText: 'Ok'
           });
-          this.toastyService.success(toastOptions(res, "Congratulations !"));
+          this.toastyService.success(toastOptions(res, 'Congratulations !'));
           this.router.navigate(['./']);
         }, (err) => {
-          this.toastyService.error(toastOptions(err, "An error occured"))
+          this.toastyService.error(toastOptions(err, 'An error occured'));
         });
     } else {
       this.publicService.resendVerifMail(this.addUser.value.email)

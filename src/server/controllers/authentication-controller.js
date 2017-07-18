@@ -104,33 +104,43 @@ module.exports = function (io) {
       if (newTempUser) {
         let URL = newTempUser[nev.options.URLFieldName];
 
-        // nev.sendVerificationEmail(email, URL, function (err, info) {
-        //   if (err) {
-        //     console.log(err)
-        //     return res.status(404).send('ERROR: sending verification email FAILED');
-        //   }
-
-          nev.confirmTempUser(URL, function (err, user) {
+        let confirmTempUser = () => {
+          return nev.confirmTempUser(URL, function (err, user) {
             console.log(user);
             if (err) {
 
             }
             if (user) {
-              nev.sendConfirmationEmail(user['email'], function (data) {
+              if (JSON.parse(process.env.EMAIL_VERIFICATION)) {
+                nev.sendConfirmationEmail(user['email'], function (data) {
+                  console.log(data);
+                  res.json(data);
+                });
+              } else {
                 console.log(data);
                 res.json(data);
-              });
-
+              }
             } else {
               return res.status(404).send('ERROR: confirming temp user FAILED' + err);
             }
           });
+        };
 
-          // res.json({
-          //   msg: 'An email has been sent to you. Please check it to verify your account.',
-          //   info: info
-          // });
-        // });
+        if (JSON.parse(process.env.EMAIL_VERIFICATION)) {
+          nev.sendVerificationEmail(email, URL, function (err, info) {
+            if (err) {
+              console.log(err);
+              return res.status(404).send('ERROR: sending verification email FAILED');
+            }
+            confirmTempUser();
+            res.json({
+              msg: 'An email has been sent to you. Please check it to verify your account.',
+              info: info
+            });
+          });
+        } else {
+          confirmTempUser()
+        }
 
         // user already exists in temporary collection!
       } else {
@@ -139,8 +149,6 @@ module.exports = function (io) {
         });
       }
     });
-
-
   };
 
   let resendVerificationEmail = (req, res) => {
