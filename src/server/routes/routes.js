@@ -82,7 +82,6 @@ module.exports = function (app, io) {
   app.delete('/api/users/deleteAllPicture/:id', usersController.deleteAllPictures);
   app.get('/api/users/get', usersController.getUsers);
   app.post('/api/users/follow', usersController.followUser);
-  app.post('/api/users/follow', usersController.followUser);
   app.post('/api/users/followOk', usersController.followUserOk);
   app.post('/api/users/unfollow', usersController.unfollowUser);
   app.post('/api/users/getThisUsers', usersController.getThisUser);

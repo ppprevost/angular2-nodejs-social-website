@@ -6,6 +6,12 @@ let utils = require('../utils/utils')();
 
 module.exports = function (io) {
 
+  //TODO  send to specific friends with the function utils
+  /**
+   * Send a post and send notif via socket to friends
+   * @param req
+   * @param res
+   */
   let sendPost = (req, res) => {
     let data = req.body.request;
     if (data) {
@@ -39,10 +45,15 @@ module.exports = function (io) {
 
   };
 
+  /**
+   * Get all Post from a user
+   * @param req Object
+   * onlyOwnPost Get own Post
+   * @param res
+   */
   let getPost = (req, res) => {
     let userData = req.body.following, onlyOwnPost = req.body.onlyOwnPost, typePost = req.body.typePost;
     let requestedWastes = [userData];
-
     Users.findById(userData, (err, user) => {
       if (!err && !onlyOwnPost && user.following && user.following.length) {
         for (let i = 0, len = user.following.length; i < len; i++) {
@@ -90,6 +101,11 @@ module.exports = function (io) {
     });
   };
 
+  /**
+   * Get all Commentary from a post
+   * @param req
+   * @param res
+   */
   let getCommentary = (req, res) => {
     let commentary = req.body.commentary
     let tableUserCommentary = commentary.map(elem => {
@@ -112,6 +128,11 @@ module.exports = function (io) {
     })
   };
 
+  /**
+   * Send a new comment from a specific
+   * @param req
+   * @param res
+   */
   let sendComments = (req, res) => {
     let comments = req.body.comments;
     let userId = req.body.userId;
@@ -143,7 +164,13 @@ module.exports = function (io) {
     })
   };
 
-
+  /**
+   * Same function for deleting and liking POST AND COMMENT
+   * @param req
+   * typeOfFunction => likes or comments
+   * @param res
+   * @param typeOfFunction string
+   */
   let likeOrDeletePost = (req, res, typeOfFunction) => {
     let wasteId = req.params.wasteId;
     Waste.findById(wasteId, (err, result) => {

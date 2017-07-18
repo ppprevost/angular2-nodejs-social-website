@@ -14,6 +14,11 @@ let uploadUtil = (req, res, callback) => {
 
 
 module.exports = function (io) {
+  /**
+   * Get all Users and add the connected carcterisitc
+   * @param req
+   * @param res
+   */
   let getUsers = function (req, res) {
     Users.find().select({password: 0, __v: 0}).exec(function (err, usersData) {
       if (err) {
@@ -73,6 +78,10 @@ module.exports = function (io) {
     })
   };
 
+  /**
+   * Delete socket ID from MongoDB server
+   * @param socketId string
+   */
   let deleteSocketIdDB = (socketId) => {
     //TODO  deconnectionMethod('location.socketId', socketId)
     UsersConnected.findOne({'location.socketId': socketId}, (err, locationUser) => {
@@ -93,7 +102,7 @@ module.exports = function (io) {
     })
   };
 
-
+  //TODO merge all following function
   let functionFollowing = (req, res) => {
 
     let obj = {
@@ -231,6 +240,10 @@ module.exports = function (io) {
     });
   };
 
+  /**
+   * Send private notification to the receiver of the request
+   * @type {(p1?:*, p2?:*)}
+   */
   let sendSocketNotification = ((waster, notif) => {
     UsersConnected.findOne({userId: waster._id}, (err, userCo) => {
       if (userCo) {
@@ -325,6 +338,11 @@ module.exports = function (io) {
     })
   };
 
+  /**
+   * Delete all Picture of a specific user
+   * @param req
+   * @param res
+   */
   let deleteAllPictures = (req, res) => {
     uploadUtil(req, res, (files, directory, userId) => {
       if (files.length === 0) {

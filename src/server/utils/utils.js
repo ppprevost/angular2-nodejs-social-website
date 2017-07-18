@@ -53,6 +53,14 @@ module.exports = () => {
         });
   };
 
+  /**
+   * add additional information to listOfFriends
+   * @param req
+   * @param res
+   * @param numberOfFriends
+   * @param userData
+   * @param callback
+   */
   let expandFriendInfo = (req, res, numberOfFriends, userData, callback) => {
     listOfFriends(req, res, userData.following, numberOfFriends, (waster) => {
       waster.map(elem => {
@@ -69,6 +77,14 @@ module.exports = () => {
     });
   };
 
+  /**
+   * Get list of friend and sent notf to all friend list
+   * @param req
+   * @param res
+   * @param userData
+   * @param message
+   * @returns {Promise}
+   */
   let getListOfFriendAndSentSocket = (req, res, userData, message) => {
     return new Promise((rej, resolve) => {
       listOfFriends(req, res, userData.following, 0, waster => {

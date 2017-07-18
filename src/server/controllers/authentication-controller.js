@@ -22,6 +22,10 @@ myHasher = function (password, tempUserData, insertTempUser, callback) {
  * https://nodemailer.com/smtp/oauth2/
  * and update nodemailer
  */
+
+/**
+ * Information to add if your are using the Verification Module
+ */
 nev.configure({
   persistentUserModel: Users,
   expirationTime: 600, // 10 minutes
@@ -169,6 +173,11 @@ module.exports = function (io) {
     });
   }
 
+  /**
+   * the loging Method
+   * @param req
+   * @param res
+   */
   let login = (req, res) => {
     console.log("req.body", req.body);
     req.assert('email', 'Email cannot be blank and must be a correct email').notEmpty().isEmail();
@@ -227,7 +236,7 @@ module.exports = function (io) {
     });
   };
 
-  let locationSearch = (savedUser, socketId, userData, res) => {
+  let locationSearch = (savedUser, socketId, userData) => {
     let idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
       return elem.socketId == socketId
     }));
@@ -241,6 +250,11 @@ module.exports = function (io) {
 
   };
 
+  /**
+   * Call this function uniquely if the user is refreshing the page of connnect again
+   * @param req
+   * @param res
+   */
   let refreshSocketIdOfConnectedUsers = (req, res) => {
     let socketId = req.body.socketId, token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
@@ -288,7 +302,11 @@ module.exports = function (io) {
     });
   };
 
-
+  /**
+   * Get ipconnection to spy
+   * @param req
+   * @returns {*}
+   */
   let ipConnection = (req) => {
     let ip;
     if (req.headers['x-forwarded-for']) {
@@ -301,8 +319,13 @@ module.exports = function (io) {
     return ip
   }
 
+  /**
+   * Valid the email of user after clicking in the mail link
+   * @param req
+   * @param res
+   */
   let emailVerif = (req, res) => {
-    console.log(req.body)
+    console.log(req.body);
     let url = req.body.url;
     console.log(url);
     nev.confirmTempUser(url, function (err, user) {
@@ -322,6 +345,11 @@ module.exports = function (io) {
     });
   };
 
+  /**
+   * This function update lit of friends and information about a specific user (the connected user mainly)
+   * @param req
+   * @param res
+   */
   let refreshUserData = (req, res) => {
     let token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
@@ -336,19 +364,9 @@ module.exports = function (io) {
                   }
                   return doc
                 })
-              })
+              });
               res.status(200).json(user)
             })
-
-            // utils.listOfFriends2({
-            //   followingTable:user.following,
-            //   numberOfFriends:10
-            // afterCheck:function (waster) {
-            //   user.following = waster;
-            //   res.status(200).json(user)
-            // }
-            // })
-
           }
         });
       } else {
@@ -358,6 +376,11 @@ module.exports = function (io) {
     })
   };
 
+  /**
+   * Valid Captcha of the Google Recaptcha
+   * @param req
+   * @param res
+   */
   let validCaptcha = (req, res) => {
     let token = req.params.token;
     let verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + process.env.SECRET_KEYCAPTCHA + "&response=" + token + "&remoteip=" + req.connection.remoteAddress;

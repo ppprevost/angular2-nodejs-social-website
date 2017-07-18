@@ -55,6 +55,12 @@ module.exports = function (io) {
     });
   };
 
+
+  /**
+   * Update all the require fileds in the profile page
+   * @param req
+   * @param res
+   */
   let updateChamp = function (req, res) {
     let userId = req.body.userId;
     console.log(req.body)
@@ -86,6 +92,11 @@ module.exports = function (io) {
     });
   };
 
+  /**
+   * Update password
+   * @param req
+   * @param res
+   */
   let updatePassword = (req, res) => {
     req.assert('lastPassword', 'Password must be at least 4 characters long').len(4);
     req.assert('password', 'Password must be at least 4 characters long').len(4);
@@ -112,6 +123,12 @@ module.exports = function (io) {
     });
   };
 
+  /**
+   * For Hashing BCrypt Function
+   * @param passw
+   * @param userPass
+   * @param cb
+   */
   let comparePassword = (passw, userPass, cb) => {
     bcrypt.compare(passw, userPass, function (err, isMatch) {
       if (err) {
@@ -121,6 +138,12 @@ module.exports = function (io) {
     });
   };
 
+  //TODO be sure that is functionning
+  /**
+   *
+   * @param req
+   * @param res
+   */
   let deleteAccount = (req, res) => {
     let id = req.params.id;
     User.update({'following.userId': id}, {$pull: {following: {userId: id}}}, {multi: true}, (err, numberAffect) => {
