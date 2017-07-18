@@ -312,9 +312,9 @@ module.exports = function (io) {
       });
     });
   };
-  let getThisUser = function (req, res) {
+  let getThisUser =  (req, res)=> {
     let userId = req.body.userId;
-    Users.findById(userId).select({password: 0, __v: 0}).exec(function (err, user) {
+    Users.findById(userId).select({password: 0, __v: 0}).exec( (err, user)=> {
       if (!err) {
         utils.listOfFriends(req, res, user.following, 10, (waster) => {
           user.following = waster

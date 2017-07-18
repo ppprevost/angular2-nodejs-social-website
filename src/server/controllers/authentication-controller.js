@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const UsersConnected = require('../datasets/connected-users');
 const utils = require('../utils/utils')();
 
-myHasher = function (password, tempUserData, insertTempUser, callback) {
+myHasher =  (password, tempUserData, insertTempUser, callback)=> {
   bcrypt.genSalt(8, function (err, salt) {
     bcrypt.hash(password, salt, function (err, hash) {
       return insertTempUser(hash, tempUserData, callback);
@@ -131,7 +131,7 @@ module.exports = function (io) {
         };
 
         if (JSON.parse(process.env.EMAIL_VERIFICATION)) {
-          nev.sendVerificationEmail(email, URL, function (err, info) {
+          nev.sendVerificationEmail(email, URL,  (err, info)=> {
             if (err) {
               console.log(err);
               return res.status(404).send('ERROR: sending verification email FAILED');
@@ -157,7 +157,7 @@ module.exports = function (io) {
 
   let resendVerificationEmail = (req, res) => {
     // resend verification button was clicked
-    nev.resendVerificationEmail(req.params.email, function (err, userFound) {
+    nev.resendVerificationEmail(req.params.email,  (err, userFound)=> {
       if (err) {
         return res.status(404).send('ERROR: resending verification email FAILED');
       }
@@ -334,7 +334,7 @@ module.exports = function (io) {
 
       }
       if (user) {
-        nev.sendConfirmationEmail(user['email'], function (data) {
+        nev.sendConfirmationEmail(user['email'],  (data)=> {
           console.log(data);
           res.json(data);
         });
@@ -354,7 +354,7 @@ module.exports = function (io) {
     let token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
-        Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec(function (err, user) {
+        Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user)=> {
           if (!err) {
             utils.listOfFriends(req, res, user.following, 10, (waster) => {
               waster.map(elem => {

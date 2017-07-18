@@ -2,7 +2,7 @@ const Users = require('../datasets/users');
 
 module.exports = () => {
 
-  let listOfFriends = function (req, res, followingTable, numberOfFriends = 0, callback) {
+  let listOfFriends =  (req, res, followingTable, numberOfFriends = 0, callback)=> {
     let following = followingTable || [];
     let newTable = [];
     newTable = following.filter(elem => {
@@ -34,7 +34,7 @@ module.exports = () => {
    * 'numberOfFriends':number
    * 'afterCheck':callback function return wasters
    */
-  let listOfFriends2 = function (query) {
+  let listOfFriends2 =  (query)=> {
     let following = query['followingTable'] || [];
     let newTable = [];
       newTable = following.filter(elem => {
