@@ -1,8 +1,9 @@
 const Users = require('../datasets/users');
+const UsersConnected = require('../datasets/connected-users');
 
-module.exports = () => {
+module.exports = (io) => {
 
-  let listOfFriends =  (req, res, followingTable, numberOfFriends = 0, callback)=> {
+  let listOfFriends = (req, followingTable, numberOfFriends = 0, callback) => {
     let following = followingTable || [];
     let newTable = [];
     newTable = following.filter(elem => {
@@ -20,9 +21,7 @@ module.exports = () => {
             }
           });
           return follow
-        }).filter(filt => {
-          return filt.statut === "accepted"
-        });
+        }).filter(filt => filt.statut === "accepted");
         callback(following)
       });
   };
@@ -34,24 +33,24 @@ module.exports = () => {
    * 'numberOfFriends':number
    * 'afterCheck':callback function return wasters
    */
-  let listOfFriends2 =  (query)=> {
-    let following = query['followingTable'] || [];
-    let newTable = [];
-      newTable = following.filter(elem => {
-        return elem.statut === 'accepted'
-      }).map(doc => {
-        return doc.userId
-      });
-      Users.find({_id: {$in: newTable}}).select({
-        statut: 1,
-        image: 1,
-        _id: 1,
-        username: 1
-      }).limit(query['numberOfFriends'])
-        .exec(function (err, waster) {
-          query['afterCheck'](waster)
-        });
-  };
+  // let listOfFriends2 = (query) => {
+  //   let following = query['followingTable'] || [];
+  //   let newTable = [];
+  //   newTable = following.filter(elem => {
+  //     return elem.statut === 'accepted'
+  //   }).map(doc => {
+  //     return doc.userId
+  //   });
+  //   Users.find({_id: {$in: newTable}}).select({
+  //     statut: 1,
+  //     image: 1,
+  //     _id: 1,
+  //     username: 1
+  //   }).limit(query['numberOfFriends'])
+  //     .exec(function (err, waster) {
+  //       query['afterCheck'](waster)
+  //     });
+  // };
 
   /**
    * add additional information to listOfFriends
@@ -61,8 +60,8 @@ module.exports = () => {
    * @param userData
    * @param callback
    */
-  let expandFriendInfo = (req, res, numberOfFriends, userData, callback) => {
-    listOfFriends(req, res, userData.following, numberOfFriends, (waster) => {
+  let expandFriendInfo = (req, numberOfFriends, userData, callback) => {
+    listOfFriends(req, userData.following, numberOfFriends, (waster) => {
       waster.map(elem => {
         if (userData.following) {
           userData.following.map(doc => {
@@ -78,40 +77,40 @@ module.exports = () => {
   };
 
   /**
-   * Get list of friend and sent notf to all friend list
+   * Get list of friend and sent notf to all friend list that are connected
    * @param req
    * @param res
    * @param userData
    * @param message
    * @returns {Promise}
    */
-  let getListOfFriendAndSentSocket = (req, res, userData, message) => {
+  let getListOfFriendAndSentSocket = (req, userData, message, aliasSocketMessage) => {
     return new Promise((rej, resolve) => {
-      listOfFriends(req, res, userData.following, 0, waster => {
-        let socketUser = waster.map(elem => {
-          return elem.userId
-        });
+      listOfFriends(req, userData.following, 0, waster => {
+        let socketUser = waster.map(elem => elem.userId);
         let socketIds = [];
+        // send uniquely if the user is connected
         UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
-          userCo.forEach(userConected => {
-            userConected.location.forEach(socketId => {
-              if (io.sockets.connected[socketId.socketId]) {
-                socketIds = [...socketIds, socketId.socketId];
-                io.sockets.connected[socketId.socketId].emit('newComments', message)
-              }
+          if (!err) {
+            userCo.forEach(userConected => {
+              userConected.location.forEach(socketId => {
+                if (io.sockets.connected[socketId.socketId]) {
+                  console.log('send to friend==>', socketId.socketId);
+                  socketIds = [...socketIds, socketId.socketId];
+                  io.sockets.connected[socketId.socketId].emit(aliasSocketMessage, message)
+                }
+              });
             });
-          })
+            resolve(waster)
+          } else {
+            rej(err)
+          }
         });
-        socketIds.forEach(elem => {
-          console.log('send to friend==>', elem)
-        });
-        resolve(waster)
       })
-
     });
   };
 
-  return {listOfFriends, listOfFriends2, expandFriendInfo, getListOfFriendAndSentSocket};
+  return {listOfFriends, expandFriendInfo, getListOfFriendAndSentSocket};
 
 
   /**

@@ -1,11 +1,9 @@
-let Waste = require('../datasets/wastes');
-let Users = require('../datasets/users');
-let UsersConnected = require('../datasets/connected-users');
-let mongoose = require('mongoose');
-let utils = require('../utils/utils')();
+const Waste = require('../datasets/wastes');
+const Users = require('../datasets/users');
+const mongoose = require('mongoose');
 
 module.exports = function (io) {
-
+  const utils = require('../utils/utils')(io);
   //TODO  send to specific friends with the function utils
   /**
    * Send a post and send notif via socket to friends
@@ -16,29 +14,34 @@ module.exports = function (io) {
     let data = req.body.request;
     if (data) {
       let waste = new Waste(data);
-      waste.save();
-
       Users.findById(data.userId, (err, user) => {
-        waste._doc.username = user.username;
-        waste._doc.image = user.image;
-        user.following.forEach(elem => {
-          if (elem.statut === "accepted") {
-            UsersConnected.findOne({userId: elem.userId.toString()}, (err, userConnecteds) => {
-              if (userConnecteds) {
-                userConnecteds.location.forEach((doc) => {
-
-                  if (io.sockets.connected[doc.socketId]) {
-                    io.sockets.connected[doc.socketId].emit("getNewPost", waste)
-                  } else {
-                    console.log("users are not connected")
-                  }
-                });
-              }
-            });
-          }
-        })
+        waste.save();
+        if (!err) {
+          utils.getListOfFriendAndSentSocket(req, user, waste, 'getNewPost')
+            .then(() => res.json(waste))
+            .catch(err => res.status(400).send(err));
+        }
       });
-      res.json(waste);
+      // Users.findById(data.userId, (err, user) => {
+      //   waste._doc.username = user.username;
+      //   waste._doc.image = user.image;
+      //   user.following.forEach(elem => {
+      //     if (elem.statut === 'accepted') {
+      //       UsersConnected.findOne({userId: elem.userId.toString()}, (err, userConnecteds) => {
+      //         if (userConnecteds) {
+      //           userConnecteds.location.forEach((doc) => {
+      //             if (io.sockets.connected[doc.socketId]) {
+      //               io.sockets.connected[doc.socketId].emit("getNewPost", waste)
+      //             } else {
+      //               console.log("users are not connected")
+      //             }
+      //           });
+      //         }
+      //       });
+      //     }
+      //   })
+      // });
+
     } else {
       res.status(404).send('aucun contenu enregistré dans la base')
     }
@@ -135,30 +138,15 @@ module.exports = function (io) {
    */
   let sendComments = (req, res) => {
     let comments = req.body.comments;
-    let userId = req.body.userId;
     Waste.findById(comments.wasteId, (err, waste) => {
       comments.date = new Date();
       //delete comments.wasteId
       waste.commentary.push(comments);
       waste.save(() => {
         Users.findById(comments.userId, (err, user) => {
-          comments.username = user.username;
-          comments.image = user.image;
-          let socketUser = user.following.filter(elem => {
-            return elem.statut == "accepted"
-          }).map(doc => {
-            return doc.userId
-          });
-          UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
-            userCo.forEach(userConected => {
-              userConected.location.forEach(socketId => {
-                if (io.sockets.connected[socketId.socketId]) {
-                  io.sockets.connected[socketId.socketId].emit('newComments', comments)
-                }
-              });
-            })
-          });
-          res.json(comments)
+          utils.getListOfFriendAndSentSocket(req, user, waste, 'newComments')
+            .then(waster => res.json(comments))
+            .catch(err => console.log(err));
         });
       });
     })
@@ -222,19 +210,9 @@ module.exports = function (io) {
   let deletePost = (req, res) => {
     return likeOrDeletePost(req, res, 'delete')
   };
-  /**
-   *
-   * @param req
-   * @param res
-   */
-  let listOfFriends = function (req, res) {
-    return utils.listOfFriends(req, res, req.body.following, (waster) => {
-      res.json(waster);
-    });
-  };
+
 
   return {
-    listOfFriends,
     getCommentary,
     deletePost,
     sendComments,

@@ -69,7 +69,6 @@ module.exports = function (app, io) {
   app.delete('/api/profile/deleteAccount/:id', profileController.deleteAccount);
 //Waste
   app.post('/api/waste/getPost', wasteController.getPost);
-  app.post('/api/waste/listOfFriend', wasteController.listOfFriends);
   app.post('/api/waste/sendPost', wasteController.sendPost);
   app.delete('/api/waste/deletePost/:wasteId/:commentId?', wasteController.deletePost);
   app.post('/api/waste/sendComments', wasteController.sendComments);
