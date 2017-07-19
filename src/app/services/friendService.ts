@@ -14,6 +14,5 @@ export class DataService {
   constructor(private http: Http, zone: NgZone) {
 
   }
-  
 
 }

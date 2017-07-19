@@ -38,7 +38,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   getThisUser() {
     this.getThisUserSub = this.activatedRoute.params.subscribe((params: Params) => {
       this.id = params['id'];
-      if (this.id != this.auth.user._id) {
+      if (this.id !== this.auth.user._id) {
         this.data.getThisUser(this.id).subscribe(following => {
           this.user = following.json();
           this.actualUser = this.auth.user;
@@ -48,7 +48,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         this.user = this.actualUser = this.auth.user;
         this.getPictureUser(this.user._id);
         this.user.following = this.user.following.filter(elem => {
-          return elem.statut === "accepted"
+          return elem.statut === 'accepted';
         });
       }
     });
@@ -63,10 +63,10 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     return this.data.getYourOwnPicture(userId)
       .map(res => res.json())
       .subscribe(data => {
-          this.uploadPicture = data
+          this.uploadPicture = data;
         },
         (err) => console.log(err),
-        () => this.isLoading = false)
+        () => this.isLoading = false);
   }
 
   deleteAllPictureUser() {
@@ -80,8 +80,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   }
 
   sendWaste() {
-    if (this.newWaste && this.newWaste != "") {
-      let request = {
+    if (this.newWaste && this.newWaste !== '') {
+      const request = {
         user: this.auth.user.username,
         userId: this.auth.user._id,
         userType: this.typeWaste || 'public',

@@ -4,12 +4,12 @@ import {Directive, Input} from '@angular/core';
   selector: 'i',
   host: {
     '(click)': 'test($event)',
-    'mdTooltip':"Tooltip!",
-    'mdTooltipPosition':'before'
+    'mdTooltip': "Tooltip!",
+    'mdTooltipPosition': 'before'
   }
 })
 export class TooltipDirective {
-@Input() mdTooltipPosition
+  @Input() mdTooltipPosition
 
   constructor() {
   }

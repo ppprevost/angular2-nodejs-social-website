@@ -1,6 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges, OnDestroy} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
-import {AuthService} from '../../services/auth.service'
+import {AuthService} from '../../services/auth.service';
 import {SocketService} from '../../services/socket.service';
 
 interface Obj {
@@ -15,32 +15,31 @@ interface Obj {
 })
 export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   isLoading = true;
-  table = ["friendRequest", "removeFriend", "friendRequestAccepted"];
+  table = ['friendRequest', 'removeFriend', 'friendRequestAccepted'];
   @Input() waste;
   @Input() user;
 
   @Output() follower: EventEmitter<any> = new EventEmitter<any>();
   @Output() notify: EventEmitter<any> = new EventEmitter<any>();
+  private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
+  private options = new RequestOptions({headers: this.headers});
   private obj = (wasterValue, typeFollowing?) => {
-    let obj: any = {
+    const obj: any = {
       userId: this.user._id,
       wasterId: wasterValue
     };
     if (typeFollowing) {
-      obj.typeFollowing = typeFollowing
+      obj.typeFollowing = typeFollowing;
     }
-
     return obj;
-  };
-  private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
-  private options = new RequestOptions({headers: this.headers});
+  }
 
   constructor(private socket: SocketService, private auth: AuthService, private http: Http) {
   }
 
   ngOnInit() {
     this.getThisUser();
-    this.socketMethodUse(this.table)
+    this.socketMethodUse(this.table);
 
   }
 
@@ -87,7 +86,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
 
   getThisUser(user?) { // pour rafraichir la liste des différents followers
-    let waster = user ? user : this.auth.user;
+    const waster = user ? user : this.auth.user;
     let ok = false;
     if (waster.following.length) {
       waster.following.map((elem) => {
@@ -109,7 +108,8 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   typeFollowing(typeFollowing, wasterId) {
-    return this.http.post(`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId, typeFollowing)), this.options).toPromise().then(data => {
+    return this.http.post
+    (`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId, typeFollowing)), this.options).toPromise().then(data => {
       this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
     });

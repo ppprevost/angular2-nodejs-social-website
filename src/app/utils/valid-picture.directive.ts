@@ -13,7 +13,7 @@ import {Directive, Input} from '@angular/core';
 
 export class ValidPictureDirective {
   @Input() src: string;
-  defaultImg: string = '/assets/images/default-avatar.jpg';
+  defaultImg = '/assets/images/default-avatar.jpg';
 
   constructor() {
   }

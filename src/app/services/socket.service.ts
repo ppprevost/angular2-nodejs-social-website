@@ -12,9 +12,8 @@ export class SocketService {
       path: '/socket.io'
     });
   }
-  
   socketFunction(receiver: string) {
-    let observable = new Observable<any>(observer => {
+    const observable = new Observable<any>(observer => {
 
       this.socket.on(receiver, (data) => {
         observer.next(data);
@@ -22,7 +21,7 @@ export class SocketService {
       return () => {
         this.socket.disconnect();
       };
-    })
+    });
     return observable;
   }
 

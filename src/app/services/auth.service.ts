@@ -2,7 +2,7 @@ import {DataService} from './data.service';
 import {PublicService} from './public.service';
 import {JwtHelper, tokenNotExpired} from 'angular2-jwt';
 import {Injectable} from '@angular/core';
-import {User} from '../interface/interface'
+import {User} from '../interface/interface';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +19,7 @@ export class AuthService {
   }
 
   loggedIn() {
-    return tokenNotExpired()
+    return tokenNotExpired();
   }
 
   loginAccount(emailAndPassword) {
@@ -43,7 +43,9 @@ export class AuthService {
     } else {
       return this.data.refreshUserData({token: this.token}).subscribe(user => {
         this.user = user.json();
-        if (callback) callback(this.user);
+        if (callback) {
+          callback(this.user);
+        }
       });
     }
   }

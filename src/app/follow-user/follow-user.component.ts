@@ -14,7 +14,7 @@ import * as Masonry from 'masonry-layout';
   providers: [InfiniteScrollService]
 })
 
-export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,OnChanges {
+export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy, OnChanges {
   wasters;
   unsub;
   @ViewChild(ListOfFriendComponent) listOfFriendComponent: ListOfFriendComponent;
@@ -31,10 +31,10 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
           return elem._id !== this.auth.user._id;
         })
         .map(follower => {
-          follower.following.filter(contact => contact.statut == 'accepted');
-          return follower
-        })
-      console.log(this.wasters)
+          follower.following.filter(contact => contact.statut === 'accepted');
+          return follower;
+        });
+      console.log(this.wasters);
     });
   }
 
@@ -52,17 +52,17 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
   }
 
   ngOnChanges(changes) {
-    console.log("changes from parent data", changes)
+    console.log('changes from parent data', changes);
   }
 
   ngOnDestroy() {
-    this.unsub.unsubscribe()
+    this.unsub.unsubscribe();
   }
 
   onNotify(message: string) {
-    console.log("response from parentData", message == "accepted");
-    if (this.listOfFriendComponent && message == "accepted") {
-      this.listOfFriendComponent.getFollowerImage(this.auth.user)
+    console.log('response from parentData', message === 'accepted');
+    if (this.listOfFriendComponent && message === 'accepted') {
+      this.listOfFriendComponent.getFollowerImage(this.auth.user);
     }
   }
 }

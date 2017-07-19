@@ -36,22 +36,22 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.user = this.auth.user;
     this.uploader.onBuildItemForm = (item: any, form) => {
-      form.append("userId", this.user["_id"]);
-      form.append("uploadType", this.typeUpload);
+      form.append('userId', this.user['_id']);
+      form.append('uploadType', this.typeUpload);
 
     };
     this.uploader.onAfterAddingFile = (file: any) => {
       file.withCredentials = false;
-      file.typeUpload = this.typeUpload
+      file.typeUpload = this.typeUpload;
     };
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-      this.auth.callRefreshUserData(response)
+      this.auth.callRefreshUserData(response);
     };
     this.updatePass = this.passwordForm.group({
       lastPassword: this.lastPassword,
       password: this.password,
       confirm: this.confirm
-    })
+    });
   }
 
   updateChamp(event) {
@@ -59,29 +59,29 @@ export class ProfileComponent implements OnInit {
     interface Obj {
       userId: string;
     }
-    let obj: Obj = <any>{};
-    obj["userId"] = this.user["_id"];
+    const obj: Obj = <any>{};
+    obj['userId'] = this.user['_id'];
     obj[event.target.name] = event.target.value;
 
     this.data.updateChamp(obj).subscribe(res => {
       console.log(res);
-      this.auth.callRefreshUserData(res.json())
-    })
+      this.auth.callRefreshUserData(res.json());
+    });
   }
 
   getTypeUpload(event) {
-    return this.typeUpload = event.target.id
+    return this.typeUpload = event.target.id;
   }
 
   updatePassword() {
     try {
       Object.keys(this.updatePass.value).forEach(elem => {
-        if (this.updatePass.value[elem] === "") {
+        if (this.updatePass.value[elem] === '') {
           throw new Error('Fields are required');
         }
       });
-      if (this.updatePass.value.confirm == this.updatePass.value.password) {
-        this.updatePass.value["userId"] = this.user["_id"];
+      if (this.updatePass.value.confirm === this.updatePass.value.password) {
+        this.updatePass.value['userId'] = this.user['_id'];
         this.data.updatePassword(this.updatePass.value)
           .map(res => res.json())
           .subscribe(res => {
@@ -90,14 +90,14 @@ export class ProfileComponent implements OnInit {
                 text: res.msg,
                 type: 'success',
                 confirmButtonText: 'Ok'
-              })
+              });
             },
-            err => this.errMethod(err))
+            err => this.errMethod(err));
       } else {
-        if (this.updatePass.value.password == this.updatePass.value.lastPassword) {
-          throw new Error('Password and newPassword are the same')
+        if (this.updatePass.value.password === this.updatePass.value.lastPassword) {
+          throw new Error('Password and newPassword are the same');
         } else {
-          throw new Error('Password are not Matching')
+          throw new Error('Password are not Matching');
         }
       }//
     } catch (err) {
@@ -112,18 +112,19 @@ export class ProfileComponent implements OnInit {
 
   errMethod(err) {
     let x: string;
-    if (typeof err == "string") {
-      x = err
+    if (typeof err === 'string') {
+      x = err;
     }
-    if (typeof err.text() == 'string') {
-      x = err.text()
+    if (typeof err.text() === 'string') {
+      x = err.text();
     } else {
       err.json().forEach((elem, i) => {
-        let param = elem.msg.replace('Password', elem.param);
-        if (i == 0)
+        const param = elem.msg.replace('Password', elem.param);
+        if (i === 0) {
           x = param;
-        else
-          x += '\n' + param
+        } else {
+          x += '\n' + param;
+        }
       });
     }
     swal({
@@ -136,10 +137,10 @@ export class ProfileComponent implements OnInit {
 
   deleteAccount() {
     this.zone.runOutsideAngular(() => {
-      let self = this;
-      swal({ //todo wrapper swal
+      const self = this;
+      swal({ // TODO wrapper swal
         title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        text: 'You won\'t be able to revert this!',
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -157,7 +158,7 @@ export class ProfileComponent implements OnInit {
               localStorage.clear();
             },
             err => {
-              swal('Problem with your destruction!', err, 'error')
+              swal('Problem with your destruction!', err, 'error');
             });
 
       }, function (dismiss) {

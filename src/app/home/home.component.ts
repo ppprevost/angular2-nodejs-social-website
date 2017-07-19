@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
   @ViewChild(WasteComponent) wasteComponent: WasteComponent;
 
   constructor(private auth: AuthService, private data: DataService) {
-    console.log(this)
+    console.log(this);
   }
 
   ngOnInit() {
@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
 
   loggedIn() {
     if (this.auth.loggedIn()) {
-      return this.user = this.auth.user
+      return this.user = this.auth.user;
     }
   }
 
@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
       userType: this.typeWaste || 'public',
       content: this.newWaste
     };
-    if (this.newWaste && this.newWaste != "") {
+    if (this.newWaste && this.newWaste !== '') {
       return this.data.sendWaste({request: request}).map(res => res.json())
         .subscribe(data => {
             this.newWaste = '';

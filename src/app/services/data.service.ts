@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
-import {Commentary, Waste} from "../interface/interface";
+import {Commentary, Waste} from '../interface/interface';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
@@ -17,7 +17,7 @@ export class DataService {
   user;
 
   constructor(private http: Http) {
-    this.user = {}
+    this.user = {};
   }
 
   getUsers(): Promise<any> {
@@ -43,15 +43,15 @@ export class DataService {
 
 
   logOut(userId, token): Observable<any> {
-    return this.http.post(`/api/user/logout/`, JSON.stringify({userId, token}), this.options)
+    return this.http.post(`/api/user/logout/`, JSON.stringify({userId, token}), this.options);
   }
 
   deleteAccount(userId: string): Observable<any> {
-    return this.http.delete(`api/profile/deleteAccount/${userId}`, this.options)
+    return this.http.delete(`api/profile/deleteAccount/${userId}`, this.options);
   }
 
   getYourOwnPicture(userId: Object): Observable<any> {
-    return this.http.get(`api/users/uploadPicture/${userId}`, this.options)
+    return this.http.get(`api/users/uploadPicture/${userId}`, this.options);
   }
 
   deleteAllPicture(userId: string): Observable<any> {
@@ -67,11 +67,11 @@ export class DataService {
   }
 
   sendWaste(request: Object) {
-    return this.http.post('api/waste/sendPost', JSON.stringify(request), this.options)
+    return this.http.post('api/waste/sendPost', JSON.stringify(request), this.options);
   }
 
   dataCommentary(waste: Waste, userId: string) {
-    return this.http.post('api/waste/getCommentary', JSON.stringify(waste), this.options)
+    return this.http.post('api/waste/getCommentary', JSON.stringify(waste), this.options);
   }
 
   getPost(userId: string, numberOfWaste: number, typePost: string, onlyOwnPost: boolean) {
