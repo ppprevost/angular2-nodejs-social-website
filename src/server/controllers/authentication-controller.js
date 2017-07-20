@@ -196,7 +196,7 @@ module.exports = function (io) {
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
               delete userData.password;
-              utils.expandFriendInfo(req, res, 10, userData, userData => {
+              utils.expandFriendInfo(req, 10, userData, userData => {
                 UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
                   if (userAlreadyConnected) {
                     userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
