@@ -22,26 +22,6 @@ module.exports = function (io) {
             .catch(err => res.status(400).send(err));
         }
       });
-      // Users.findById(data.userId, (err, user) => {
-      //   waste._doc.username = user.username;
-      //   waste._doc.image = user.image;
-      //   user.following.forEach(elem => {
-      //     if (elem.statut === 'accepted') {
-      //       UsersConnected.findOne({userId: elem.userId.toString()}, (err, userConnecteds) => {
-      //         if (userConnecteds) {
-      //           userConnecteds.location.forEach((doc) => {
-      //             if (io.sockets.connected[doc.socketId]) {
-      //               io.sockets.connected[doc.socketId].emit("getNewPost", waste)
-      //             } else {
-      //               console.log("users are not connected")
-      //             }
-      //           });
-      //         }
-      //       });
-      //     }
-      //   })
-      // });
-
     } else {
       res.status(404).send('aucun contenu enregistré dans la base')
     }

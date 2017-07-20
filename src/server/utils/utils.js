@@ -85,7 +85,7 @@ module.exports = (io) => {
    * @returns {Promise}
    */
   let getListOfFriendAndSentSocket = (req, userData, message, aliasSocketMessage) => {
-    return new Promise((rej, resolve) => {
+    return new Promise((resolve, rej) => {
       listOfFriends(req, userData.following, 0, waster => {
         let socketUser = waster.map(elem => elem.userId);
         let socketIds = [];
