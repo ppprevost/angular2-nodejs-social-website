@@ -24,32 +24,6 @@ module.exports = function (app, io) {
     optionsSuccessStatus: 200
   };
 
-  let jwtAuth = (req, res, next) => {
-    let token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
-    if (token) {
-      try {
-        let decoded = jwt.decode(token, process.env.SECRET_TOKEN);
-
-        // if (decoded.exp <= Date.now()) {
-        //   res.end('Access token has expired', 400);
-        // }
-        // handle token here
-
-      } catch (err) {
-        return res.end('no good token', 400);
-      }
-    } else {
-      if (req.url === '/api/verif' || req.url == '/api/user/signup' || req.url == '/api/user/login') {
-        next();
-      } else {
-        res.end('no token provided', 400);
-      }
-
-    }
-  };
-
-  // app.all('/api/*', jwtAuth);
-
 //Route
 //Authentication
   app.post('/api/verif', authenticationController.emailVerif);

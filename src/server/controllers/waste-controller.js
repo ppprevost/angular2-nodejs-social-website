@@ -17,7 +17,7 @@ module.exports = function (io) {
       Users.findById(data.userId, (err, user) => {
         waste.save();
         if (!err) {
-          utils.getListOfFriendAndSentSocket(req, user, waste, 'getNewPost')
+          utils.getListOfFriendAndSentSocket(user, waste, 'getNewPost')
             .then(() => res.json(waste))
             .catch(err => res.status(400).send(err));
         }
@@ -25,7 +25,6 @@ module.exports = function (io) {
     } else {
       res.status(404).send('aucun contenu enregistré dans la base')
     }
-
   };
 
   /**
@@ -39,47 +38,46 @@ module.exports = function (io) {
     let requestedWastes = [userData];
     Users.findById(userData, (err, user) => {
       if (!err && !onlyOwnPost && user.following && user.following.length) {
-        for (let i = 0, len = user.following.length; i < len; i++) {
-          if (user.following[i].statut == "accepted") {
-            requestedWastes.push(user.following[i].userId);
-          }
-        }
-      }
-      if (requestedWastes.length) {
-        let seekPosts = {userId: {$in: requestedWastes}};
-        if (typePost == "publicOnly") {
-          seekPosts.userType = "public"
-        }
-        Waste.find(seekPosts)
-          .sort({date: -1})
-          .limit(req.body.numberOfWaste)
-          .exec(function (err, allWastes) {
-            if (err) {
-              res.status(400).send("Erreur dans la récupération de la base de donnée")
-            } else {
-              Users.find({
-                _id: {
-                  $in: requestedWastes
-                }
-              }).select({image: 1, _id: 1, username: 1}).exec((err, allUserImage) => {
-                if (err) {
-                  res.status(400).send(err)
-                }
-                allWastes.map(doc => {
-                  allUserImage.forEach((elem) => {
-                    if (doc.userId == elem._id) {
-                      doc._doc.image = elem.image; // hack Mongoose
-                      doc._doc.user = elem.username;
-                      return doc
-                    }
-                  });
-                });
-                res.json(allWastes);
-              });
+        utils.listOfFriends(user.following, 0,false, following => {
+          following = following.map(elem => elem.userId);
+          let userAndFriends = requestedWastes.concat(following);
+          if (userAndFriends.length) { // length == 1 means no friends
+            let seekPosts = {userId: {$in: requestedWastes}};
+            if (typePost == "publicOnly") {
+              seekPosts.userType = "public"
             }
-          })
-      } else {
-        res.status(400).send("pas de posts trouvés ou erreurs envoi userId")
+            Waste.find(seekPosts)
+              .sort({date: -1})
+              .limit(req.body.numberOfWaste)
+              .exec(function (err, allWastes) {
+                if (err) {
+                  res.status(400).send("Erreur dans la récupération de la base de donnée")
+                } else {
+                  Users.find({
+                    _id: {
+                      $in: requestedWastes
+                    }
+                  }).select({image: 1, _id: 1, username: 1}).exec((err, allUserImage) => {
+                    if (err) {
+                      res.status(400).send(err)
+                    }
+                    allWastes.map(doc => {
+                      allUserImage.forEach((elem) => {
+                        if (doc.userId == elem._id) {
+                          doc._doc.image = elem.image; // hack Mongoose
+                          doc._doc.user = elem.username;
+                          return doc
+                        }
+                      });
+                    });
+                    res.json(allWastes);
+                  });
+                }
+              })
+          } else {
+            res.status(400).send("pas de posts trouvés ou erreurs envoi userId")
+          }
+        });
       }
     });
   };
@@ -124,7 +122,7 @@ module.exports = function (io) {
       waste.commentary.push(comments);
       waste.save(() => {
         Users.findById(comments.userId, (err, user) => {
-          utils.getListOfFriendAndSentSocket(req, user, waste, 'newComments')
+          utils.getListOfFriendAndSentSocket(user, waste, 'newComments')
             .then(waster => res.json(comments))
             .catch(err => console.log(err));
         });

@@ -2,79 +2,23 @@ const Users = require('../datasets/users');
 const UsersConnected = require('../datasets/connected-users');
 
 module.exports = (io) => {
-
-  let listOfFriends = (req, followingTable, numberOfFriends = 0, callback) => {
-    let following = followingTable || [];
-    let newTable = [];
-    newTable = following.filter(elem => {
-      return elem.statut === 'accepted'
-    }).map(doc => {
-      return doc.userId
-    });
-    Users.find({_id: {$in: newTable}}).select({image: 1, _id: 1, username: 1}).limit(numberOfFriends)
+  /**
+   *Get the list of friends of a specific user.
+   * @param followingTable
+   * @param {Number} numberOfFriends
+   * @param {String} fullDataWanted If you want a lot of data of just picture and username
+   * @param {Function} callback
+   */
+  let listOfFriends = (followingTable = [], numberOfFriends = 0, fullDataWanted = false, callback) => {
+    let following = followingTable;
+    let newTable = following.filter(elem => elem.statut === 'accepted').map(doc => doc.userId);
+    fullDataWanted = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};
+    Users.find({_id: {$in: newTable}}).select(fullDataWanted).limit(numberOfFriends)
       .exec(function (err, waster) {
-        following = following.map(follow => {
-          waster.forEach(elem => {
-            if (follow.userId === elem._id.toString()) {
-              follow.image = elem.image;
-              follow.username = elem.username
-            }
-          });
-          return follow
-        }).filter(filt => filt.statut === "accepted");
-        callback(following)
+        callback(waster)
       });
   };
 
-  /**
-   *
-   * @param query
-   * 'followingTable':Array of Follower
-   * 'numberOfFriends':number
-   * 'afterCheck':callback function return wasters
-   */
-  // let listOfFriends2 = (query) => {
-  //   let following = query['followingTable'] || [];
-  //   let newTable = [];
-  //   newTable = following.filter(elem => {
-  //     return elem.statut === 'accepted'
-  //   }).map(doc => {
-  //     return doc.userId
-  //   });
-  //   Users.find({_id: {$in: newTable}}).select({
-  //     statut: 1,
-  //     image: 1,
-  //     _id: 1,
-  //     username: 1
-  //   }).limit(query['numberOfFriends'])
-  //     .exec(function (err, waster) {
-  //       query['afterCheck'](waster)
-  //     });
-  // };
-
-  /**
-   * add additional information to listOfFriends
-   * @param req
-   * @param res
-   * @param numberOfFriends
-   * @param userData
-   * @param callback
-   */
-  let expandFriendInfo = (req, numberOfFriends, userData, callback) => {
-    listOfFriends(req, userData.following, numberOfFriends, (waster) => {
-      waster.map(elem => {
-        if (userData.following) {
-          userData.following.map(doc => {
-            if (doc.userId === elem._id.toString()) {
-              doc = elem
-            }
-            return doc
-          })
-        }
-      });
-      return callback(userData);
-    });
-  };
 
   /**
    * Get list of friend and sent notf to all friend list that are connected
@@ -84,9 +28,9 @@ module.exports = (io) => {
    * @param message
    * @returns {Promise}
    */
-  let getListOfFriendAndSentSocket = (req, userData, message, aliasSocketMessage) => {
+  let getListOfFriendAndSentSocket = (userData, message, aliasSocketMessage) => {
     return new Promise((resolve, rej) => {
-      listOfFriends(req, userData.following, 0, waster => {
+      listOfFriends(userData.following, 0, false, waster => {
         let socketUser = waster.map(elem => elem.userId);
         let socketIds = [];
         // send uniquely if the user is connected
@@ -110,7 +54,7 @@ module.exports = (io) => {
     });
   };
 
-  return {listOfFriends, expandFriendInfo, getListOfFriendAndSentSocket};
+  return {listOfFriends, getListOfFriendAndSentSocket};
 
 
   /**

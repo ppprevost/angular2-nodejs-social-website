@@ -25,7 +25,7 @@ module.exports = function (io) {
         res.error(err);
       } else {
         let asyncLoop = (i, usersData) => {
-          utils.listOfFriends(req, usersData[i].following, 10, (waster) => {
+          utils.listOfFriends(usersData[i].following, 10,false, waster => {
             usersData[i].following = waster;
             if (i === usersData.length - 1) {
               UsersConnected.find().exec((err, userConnected) => {
@@ -315,8 +315,8 @@ let getThisUser = (req, res) => {
   let userId = req.body.userId;
   Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
     if (!err) {
-      utils.listOfFriends(req, user.following, 10, (waster) => {
-        user.following = waster
+      utils.listOfFriends(user.following, 10, false,waster => {
+        user.following = waster;
         res.json(user)
       });
     }

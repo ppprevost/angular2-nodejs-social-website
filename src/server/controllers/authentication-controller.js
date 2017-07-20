@@ -74,6 +74,13 @@ nev.generateTempUserModel(Users, function (err, tempUserModel) {
 
 module.exports = function (io) {
   const utils = require('../utils/utils')(io);
+
+  /**
+   * When user signup. Can desactivate or activate the module with process.env.EMAIL_VERIFICATION value
+   * @param req
+   * @param res
+   * @param next
+   */
   let signup = function (req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('email', 'Email cannot be blank').notEmpty();
@@ -196,7 +203,6 @@ module.exports = function (io) {
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
               delete userData.password;
-              utils.expandFriendInfo(req, 10, userData, userData => {
                 UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
                   if (userAlreadyConnected) {
                     userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
@@ -217,7 +223,7 @@ module.exports = function (io) {
                   }, process.env.SECRET_TOKEN, {expiresIn: '5h'});
                   res.status(200).json({token});
                 });
-              })
+
             } else {
               return res.status(401).send({msg: 'Invalid email or password'});
             }
@@ -356,7 +362,7 @@ module.exports = function (io) {
       if (!err) {
         Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
           if (!err) {
-            utils.listOfFriends(req, user.following, 10, (waster) => {
+            utils.listOfFriends(user.following, 10,false, waster => {
               waster.map(elem => {
                 user.following.map(doc => {
                   if (doc.userId === elem._id) {
