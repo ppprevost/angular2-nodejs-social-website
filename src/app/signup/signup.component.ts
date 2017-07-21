@@ -5,6 +5,7 @@ import {Router} from '@angular/router';
 import {ToastyService} from 'ng2-toasty';
 import swal from 'sweetalert2';
 import 'rxjs/add/operator/map';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-signup',
@@ -15,6 +16,7 @@ export class SignupComponent implements OnInit {
   addUser: FormGroup;
   private email = new FormControl('', Validators.required);
   private res;
+  activatedModule = environment.recaptcha;
   verifToggle = false;
   private eventCaptcha = false;
   username = new FormControl('', [Validators.required, Validators.maxLength(20)]);
@@ -35,9 +37,7 @@ export class SignupComponent implements OnInit {
     });
   }
 
-
   handleCorrectCaptcha(event) {
-
     this.publicService.getCaptcha(event)
       .map(res => res.json())
       .subscribe((res) => {

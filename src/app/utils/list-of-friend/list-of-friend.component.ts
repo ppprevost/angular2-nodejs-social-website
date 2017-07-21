@@ -26,7 +26,7 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.currentValue) {
-      this.user = changes.user.currentValue;
+     // this.user = changes.user.currentValue;
     }
   }
 
@@ -38,5 +38,4 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
       });
     }
   }
-
 }

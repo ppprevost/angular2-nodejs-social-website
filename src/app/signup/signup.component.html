@@ -1,5 +1,5 @@
 <div>
-  <form  class="row" (ngSubmit)="addAccount()" [formGroup]="addUser"
+  <form class="row" (ngSubmit)="addAccount()" [formGroup]="addUser"
         class="col-sm-6 col-sm-offset-3 newUserSignIn">
     <div *ngIf="!verifToggle" class="form-group">
       <label>Name: </label>
@@ -8,7 +8,6 @@
         <input formControlName="username" type="text" class="form-control">
       </div>
     </div>
-
     <div class="form-group">
       <label for="email">Mail:</label>
       <div class="input-group">
@@ -17,7 +16,6 @@
                required="required">
       </div>
     </div>
-
     <div *ngIf="!verifToggle" class="form-group">
       <label>Password:</label>
       <div class="input-group">
@@ -26,10 +24,9 @@
                required="required">
       </div>
     </div>
-
-    <div *ngIf="!verifToggle" class="form-group">
-      <!--<re-captcha (captchaResponse)="handleCorrectCaptcha($event)"-->
-                  <!--site_key="6Lc9RiAUAAAAACVy4rmGhTAJX9_HuJgDkdB-aONd"></re-captcha>-->
+    <div *ngIf="!verifToggle && activatedModule" class="form-group">
+      <re-captcha (captchaResponse)="handleCorrectCaptcha($event)"
+                  site_key="6Lc9RiAUAAAAACVy4rmGhTAJX9_HuJgDkdB-aONd"></re-captcha>
     </div>
     <button *ngIf="!verifToggle" [disabled]="!addUser.valid && eventCaptcha" class="btn btn-default">Submit</button>
     <button *ngIf="verifToggle" class="btn btn-default">Submit</button>

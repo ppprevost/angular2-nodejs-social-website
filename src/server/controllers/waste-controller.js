@@ -39,7 +39,7 @@ module.exports = function (io) {
     Users.findById(userData, (err, user) => {
       if (!err && !onlyOwnPost && user.following && user.following.length) {
         utils.listOfFriends(user.following, 0, false, following => {
-          following = following.map(elem => elem.userId);
+          following = following.map(elem => elem._doc.userId);
           let userAndFriends = requestedWastes.concat(following);
           if (userAndFriends.length) { // length == 1 means no friends
             let seekPosts = {userId: {$in: userAndFriends}};
