@@ -15,6 +15,12 @@ module.exports = (io) => {
     fullDataWanted = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};
     Users.find({_id: {$in: newTable}}).select(fullDataWanted).limit(numberOfFriends)
       .exec(function (err, waster) {
+        waster.map(el => {
+          el._doc.userId = el._id.toString();
+          el._doc.statut = 'accepted';
+          delete el._doc._id;
+          return el
+        });
         callback(waster)
       });
   };

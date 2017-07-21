@@ -18,6 +18,7 @@ module.exports = function (app, io) {
   let profileController = require('../controllers/profile-controller')(io);
   let wasteController = require('../controllers/waste-controller')(io);
   let usersController = require('../controllers/users-controller')(io);
+  //let utilsController = require('../utils/utils')(io);
   const cors = require('cors');
   let corsOptions = {
     origin: ["http://127.0.0.1:3000", "http://127.0.0.1:4200", "http://localhost:3000"],
@@ -51,10 +52,12 @@ module.exports = function (app, io) {
 
 //User
 
+
   app.get('/api/users/uploadPicture/:id', usersController.uploadPicture);
   app.delete('/api/users/deleteAllPicture/:id', usersController.deleteAllPictures);
   app.get('/api/users/get', usersController.getUsers);
   app.post('/api/users/follow', usersController.followUser);
+  app.post('/api/users/getListOfFriends', usersController.getlistOfFriends);
   app.post('/api/users/followOk', usersController.followUserOk);
   app.post('/api/users/unfollow', usersController.unfollowUser);
   app.post('/api/users/getThisUsers', usersController.getThisUser);

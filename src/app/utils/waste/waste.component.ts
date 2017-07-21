@@ -125,7 +125,12 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
       });
   }
 
-
+  /**
+   * Send a comment
+   * @param wasteId
+   * @param value
+   * @returns {Subscription}
+   */
   sendWasteComments(wasteId, value) {
     let comments = {
       wasteId: wasteId,
@@ -153,6 +158,12 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
     });
   }
 
+  /**
+   *
+   * @param wasteId
+   * @param wasteOrComment
+   * @returns {Subscription}
+   */
   deleteWasteOrPost(wasteId, wasteOrComment?) {
     return this.data.deletePost(wasteId, wasteOrComment)
       .map(res => res.json())

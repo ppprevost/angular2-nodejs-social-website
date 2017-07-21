@@ -10,9 +10,8 @@ import {AuthService} from '../services/auth.service';
   styleUrls: ['./home.component.css']
 })
 
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   user: User;
-  images: Object[] = [];
   typeWaste: string;
   newWaste: string;
   @ViewChild(WasteComponent) wasteComponent: WasteComponent;
@@ -20,11 +19,6 @@ export class HomeComponent implements OnInit {
   constructor(private auth: AuthService, private data: DataService) {
     console.log(this);
   }
-
-  ngOnInit() {
-
-  }
-
 
   loggedIn() {
     if (this.auth.loggedIn()) {

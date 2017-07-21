@@ -9,7 +9,7 @@ export class AuthService {
   user: User;
   jwtHelper: JwtHelper = new JwtHelper();
   token;
-  countFriendRequest: number = 0;
+  countFriendRequest = 0;
 
   constructor(private publicService: PublicService, private data: DataService) {
     this.token = localStorage.getItem('token');
@@ -18,10 +18,19 @@ export class AuthService {
     }
   }
 
+  /**
+   * Check if you're not connected
+   * @returns {boolean}
+   */
   loggedIn() {
     return tokenNotExpired();
   }
 
+  /**
+   * To Connect to the social website
+   * @param emailAndPassword
+   * @returns {Observable<R>}
+   */
   loginAccount(emailAndPassword) {
     return this.publicService.loginAccount(emailAndPassword)
       .map(res => res.json())
@@ -36,10 +45,15 @@ export class AuthService {
     return this.jwtHelper.decodeToken(token).user;
   }
 
+  /**
+   * See data.redreshUserData
+   * @param userData
+   * @param callback
+   * @returns {any}
+   */
   callRefreshUserData(userData?: User, callback?: Function) {
     if (userData) {
       return this.user = userData
-
     } else {
       return this.data.refreshUserData({token: this.token}).subscribe(user => {
         this.user = user.json();

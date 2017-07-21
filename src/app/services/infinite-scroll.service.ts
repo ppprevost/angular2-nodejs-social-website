@@ -6,7 +6,10 @@ export class InfiniteScrollService {
   constructor() {
   }
 
-
+  /**
+   * get the max height of the document by picking the good technique
+   * @returns {number}
+   */
   getDocHeight() {
     let D = document;
     return Math.max(
@@ -16,6 +19,10 @@ export class InfiniteScrollService {
     );
   }
 
+  /**
+   * get
+   * @returns {[number,number]}
+   */
   getScrollXY() {
     let scrOfX = 0, scrOfY = 0;
     if (typeof( window.pageYOffset ) == 'number') {
@@ -34,6 +41,14 @@ export class InfiniteScrollService {
     return [scrOfX, scrOfY];
   }
 
+  /**
+   * Need some time before launching the function
+   * @param func
+   * @param wait
+   * @param immediate
+   * @param context
+   * @returns {()=>any}
+   */
   debounce(func, wait, immediate, context?) {
     let result;
     let timeout = null;
@@ -52,6 +67,9 @@ export class InfiniteScrollService {
     };
   }
 
+  /**
+   * get the function
+   */
   getInfiniteScroll() {
     if (this.getDocHeight() - 20 <= this.getScrollXY()[1] + window.innerHeight) {
       this.debounce((d) => console.log(d), 250, false);

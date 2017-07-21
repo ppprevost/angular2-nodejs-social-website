@@ -38,11 +38,11 @@ module.exports = function (io) {
     let requestedWastes = [userData];
     Users.findById(userData, (err, user) => {
       if (!err && !onlyOwnPost && user.following && user.following.length) {
-        utils.listOfFriends(user.following, 0,false, following => {
+        utils.listOfFriends(user.following, 0, false, following => {
           following = following.map(elem => elem.userId);
           let userAndFriends = requestedWastes.concat(following);
           if (userAndFriends.length) { // length == 1 means no friends
-            let seekPosts = {userId: {$in: requestedWastes}};
+            let seekPosts = {userId: {$in: userAndFriends}};
             if (typePost == "publicOnly") {
               seekPosts.userType = "public"
             }

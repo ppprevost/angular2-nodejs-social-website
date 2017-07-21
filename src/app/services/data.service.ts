@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
-import {Commentary, Waste} from '../interface/interface';
+import {Commentary, Waste, Friends} from '../interface/interface';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
@@ -20,19 +20,37 @@ export class DataService {
     this.user = {};
   }
 
+  /**
+   * Get all Users {User}
+   * @returns {Promise<Observable<Response>>}
+   */
   getUsers(): Promise<any> {
     return Promise.resolve(this.http.get('api/users/get'));
   }
 
+  /**
+   * Get data from a specific user and load data from the backend
+   * @param userid {String}
+   * @returns {Observable<Response>}
+   */
   getThisUser(userid): Observable<any> {
     return this.http.post('/api/users/getThisUsers', JSON.stringify({userId: userid}), this.options);
   }
 
+  /**
+   * Refresh data rom a user
+   * @param token {String} Json web token
+   * @returns {Observable<Response>}
+   */
   refreshUserData(token): Observable<any> {
     return this.http.post('/api/user/refreshUserData', JSON.stringify(token), this.options);
   }
 
-
+  /**
+   * Update perso data
+   * @param champ
+   * @returns {Observable<Response>}
+   */
   updateChamp(champ): Observable<any> {
     return this.http.post('/api/profile/updateChamp', JSON.stringify(champ), this.options);
   }
@@ -46,6 +64,11 @@ export class DataService {
     return this.http.post(`/api/user/logout/`, JSON.stringify({userId, token}), this.options);
   }
 
+  /**
+   * Delete my account
+   * @param userId {String}
+   * @returns {Observable<Response>}
+   */
   deleteAccount(userId: string): Observable<any> {
     return this.http.delete(`api/profile/deleteAccount/${userId}`, this.options);
   }
@@ -66,6 +89,11 @@ export class DataService {
     }), this.options);
   }
 
+  /**
+   * Send a new post
+   * @param request
+   * @returns {Observable<Response>}
+   */
   sendWaste(request: Object) {
     return this.http.post('api/waste/sendPost', JSON.stringify(request), this.options);
   }
@@ -74,6 +102,14 @@ export class DataService {
     return this.http.post('api/waste/getCommentary', JSON.stringify(waste), this.options);
   }
 
+  /**
+   * Get post from a user and all this different friends
+   * @param userId {String}
+   * @param numberOfWaste {Number}
+   * @param typePost {String} means private or public
+   * @param onlyOwnPost {Boolean} means that i only want my own post
+   * @returns {Observable<Response>}
+   */
   getPost(userId: string, numberOfWaste: number, typePost: string, onlyOwnPost: boolean) {
     return this.http.post('/api/waste/getPost', JSON.stringify({
       following: userId,
@@ -87,11 +123,21 @@ export class DataService {
     return this.http.post('/api/waste/sendComments', JSON.stringify({comments}), this.options);
   }
 
+  /**
+   *
+   * @param wasteId {String} post id
+   * @param commentId {String}
+   * @returns {Observable<Response>}
+   */
   deletePost(wasteId, commentId?): Observable<any> {
     return this.http.delete('/api/waste/deletePost/' + wasteId + (commentId ? '/' + commentId : ''), this.options);
   }
 
   likeThisPostOrComment(wasteId, commentId?): Observable<any> {
     return this.http.get('api/waste/likeThisPostOrComment/' + wasteId + (commentId ? '/' + commentId : ''), this.options);
+  }
+
+  listOfFriends(followingTable: Friends[]) {
+    return this.http.post('/api/users/getListOfFriends', JSON.stringify(followingTable), this.options);
   }
 }

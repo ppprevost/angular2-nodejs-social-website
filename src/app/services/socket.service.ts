@@ -12,6 +12,12 @@ export class SocketService {
       path: '/socket.io'
     });
   }
+
+  /**
+   * Manage all socket function of the client app.
+   * @param receiver {String} sync with the backend
+   * @returns {Observable<any>|"../../Observable".Observable<any>|"../../../Observable".Observable<any>}
+   */
   socketFunction(receiver: string) {
     const observable = new Observable<any>(observer => {
 
