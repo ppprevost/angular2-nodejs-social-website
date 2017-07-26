@@ -9,7 +9,6 @@
     "ng": "ng",
     "build": "ng build",
     "start": "node --harmony src/server/app.js",
-    "postinstall": "ng build -aot -prod",
     "prod": "concurrently \"ng build -aot -prod\" \"node --harmony src/server/app.js\"",
     "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"nodemon \"",
     "test": "ng test",
