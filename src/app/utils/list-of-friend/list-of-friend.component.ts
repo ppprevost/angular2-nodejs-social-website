@@ -17,7 +17,7 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     console.log(this.user);
-    this.getFollowerImage(this.user)
+
   }
 
   ngOnDestroy() {
@@ -26,6 +26,7 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.currentValue) {
+      this.getFollowerImage(this.user);
      // this.user = changes.user.currentValue;
     }
   }
