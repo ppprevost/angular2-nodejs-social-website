@@ -11,8 +11,8 @@ Email-verification system, backend server with node.js and front end with Angula
 Install Node.js and MongoDb or use a Mongolab account.
 Install Nodemon and Angular-cli with npm -g command.
 Google Recaptcha and Email Verification is disabled to feel free testing the application. 
-To make it working again : 
-in signup.component.html, decomment the recaptcha element then, in the element button below change condition in the attribute [disabled] from !addUser.valid && eventCaptcha to !addUser.valid && !eventCaptcha.
+To make it working again :
+For recaptcha : enable var recaptcha in angular 4 environment file.
 For email verification, in your .env file put the EMAIL_VERIFICATION value to true. You have to create then a Gmail Api account.
 Create Gmail account in order to use nodemailer email verification module. Then go to this page to use the GMAIL API:
  * [Configure your GMAIL API](https://medium.com/@pandeysoni/nodemailer-service-in-node-js-using-smtp-and-xoauth2-7c638a39a37e)
