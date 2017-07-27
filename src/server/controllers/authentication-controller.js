@@ -123,14 +123,7 @@ module.exports = function (io) {
 
             }
             if (user) {
-              if (JSON.parse(process.env.EMAIL_VERIFICATION)) {
-                nev.sendConfirmationEmail(user['email'], function (data) {
-                  console.log(data);
-                  res.json(data);
-                });
-              } else {
-                res.json(user)
-              }
+              res.json(user)
             } else {
               return res.status(404).send('ERROR: confirming temp user FAILED' + err);
             }
@@ -143,7 +136,6 @@ module.exports = function (io) {
               console.log(err);
               return res.status(404).send('ERROR: sending verification email FAILED');
             }
-            confirmTempUser();
             res.json({
               msg: 'An email has been sent to you. Please check it to verify your account.',
               info: info
@@ -203,26 +195,26 @@ module.exports = function (io) {
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
               delete userData.password;
-                UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
-                  if (userAlreadyConnected) {
-                    userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
-                    userAlreadyConnected.save(() => {
-                      locationSearch(userAlreadyConnected, req.body.socketId, userData, res)
-                    })
-                  } else {
-                    let newUserConnected = new UsersConnected({
-                      userId: userData._id,
-                      location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
-                    });
-                    newUserConnected.save((err, savedUser) => {
-                      locationSearch(savedUser, req.body.socketId, userData, res)
-                    });
-                  }
-                  const token = jwt.sign({
-                    user: userData
-                  }, process.env.SECRET_TOKEN, {expiresIn: '5h'});
-                  res.status(200).json({token});
-                });
+              UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
+                if (userAlreadyConnected) {
+                  userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
+                  userAlreadyConnected.save(() => {
+                    locationSearch(userAlreadyConnected, req.body.socketId, userData, res)
+                  })
+                } else {
+                  let newUserConnected = new UsersConnected({
+                    userId: userData._id,
+                    location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
+                  });
+                  newUserConnected.save((err, savedUser) => {
+                    locationSearch(savedUser, req.body.socketId, userData, res)
+                  });
+                }
+                const token = jwt.sign({
+                  user: userData
+                }, process.env.SECRET_TOKEN, {expiresIn: '5h'});
+                res.status(200).json({token});
+              });
 
             } else {
               return res.status(401).send({msg: 'Invalid email or password'});
@@ -362,7 +354,7 @@ module.exports = function (io) {
       if (!err) {
         Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
           if (!err) {
-            utils.listOfFriends(user.following, 10,false, waster => {
+            utils.listOfFriends(user.following, 10, false, waster => {
               waster.map(elem => {
                 user.following.map(doc => {
                   if (doc.userId === elem._id) {
