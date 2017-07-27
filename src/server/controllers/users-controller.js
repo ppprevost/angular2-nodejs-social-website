@@ -22,39 +22,50 @@ module.exports = function (io) {
 
   /**
    * Get all Users and add the connected carcterisitc
+   * limitData
+   * searchData for autocompletion
    * @param req
    * @param res
    */
+
+
   let getUsers = function (req, res) {
-    Users.find().select({password: 0, __v: 0}).exec(function (err, usersData) {
+    let search = new RegExp(req.query.searchData, 'i');
+    let limitData = req.query.limitData ? Number(req.query.limitData) : 0;
+    Users.find({username: search} || {}).select({
+      password: 0,
+      __v: 0
+    }).limit(limitData).sort({modifiedAt: 1}).exec(function (err, usersData) {
       if (err) {
-        res.error(err);
+        res.status(500).send(err);
       } else {
-        let asyncLoop = (i, usersData) => {
-          utils.listOfFriends(usersData[i].following, 10, false, waster => {
-            usersData[i].following = waster;
-            if (i === usersData.length - 1) {
-              UsersConnected.find().exec((err, userConnected) => {
-                let connectedId = userConnected.map(elem => {
-                  return elem.userId
+        if (Array.isArray(usersData) && usersData.length) {
+          let asyncLoop = (i, usersData) => {
+            utils.listOfFriends(usersData[i].following, 10, false, waster => {
+              usersData[i].following = waster;
+              if (i === usersData.length - 1) {
+                UsersConnected.find().exec((err, userConnected) => {
+                  let connectedId = userConnected.map(elem => {
+                    return elem.userId
+                  });
+                  usersData.map(doc => {
+                    if (doc && doc._id) {
+                      connectedId.forEach(elem => {
+                        return doc._doc.isConnected = elem === doc._id.toString()
+                      })
+                    }
+                  });
+                  res.json(usersData);
                 });
-                usersData.map(doc => {
-                  if (doc && doc._id) {
-                    connectedId.forEach(elem => {
-                      return doc._doc.isConnected = elem === doc._id.toString()
-                    })
-                  }
-                });
-                res.json(usersData);
-              });
-            } else {
-              asyncLoop(++i, usersData)
-            }
-          });
-        };
-        asyncLoop(i = 0, usersData);
-
-
+              } else {
+                asyncLoop(++i, usersData)
+              }
+            });
+          };
+          asyncLoop(i = 0, usersData);
+        } else {
+          res.json([]);
+        }
       }
     })
   };

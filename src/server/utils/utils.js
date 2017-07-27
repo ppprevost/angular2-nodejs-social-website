@@ -9,7 +9,7 @@ module.exports = (io) => {
    * @param {String} fullDataWanted If you want a lot of data of just picture and username
    * @param {Function} callback
    */
-  let listOfFriends = (followingTable = [], numberOfFriends = 0, fullDataWanted = false, callback) => {
+  let listOfFriends = (followingTable = [], numberOfFriends = 0, fullDataWanted = '', callback) => {
     let following = followingTable;
     let newTable = following.filter(elem => elem.statut === 'accepted').map(doc => doc.userId);
     fullDataWanted = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};

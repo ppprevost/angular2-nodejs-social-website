@@ -24,8 +24,8 @@ export class DataService {
    * Get all Users {User}
    * @returns {Promise<Observable<Response>>}
    */
-  getUsers(data?): Promise<any> {
-    return Promise.resolve(this.http.get('api/users/get'));
+  getUsers(searchData?, limit = 0): Promise<any> {
+    return Promise.resolve(this.http.get(`api/users/get?limitData=${limit}&searchData=${searchData}`));
   }
 
   /**
@@ -81,6 +81,13 @@ export class DataService {
     return this.http.delete(`/api/users/deleteAllPicture/${userId}`, this.options);
   }
 
+  /**
+   * get the new socket id of the connected user
+   * @param userId
+   * @param socketId
+   * @param token
+   * @returns {Observable<Response>}
+   */
   refreshSocketIdOfConnectedUsers(userId: string, socketId: string, token: string): Observable<any> {
     return this.http.post('/api/user/refreshSocketId', JSON.stringify({
       userId,

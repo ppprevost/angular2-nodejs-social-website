@@ -16,7 +16,7 @@
            routerLinkActive="active">My
           Profile</a>
         <a *ngIf="auth.loggedIn()">
-          <ng2-completer  [(ngModel)]="searchUser" [datasource]="dataUser"
+          <ng2-completer  [clearUnselected]="true" [placeholder]="'find a user'" [pause]="1000" [(ngModel)]="searchUser" [datasource]="dataUser"
                          [minSearchLength]="0"></ng2-completer>
         </a>
         <div class="nav navbar-nav navbar-right">

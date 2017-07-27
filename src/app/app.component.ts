@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy, ViewContainerRef, ViewChild} from '@angular/core';
 import {DataService} from './services/data.service';
-import {CompleterService, CompleterData} from 'ng2-completer';
+import {CompleterService, CompleterData, RemoteData} from 'ng2-completer';
 import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {Router} from '@angular/router';
@@ -24,7 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private email = new FormControl('', Validators.required);
   private password = new FormControl('', Validators.required);
   private connection;
-  protected dataUser: CompleterData;
+  protected dataUser: RemoteData;
   private connectionOfUser;
   private commentarySub;
   protected searchUser: string;
@@ -134,12 +134,18 @@ export class AppComponent implements OnInit, OnDestroy {
         this.auth.countFriendRequest++;
       }
     });
-    this.data.getUsers()
-      .then(tableOfUsers => {
-        tableOfUsers.subscribe(dataElement => {
-          this.dataUser = this.completerService.local(dataElement.json(), 'username', 'username').imageField('image');
-        });
-      });
+    //TODO search server side
+    // auto completion
+    // this.data.getUsers()
+    //   .then(tableOfUsers => {
+    //     tableOfUsers.subscribe(dataElement => {
+    //       this.dataUser = this.completerService.local(dataElement.json(), 'username', 'username').imageField('image');
+    //     });
+    //   });
+    this.dataUser = this.completerService.remote(null, 'username', 'username').imageField('image');
+    this.dataUser.urlFormater(term => `api/users/get?limitData=0&searchData=${term}`);
+
+    // the socket is connected
     this.connectionOfUser = this.socket.socketFunction('connect')
       .subscribe(connection => {
         this.data.refreshSocketIdOfConnectedUsers(
