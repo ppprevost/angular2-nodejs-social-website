@@ -21,7 +21,7 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
   @ViewChild('wasteMasonry') wasteCompo;
 
   constructor(private infinite: InfiniteScrollService, private route: ActivatedRoute,
-              private router: Router, private auth: AuthService, private data: DataService) {
+              private auth: AuthService, private data: DataService) {
   }
 
   ngOnInit() {

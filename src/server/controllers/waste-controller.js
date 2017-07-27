@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 
 module.exports = function (io) {
   const utils = require('../utils/utils')(io);
-  //TODO  send to specific friends with the function utils
   /**
    * Send a post and send notif via socket to friends
    * @param req
@@ -40,48 +39,53 @@ module.exports = function (io) {
       if (!err && !onlyOwnPost && user.following && user.following.length) {
         utils.listOfFriends(user.following, 0, false, following => {
           following = following.map(elem => elem._doc.userId);
-          let userAndFriends = requestedWastes.concat(following);
-          if (userAndFriends.length) { // length == 1 means no friends
-            let seekPosts = {userId: {$in: userAndFriends}};
-            if (typePost == "publicOnly") {
-              seekPosts.userType = "public"
-            }
-            Waste.find(seekPosts)
-              .sort({date: -1})
-              .limit(req.body.numberOfWaste)
-              .exec(function (err, allWastes) {
-                if (err) {
-                  res.status(400).send("Erreur dans la récupération de la base de donnée")
-                } else {
-                  Users.find({
-                    _id: {
-                      $in: requestedWastes
-                    }
-                  }).select({image: 1, _id: 1, username: 1}).exec((err, allUserImage) => {
-                    if (err) {
-                      res.status(400).send(err)
-                    }
-                    allWastes.map(doc => {
-                      allUserImage.forEach((elem) => {
-                        if (doc.userId == elem._id) {
-                          doc._doc.image = elem.image; // hack Mongoose
-                          doc._doc.user = elem.username;
-                          return doc
-                        }
-                      });
-                    });
-                    res.json(allWastes);
-                  });
-                }
-              })
-          } else {
-            res.status(400).send("pas de posts trouvés ou erreurs envoi userId")
-          }
+          requestedWastes = requestedWastes.concat(following);
+          actionGetPost(requestedWastes, typePost, req, res);
         });
+      } else {
+        actionGetPost(requestedWastes, typePost, req, res);
       }
     });
   };
 
+  let actionGetPost = (requestedWastes, typePost, req, res) => {
+    if (requestedWastes.length) { // length == 1 means no friends
+      let seekPosts = {userId: {$in: requestedWastes}};
+      if (typePost == "publicOnly") {
+        seekPosts.userType = "public"
+      }
+      Waste.find(seekPosts)
+        .sort({date: -1})
+        .limit(req.body.numberOfWaste)
+        .exec(function (err, allWastes) {
+          if (err) {
+            res.status(400).send("Erreur dans la récupération de la base de donnée")
+          } else {
+            Users.find({
+              _id: {
+                $in: requestedWastes
+              }
+            }).select({image: 1, _id: 1, username: 1}).exec((err, allUserImage) => {
+              if (err) {
+                res.status(400).send(err)
+              }
+              allWastes.map(doc => {
+                allUserImage.forEach((elem) => {
+                  if (doc.userId == elem._id) {
+                    doc._doc.image = elem.image; // hack Mongoose
+                    doc._doc.user = elem.username;
+                    return doc
+                  }
+                });
+              });
+              res.json(allWastes);
+            });
+          }
+        })
+    } else {
+      res.status(400).send("pas de posts trouvés ou erreurs envoi userId")
+    }
+  };
   /**
    * Get all Commentary from a post
    * @param req

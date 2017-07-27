@@ -1,9 +1,9 @@
 import {Component, OnInit, OnDestroy, ViewContainerRef, ViewChild} from '@angular/core';
 import {DataService} from './services/data.service';
-import {PublicService} from './services/public.service';
+import {CompleterService, CompleterData} from 'ng2-completer';
 import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
-import{Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 import {SocketService} from './services/socket.service';
 
@@ -24,9 +24,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private email = new FormControl('', Validators.required);
   private password = new FormControl('', Validators.required);
   private connection;
-
+  protected dataUser: CompleterData;
   private connectionOfUser;
   private commentarySub;
+  protected searchUser: string;
   user;
 
   constructor(private socket: SocketService,
@@ -36,8 +37,9 @@ export class AppComponent implements OnInit, OnDestroy {
               private data: DataService,
               private addUserForm: FormBuilder,
               private router: Router,
-              public vcr: ViewContainerRef) {
+              private completerService: CompleterService) {
     this.toastyConfig.theme = 'material';
+
   }
 
   ngOnInit() {
@@ -84,7 +86,7 @@ export class AppComponent implements OnInit, OnDestroy {
       });
   }
 
-  socketMethodUse(table) {
+  private socketMethodUse(table) {
     table.forEach((elem, i) => {
       this['connection' + i] = this.socket.socketFunction(elem.type)
         .subscribe(waste => {
@@ -125,14 +127,19 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.auth.loggedIn();
   }
 
-  initSocket() {
+  private initSocket() {
     this.auth.callRefreshUserData();
     this.auth.user.following.forEach(elem => {
       if (elem.statut === 'requested') {
         this.auth.countFriendRequest++;
       }
     });
-
+    this.data.getUsers()
+      .then(tableOfUsers => {
+        tableOfUsers.subscribe(dataElement => {
+          this.dataUser = this.completerService.local(dataElement.json(), 'username', 'username').imageField('image');
+        });
+      });
     this.connectionOfUser = this.socket.socketFunction('connect')
       .subscribe(connection => {
         this.data.refreshSocketIdOfConnectedUsers(

@@ -15,6 +15,10 @@
         <a *ngIf="auth.loggedIn()" class="navbar-brand" [routerLink]="['/my-profile', auth.user._id]"
            routerLinkActive="active">My
           Profile</a>
+        <a *ngIf="auth.loggedIn()">
+          <ng2-completer  [(ngModel)]="searchUser" [datasource]="dataUser"
+                         [minSearchLength]="0"></ng2-completer>
+        </a>
         <div class="nav navbar-nav navbar-right">
           <div class="form-inline">
             <form *ngIf="!auth.loggedIn()" [formGroup]="loginUser">

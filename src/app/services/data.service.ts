@@ -24,7 +24,7 @@ export class DataService {
    * Get all Users {User}
    * @returns {Promise<Observable<Response>>}
    */
-  getUsers(): Promise<any> {
+  getUsers(data?): Promise<any> {
     return Promise.resolve(this.http.get('api/users/get'));
   }
 

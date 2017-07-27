@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
 import {User} from '../interface/interface';
 import {
   Router, Resolve, RouterStateSnapshot,

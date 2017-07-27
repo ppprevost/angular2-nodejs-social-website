@@ -27,11 +27,11 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.currentValue) {
       this.getFollowerImage(this.user);
-     // this.user = changes.user.currentValue;
+      // this.user = changes.user.currentValue;
     }
   }
 
-  getFollowerImage(user: User): void { // avatar from other friends
+  public getFollowerImage(user: User): void { // avatar from other friends
     if (user && user.following && user.following.length > 0) {
       this.data.listOfFriends(user.following).subscribe((elem) => {
         this.user.following = elem.json() || [];
