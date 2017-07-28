@@ -65,9 +65,11 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   @HostListener('window:scroll', ['$event']) onScroll($event) {
-    this.infinite.getInfiniteScroll();
+    this.infinite.getInfiniteScroll(() => {
+      this.data.getPost(this.userId, 10, 'all', false, 10).map(res => res.json())
+        .subscribe((data) => this.wastes = this.wastes.concat(data), err => console.log(err));
+    });
   }
-
 
   ngOnChanges(changes) {
     console.log(changes);
@@ -77,7 +79,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   getPosts() {
-    this.data.getPost(this.userId, this.numberOfWaste, this.typePost, this.onlyOwnPost)
+    this.data.getPost(this.userId, this.numberOfWaste, this.typePost, this.onlyOwnPost, 10)
       .map(res => res.json())
       .subscribe(
         data => {
@@ -89,7 +91,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
         err => console.log(err));
   }
 
-  dataCommentaryWanted(waste: Waste, userId: string) {
+  private dataCommentaryWanted(waste: Waste, userId: string) {
     if (waste.isOpeningCommentary) {
       this.data.dataCommentary(waste, userId)
         .map(res => res.json())

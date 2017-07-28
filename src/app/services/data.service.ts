@@ -24,8 +24,8 @@ export class DataService {
    * Get all Users {User}
    * @returns {Promise<Observable<Response>>}
    */
-  getUsers(searchData?, limit = 0): Promise<any> {
-    return Promise.resolve(this.http.get(`api/users/get?limitData=${limit}&searchData=${searchData}`));
+  getUsers(searchData?, limit = 10, skip = 0): Promise<any> {
+    return Promise.resolve(this.http.get(`api/users/get?limitData=${limit}&searchData=${searchData}&skip=${skip}`));
   }
 
   /**
@@ -115,14 +115,16 @@ export class DataService {
    * @param numberOfWaste {Number}
    * @param typePost {String} means private or public
    * @param onlyOwnPost {Boolean} means that i only want my own post
+   * @param skipLimit for infinite scrollig
    * @returns {Observable<Response>}
    */
-  getPost(userId: string, numberOfWaste: number, typePost: string, onlyOwnPost: boolean) {
+  getPost(userId: string, numberOfWaste: number, typePost: string, onlyOwnPost: boolean, skipLimit) {
     return this.http.post('/api/waste/getPost', JSON.stringify({
       following: userId,
-      numberOfWaste: numberOfWaste,
-      typePost: typePost,
-      onlyOwnPost: onlyOwnPost
+      numberOfWaste,
+      typePost,
+      onlyOwnPost,
+      skipLimit
     }), this.options);
   }
 

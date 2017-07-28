@@ -70,10 +70,13 @@ export class InfiniteScrollService {
   /**
    * get the function
    */
-  getInfiniteScroll() {
+  getInfiniteScroll(callback?) {
     if (this.getDocHeight() - 20 <= this.getScrollXY()[1] + window.innerHeight) {
       this.debounce((d) => console.log(d), 250, false);
       console.log('edeors debounce');
+      if (callback) {
+        callback();
+      }
     }
   }
 }

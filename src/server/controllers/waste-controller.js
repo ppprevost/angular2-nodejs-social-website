@@ -56,6 +56,7 @@ module.exports = function (io) {
       }
       Waste.find(seekPosts)
         .sort({date: -1})
+        .skip(req.body.skipLimit)
         .limit(req.body.numberOfWaste)
         .exec(function (err, allWastes) {
           if (err) {
