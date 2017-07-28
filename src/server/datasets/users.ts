@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const friends = require("mongoose-friends");
 
-
-
-let follower = new mongoose.Schema(
+const follower = new mongoose.Schema(
   {
     userId: {required: true, type: String},
     date: Date,
@@ -12,7 +10,7 @@ let follower = new mongoose.Schema(
     username: String
   });
 
-let schema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   email: {
     type: String,
     trim: true,
@@ -24,7 +22,7 @@ let schema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: "mot de passe Mongoose required"
+    required: 'mot de passe Mongoose required'
   },
   website: String,
   gender: String,
@@ -42,7 +40,7 @@ let schema = new mongoose.Schema({
   following: [follower]
 });
 
-schema.plugin(friends({pathName: "friendManagement"}));
+schema.plugin(friends({pathName: 'friendManagement'}));
 
-module.exports = mongoose.model('User', schema);
+export default mongoose.model('User', schema);
 

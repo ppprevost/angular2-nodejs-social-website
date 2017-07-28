@@ -4,7 +4,7 @@ const randtoken = require('rand-token'),
   nodemailer = require('nodemailer');
 
 
-module.exports = function (mongoose) {
+export default function (mongoose) {
 
   let isPositiveInteger = function (x) {
     return ((parseInt(x, 10) === x) && (x >= 0));

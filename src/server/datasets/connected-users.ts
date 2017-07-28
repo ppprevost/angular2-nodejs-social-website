@@ -1,5 +1,6 @@
-let mongoose = require("mongoose");
-module.exports = mongoose.model('UsersConnected', {
+import * as mongoose from 'mongoose';
+
+export default mongoose.model('UsersConnected', {
   userId: String,
   location: [
     {

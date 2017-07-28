@@ -1,11 +1,14 @@
-const Users = require('../datasets/users'), fs = require('fs'), UsersConnected = require('../datasets/connected-users');
-const jwt = require('jsonwebtoken');
-let uploadUtil = (req, res, callback) => {
-  let userId = req.params.id;
-  let directory = `${process.cwd()}\\src\\assets\\upload\\${userId}\\`;
+import * as Users from '../datasets/users';
+import * as fs from 'fs';
+import * as UsersConnected from '../datasets/connected-users';
+import * as jwt from 'jsonwebtoken';
+
+const uploadUtil = (req, res, callback) => {
+  const userId = req.params.id;
+  const directory = `${process.cwd()}\\src\\assets\\upload\\${userId}\\`;
   try {
-    let files = fs.readdirSync(directory);
-    callback(files, directory, userId)
+    const files = fs.readdirSync(directory);
+    callback(files, directory, userId);
   } catch (err) {
     res.json([]);
   }

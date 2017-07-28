@@ -1,14 +1,22 @@
-const Users = require('../datasets/users');
-const bcrypt = require('bcryptjs');
-const mongoose = require('mongoose');
-const nev = require('../services/email-verification')(mongoose);
-const path = require('path');
-const request = require('request');
-const jwt = require('jsonwebtoken');
-const UsersConnected = require('../datasets/connected-users');
+// const Users = require('../datasets/users');
+// const bcrypt = require('bcryptjs');
+// const mongoose = require('mongoose');
+// const nev = require('../services/email-verification')(mongoose);
+// const request = require('request');
+// const jwt = require('jsonwebtoken');
+// const UsersConnected = require('../datasets/connected-users');
+
+import * as mongoose from 'mongoose';
+import * as Users from '../datasets/users';
+import * as bcrypt from 'bcryptjs';
+import * as nev from '../services/email-verification';
+nev(mongoose);
+import * as request from 'request';
+import * as jwt from 'jsonwebtoken';
+import * as UsersConnected from '../datasets/connected-users';
 
 
-myHasher = (password, tempUserData, insertTempUser, callback) => {
+const myHasher = (password, tempUserData, insertTempUser, callback) => {
   bcrypt.genSalt(8, function (err, salt) {
     bcrypt.hash(password, salt, function (err, hash) {
       return insertTempUser(hash, tempUserData, callback);

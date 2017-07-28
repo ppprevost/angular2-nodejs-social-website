@@ -9,6 +9,7 @@
     "ng": "ng",
     "build": "ng build",
     "start": "node %NODE_DEBUG_OPTION% --harmony src/server/app.js",
+    "predev":"tsc -p ./src/server",
     "prod": "concurrently \"ng build -aot -prod\" \"node --harmony src/server/app.js\"",
     "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"nodemon \"",
     "test": "ng test",

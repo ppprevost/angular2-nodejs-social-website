@@ -1,9 +1,9 @@
-const jwt = require('jsonwebtoken');
+import * as profileController from '../controllers/profile-controller';
 
-module.exports = function (app, io) {
+export default function (app, io) {
   // APIs
 
-  //traitement socket
+  // traitement socket
   io.on('connection', function (socket) {
     console.log("connection socket server ok");
     socket.emit('news', {hello: 'bienvenue sur mon reseau'});
@@ -14,10 +14,11 @@ module.exports = function (app, io) {
     });
   });
 
-  let authenticationController = require('../controllers/authentication-controller')(io);
-  let profileController = require('../controllers/profile-controller')(io);
-  let wasteController = require('../controllers/waste-controller')(io);
-  let usersController = require('../controllers/users-controller')(io);
+  const authenticationController = require('../controllers/authentication-controller')(io);
+
+  profileController = new profileController(io);
+  const wasteController = require('../controllers/waste-controller')(io);
+  const usersController = require('../controllers/users-controller')(io);
   //let utilsController = require('../utils/utils')(io);
   const cors = require('cors');
   let corsOptions = {

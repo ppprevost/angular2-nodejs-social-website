@@ -1,5 +1,5 @@
-let mongoose = require('mongoose');
-module.exports = mongoose.model('Waste', {
+import * as mongoose from 'mongoose';
+export default mongoose.model('Waste', {
   userId: {type: String, required: true},
   userType: {type: String, enum: ['public', 'private']},
   content: String,
