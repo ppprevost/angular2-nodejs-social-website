@@ -1,4 +1,4 @@
-import * as profileController from '../controllers/profile-controller';
+import {Update} from '../controllers/profile-controller';
 
 export default function (app, io) {
   // APIs
@@ -15,8 +15,6 @@ export default function (app, io) {
   });
 
   const authenticationController = require('../controllers/authentication-controller')(io);
-
-  profileController = new profileController(io);
   const wasteController = require('../controllers/waste-controller')(io);
   const usersController = require('../controllers/users-controller')(io);
   //let utilsController = require('../utils/utils')(io);
@@ -25,6 +23,7 @@ export default function (app, io) {
     origin: ["http://127.0.0.1:3000", "http://127.0.0.1:4200", "http://localhost:3000"],
     optionsSuccessStatus: 200
   };
+
 
 //Route
 //Authentication
@@ -39,7 +38,9 @@ export default function (app, io) {
 
 //Profile profileController.updatePhoto
   app.options('api/upload', cors(corsOptions)); // enable pre-flight request for request
-  app.post('/api/upload', profileController.updatePhoto);
+
+  const oo = new Update(io);
+  app.post('/api/upload', oo.updatePhoto);
   app.post('/api/profile/updateChamp', profileController.updateChamp);
   app.post('/api/profile/updatePassword', profileController.updatePassword);
   app.delete('/api/profile/deleteAccount/:id', profileController.deleteAccount);

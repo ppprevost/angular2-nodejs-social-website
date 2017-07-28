@@ -1,7 +1,13 @@
-const Users = require('../datasets/users');
-const UsersConnected = require('../datasets/connected-users');
+import * as Users from '../datasets/users';
+import * as UsersConnected from '../datasets/connected-users';
 
-module.exports = (io) => {
+export class Utils {
+  private io;
+
+  constructor(io) {
+    this.io = io;
+  }
+
   /**
    *Get the list of friends of a specific user.
    * @param followingTable
@@ -9,19 +15,19 @@ module.exports = (io) => {
    * @param {String} fullDataWanted If you want a lot of data of just picture and username
    * @param {Function} callback
    */
-  let listOfFriends = (followingTable = [], numberOfFriends = 0, fullDataWanted = false, callback) => {
-    let following = followingTable;
-    let newTable = following.filter(elem => elem.statut === 'accepted').map(doc => doc.userId);
-    fullDataWanted = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};
-    Users.find({_id: {$in: newTable}}).select(fullDataWanted).limit(numberOfFriends)
+  listOfFriends(followingTable = [], numberOfFriends = 0, fullDataWanted = false, callback) {
+    const following = followingTable;
+    const newTable = following.filter(elem => elem.statut === 'accepted').map(doc => doc.userId);
+    const valueSeek = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};
+    Users.find({_id: {$in: newTable}}).select(valueSeek).limit(numberOfFriends)
       .exec(function (err, waster) {
         waster.map(el => {
           el._doc.userId = el._id.toString();
           el._doc.statut = 'accepted';
           delete el._doc._id;
-          return el
+          return el;
         });
-        callback(waster)
+        callback(waster);
       });
   };
 
@@ -34,36 +40,35 @@ module.exports = (io) => {
    * @param message
    * @returns {Promise}
    */
-  let getListOfFriendAndSentSocket = (userData, message, aliasSocketMessage) => {
+  getListOfFriendAndSentSocket(userData, message, aliasSocketMessage): Promise<any> {
     return new Promise((resolve, rej) => {
-      listOfFriends(userData.following, 0, false, waster => {
-        let socketUser = waster.map(elem => elem.userId);
+      this.listOfFriends(userData.following, 0, false, waster => {
+        const socketUser = waster.map(elem => elem.userId);
         let socketIds = [];
         // send uniquely if the user is connected
         UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
           if (!err) {
             userCo.forEach(userConected => {
               userConected.location.forEach(socketId => {
-                if (io.sockets.connected[socketId.socketId]) {
+                if (this.io.sockets.connected[socketId.socketId]) {
                   console.log('send to friend==>', socketId.socketId);
                   socketIds = [...socketIds, socketId.socketId];
-                  io.sockets.connected[socketId.socketId].emit(aliasSocketMessage, message)
+                  this.io.sockets.connected[socketId.socketId].emit(aliasSocketMessage, message);
                 }
               });
             });
-            resolve(waster)
+            resolve(waster);
           } else {
-            rej(err)
+            rej(err);
           }
         });
-      })
+      });
     });
   };
-
-  return {listOfFriends, getListOfFriendAndSentSocket};
 
 
   /**
    * Created by Prevost on 05/06/2017.
    */
-};
+}
+;

@@ -1,7 +1,7 @@
 // const Users = require('../datasets/users');
 // const bcrypt = require('bcryptjs');
 // const mongoose = require('mongoose');
-// const nev = require('../services/email-verification')(mongoose);
+
 // const request = require('request');
 // const jwt = require('jsonwebtoken');
 // const UsersConnected = require('../datasets/connected-users');
@@ -9,12 +9,10 @@
 import * as mongoose from 'mongoose';
 import * as Users from '../datasets/users';
 import * as bcrypt from 'bcryptjs';
-import * as nev from '../services/email-verification';
-nev(mongoose);
+const nev = require('../services/email-verification')(mongoose);
 import * as request from 'request';
 import * as jwt from 'jsonwebtoken';
 import * as UsersConnected from '../datasets/connected-users';
-
 
 const myHasher = (password, tempUserData, insertTempUser, callback) => {
   bcrypt.genSalt(8, function (err, salt) {
@@ -99,7 +97,7 @@ module.exports = function (io) {
     if (errors) {
       return res.status(400).send(errors);
     }
-    let email = req.body.email;
+    const email = req.body.email;
 
     let newUser = new Users({
       email: req.body.email,
@@ -150,7 +148,7 @@ module.exports = function (io) {
             });
           });
         } else {
-          confirmTempUser()
+          confirmTempUser();
         }
 
         // user already exists in temporary collection!

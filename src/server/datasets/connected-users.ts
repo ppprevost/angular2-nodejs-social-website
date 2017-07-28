@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 
-export default mongoose.model('UsersConnected', {
+export default mongoose.model('UsersConnected', new mongoose.Schema({
   userId: String,
   location: [
     {
@@ -10,4 +10,4 @@ export default mongoose.model('UsersConnected', {
     }],
   isConnected: Boolean,
   date: {type: Date, default: Date.now}
-});
+}));

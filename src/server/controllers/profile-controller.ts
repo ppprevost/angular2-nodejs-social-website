@@ -31,7 +31,13 @@ const upload = multer({ //multer settings
   storage: storage
 }).single('file');
 
-export default class {
+export declare class Update {
+  io;
+
+  constructor(io) {
+    this.io = io;
+  }
+
   updatePhoto(req, res) {
     upload(req, res, function (err) {
       console.log('req.file', req.file);
@@ -82,7 +88,7 @@ export default class {
           console.log("champ sauvegardé " + champ);
           res.json(user);
         }
-      })
+      });
     });
   };
 }
