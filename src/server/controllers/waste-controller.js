@@ -193,7 +193,6 @@ module.exports = function (io) {
     return likeOrDeletePost(req, res, 'delete')
   };
 
-
   return {
     getCommentary,
     deletePost,
