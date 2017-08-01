@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 
 export class WasteController {
-
+  private io;
 
   /**
    * Send a post and send notif via socket to friends
@@ -12,8 +12,8 @@ export class WasteController {
    * @param res
    */
 
-  constructor() {
-
+  constructor(io) {
+    this.io = io;
 
   }
 
@@ -52,7 +52,7 @@ export class WasteController {
           }
         });
     } else {
-      res.status(400).send("'pas de posts trouvés ou erreurs envoi userId')
+      res.status(400).send('pas de posts trouvés ou erreurs envoi userId');
     }
   }
 
@@ -93,51 +93,18 @@ export class WasteController {
         this.actionGetPost(requestedWastes, typePost, req, res);
       }
     });
-  };
-
-}
-
-module.exports = function (io) {
-  const utils = require('../utils/utils')(io);
-
-
-  /**
-   * Get all Commentary from a post
-   * @param req
-   * @param res
-   */
-  let getCommentary = (req, res) => {
-    let commentary = req.body.commentary
-    let tableUserCommentary = commentary.map(elem => {
-      return elem.userId
-    }).filter((v, i, a) => {
-      return a.indexOf(v) === i
-    });
-    Users.find({_id: {$in: tableUserCommentary}}).exec((err, users) => {
-      users.forEach(user => {
-        commentary.map(comment => {
-          if (user._id == comment.userId) {
-            comment.image = user.image;
-            comment.username = user.username
-          }
-          return comment
-        })
-      });
-      req.body.commentary = commentary;
-      res.json(req.body)
-    })
-  };
+  }
 
   /**
    * Send a new comment from a specific
    * @param req
    * @param res
    */
-  let sendComments = (req, res) => {
+  sendComments = (req, res) => {
     let comments = req.body.comments;
     Waste.findById(comments.wasteId, (err, waste) => {
       comments.date = new Date();
-      //delete comments.wasteId
+      // delete comments.wasteId
       waste.commentary.push(comments);
       waste.save(() => {
         Users.findById(comments.userId, (err, user) => {
@@ -146,8 +113,36 @@ module.exports = function (io) {
             .catch(err => console.log(err));
         });
       });
-    })
-  };
+    });
+  }
+
+  /**
+   * Get all Commentary from a post
+   * @param req
+   * @param res
+   */
+  getCommentary = (req, res) => {
+    const commentary = req.body.commentary;
+    const tableUserCommentary = commentary.map(elem => {
+      return elem.userId;
+    }).filter((v, i, a) => {
+      return a.indexOf(v) === i;
+    });
+    Users.find({_id: {$in: tableUserCommentary}}).exec((err, users) => {
+      users.forEach(user => {
+        commentary.map(comment => {
+          if (user._id == comment.userId) {
+            comment.image = user.image;
+            comment.username = user.username;
+          }
+          return comment
+        });
+      });
+      req.body.commentary = commentary;
+      res.json(req.body);
+    });
+  }
+
 
   /**
    * Same function for deleting and liking POST AND COMMENT
@@ -156,14 +151,14 @@ module.exports = function (io) {
    * @param res
    * @param typeOfFunction string
    */
-  let likeOrDeletePost = (req, res, typeOfFunction) => {
+  private likeOrDeletePost = (req, res, typeOfFunction) => {
     let wasteId = req.params.wasteId;
     Waste.findById(wasteId, (err, result) => {
       if (!err) {
         if (!req.params.commentId) {
-          if (typeOfFunction == "likes") {
+          if (typeOfFunction == 'likes') {
             let testIfExist = result.likes.find(elem => {
-              return elem == result.userId
+              return elem == result.userId;
             });
             if (!testIfExist) {
               result.likes = [...result.likes, result.userId];
@@ -178,21 +173,21 @@ module.exports = function (io) {
           })
         } else {
           let index = result.commentary.indexOf(result.commentary.find(elem => {
-            return req.params.commentId == elem._id
+            return req.params.commentId == elem._id;
           }));
-          if (typeOfFunction == "likes") {
+          if (typeOfFunction == 'likes') {
             let testIfComment = result.commentary[index].likes.find(elem => {
-              return elem == result.commentary[index].userId
+              return elem == result.commentary[index].userId;
             });
             if (!testIfComment) {
               result.commentary[index].likes = [...result.commentary[index].likes, result.commentary[index].userId];
             }
           } else {
-            result.commentary.splice(index, 1)
+            result.commentary.splice(index, 1);
           }
           result.save(() => {
-            res.json(result)
-          })
+            res.json(result);
+          });
         }
 
 
@@ -200,13 +195,19 @@ module.exports = function (io) {
     });
   };
 
-  let likeThisPostOrComment = (req, res) => {
-    return likeOrDeletePost(req, res, 'likes')
-  };
+  likeThisPostOrComment = (req, res) => {
+    return this.likeOrDeletePost(req, res, 'likes');
+  }
 
-  let deletePost = (req, res) => {
-    return likeOrDeletePost(req, res, 'delete')
-  };
+  deletePost = (req, res) => {
+    return this.likeOrDeletePost(req, res, 'delete');
+  }
+
+}
+
+module.exports = function (io) {
+  const utils = require('../utils/utils')(io);
+
 
 };
 
