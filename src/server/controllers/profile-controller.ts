@@ -137,7 +137,7 @@ export class ProfileController {
     });
   }
 
-  //TODO be sure that is functionning
+  // TODO be sure that is functionning
   /**
    *
    * @param req

@@ -7,11 +7,9 @@ import * as mongoose from 'mongoose';
 import * as fs from 'fs';
 const expressValidator = require('express-validator');
 
-
 class Server {
   private app: express.Application;
   private io: any;
-  private mongo: mongoose.MongooseThenable;
   private port: number;
   private limiter: any;
 
