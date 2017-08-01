@@ -1,10 +1,11 @@
 import {ProfileController} from '../controllers/profile-controller';
+import {UserController} from '../controllers/users-controller';
 
 export default function (app, io) {
   const profileController = new ProfileController(io);
+  const usersController = new UserController(io);
   const authenticationController = require('../controllers/authentication-controller')(io);
   const wasteController = require('../controllers/waste-controller')(io);
-  const usersController = require('../controllers/users-controller')(io);
   // APIs
 
   // traitement socket
@@ -14,18 +15,9 @@ export default function (app, io) {
 
     socket.on('disconnect', () => {
       console.log('user close the socket connection' + socket.id);
-      usersController.deleteSocketIdDB(socket.id)
+      usersController.deleteSocketIdDB(socket.id);
     });
   });
-
-
-  // let utilsController = require('../utils/utils')(io);
-  const cors = require('cors');
-  let corsOptions = {
-    origin: ["http://127.0.0.1:3000", "http://127.0.0.1:4200", "http://localhost:3000"],
-    optionsSuccessStatus: 200
-  };
-
 
 // Route
 // Authentication
@@ -39,7 +31,7 @@ export default function (app, io) {
   app.post('/api/user/logout', usersController.deconnection);
 
 // Profile profileController.updatePhoto
-  app.options('api/upload', cors(corsOptions)); // enable pre-flight request for request
+  // app.options('api/upload', cors(corsOptions)); // enable pre-flight request for request
 
 
   app.post('/api/upload', profileController.updatePhoto);
@@ -55,8 +47,6 @@ export default function (app, io) {
   app.get('/api/waste/likeThisPostOrComment/:wasteId/:commentId?', wasteController.likeThisPostOrComment);
 
 // User
-
-
   app.get('/api/users/uploadPicture/:id', usersController.uploadPicture);
   app.delete('/api/users/deleteAllPicture/:id', usersController.deleteAllPictures);
   app.get('/api/users/get', usersController.getUsers);
@@ -65,6 +55,5 @@ export default function (app, io) {
   app.post('/api/users/followOk', usersController.followUserOk);
   app.post('/api/users/unfollow', usersController.unfollowUser);
   app.post('/api/users/getThisUsers', usersController.getThisUser);
-
 };
 

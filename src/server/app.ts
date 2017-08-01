@@ -76,4 +76,4 @@ class Server {
   }
 }
 
-export const listen = new Server();
+export default new Server();

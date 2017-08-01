@@ -2,53 +2,22 @@ const Waste = require('../datasets/wastes');
 const Users = require('../datasets/users');
 const mongoose = require('mongoose');
 
-module.exports = function (io) {
-  const utils = require('../utils/utils')(io);
+
+export class WasteController {
+
+
   /**
    * Send a post and send notif via socket to friends
    * @param req
    * @param res
    */
-  let sendPost = (req, res) => {
-    let data = req.body.request;
-    if (data) {
-      let waste = new Waste(data);
-      Users.findById(data.userId, (err, user) => {
-        waste.save();
-        if (!err) {
-          utils.getListOfFriendAndSentSocket(user, waste, 'getNewPost')
-            .then(() => res.json(waste))
-            .catch(err => res.status(400).send(err));
-        }
-      });
-    } else {
-      res.status(404).send('aucun contenu enregistré dans la base')
-    }
-  };
 
-  /**
-   * Get all Post from a user
-   * @param req Object
-   * onlyOwnPost Get own Post
-   * @param res
-   */
-  let getPost = (req, res) => {
-    let userData = req.body.following, onlyOwnPost = req.body.onlyOwnPost, typePost = req.body.typePost;
-    let requestedWastes = [userData];
-    Users.findById(userData, (err, user) => {
-      if (!err && !onlyOwnPost && user.following && user.following.length) {
-        utils.listOfFriends(user.following, 0, false, following => {
-          following = following.map(elem => elem._doc.userId);
-          requestedWastes = requestedWastes.concat(following);
-          actionGetPost(requestedWastes, typePost, req, res);
-        });
-      } else {
-        actionGetPost(requestedWastes, typePost, req, res);
-      }
-    });
-  };
+  constructor() {
 
-  let actionGetPost = (requestedWastes, typePost, req, res) => {
+
+  }
+
+  private actionGetPost = (requestedWastes, typePost, req, res) => {
     if (requestedWastes.length) { // length == 1 means no friends
       let seekPosts = {userId: {$in: requestedWastes}};
       if (typePost == "publicOnly") {
@@ -81,11 +50,57 @@ module.exports = function (io) {
               res.json(allWastes);
             });
           }
-        })
+        });
     } else {
-      res.status(400).send("pas de posts trouvés ou erreurs envoi userId")
+      res.status(400).send("'pas de posts trouvés ou erreurs envoi userId')
+    }
+  }
+
+  sendPost = (req, res) => {
+    let data = req.body.request;
+    if (data) {
+      let waste = new Waste(data);
+      Users.findById(data.userId, (err, user) => {
+        waste.save();
+        if (!err) {
+          utils.getListOfFriendAndSentSocket(user, waste, 'getNewPost')
+            .then(() => res.json(waste))
+            .catch(err => res.status(400).send(err));
+        }
+      });
+    } else {
+      res.status(404).send('aucun contenu enregistré dans la base')
     }
   };
+
+  /**
+   * Get all Post from a user
+   * @param req Object
+   * onlyOwnPost Get own Post
+   * @param res
+   */
+  getPost = (req, res) => {
+    let userData = req.body.following, onlyOwnPost = req.body.onlyOwnPost, typePost = req.body.typePost;
+    let requestedWastes = [userData];
+    Users.findById(userData, (err, user) => {
+      if (!err && !onlyOwnPost && user.following && user.following.length) {
+        utils.listOfFriends(user.following, 0, false, following => {
+          following = following.map(elem => elem._doc.userId);
+          requestedWastes = requestedWastes.concat(following);
+          this.actionGetPost(requestedWastes, typePost, req, res);
+        });
+      } else {
+        this.actionGetPost(requestedWastes, typePost, req, res);
+      }
+    });
+  };
+
+}
+
+module.exports = function (io) {
+  const utils = require('../utils/utils')(io);
+
+
   /**
    * Get all Commentary from a post
    * @param req
@@ -193,14 +208,6 @@ module.exports = function (io) {
     return likeOrDeletePost(req, res, 'delete')
   };
 
-  return {
-    getCommentary,
-    deletePost,
-    sendComments,
-    likeThisPostOrComment,
-    sendPost,
-    getPost
-  }
 };
 
 

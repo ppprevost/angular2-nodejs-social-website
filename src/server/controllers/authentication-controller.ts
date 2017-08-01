@@ -1,4 +1,4 @@
-// const Users = require('../datasets/users');
+const Users = require('../datasets/users');
 // const bcrypt = require('bcryptjs');
 // const mongoose = require('mongoose');
 
@@ -7,7 +7,6 @@
 // const UsersConnected = require('../datasets/connected-users');
 
 import * as mongoose from 'mongoose';
-import * as Users from '../datasets/users';
 import * as bcrypt from 'bcryptjs';
 const nev = require('../services/email-verification')(mongoose);
 import * as request from 'request';
@@ -99,7 +98,7 @@ module.exports = function (io) {
     }
     const email = req.body.email;
 
-    let newUser = new Users({
+    const newUser = new Users({
       email: req.body.email,
       password: req.body.pass,
       username: req.body.username,
