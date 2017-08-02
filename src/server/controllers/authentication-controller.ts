@@ -1,9 +1,4 @@
 const Users = require('../datasets/users');
-// const bcrypt = require('bcryptjs');
-// const mongoose = require('mongoose');
-
-// const request = require('request');
-// const jwt = require('jsonwebtoken');
 const UsersConnected = require('../datasets/connected-users');
 
 import * as mongoose from 'mongoose';

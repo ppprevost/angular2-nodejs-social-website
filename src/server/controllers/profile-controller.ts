@@ -1,10 +1,7 @@
-let User = require('../datasets/users');
-let path = require('path');
-let Waste = require('../datasets/wastes');
+const Users = require('../datasets/users');
 import * as bcrypt from 'bcryptjs';
 import * as multer from 'multer';
 import * as fs from 'fs-extra';
-
 
 const storage = multer.diskStorage({ // multers disk storage settings
   destination: function (req, file, cb) {
@@ -45,10 +42,10 @@ export class ProfileController {
         res.json({error_code: 1, err_desc: err});
       }
       const userId = req.body.userId;
-      User.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
+      Users.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
         const user = userData;
         user[req.body.uploadType] = req.file.path.substr(4);
-        user.save(function (err) {
+        Users.save(function (err) {
           if (err) {
             console.log('failed save');
             res.status(500).send(err + 'error uploading image');
@@ -63,7 +60,7 @@ export class ProfileController {
 
   updateChamp(req, res) {
     const userId = req.body.userId;
-    console.log(req.body)
+    console.log(req.body);
     delete req.body.userId;
     const champ = Object.keys(req.body)[0];
     if (champ === 'email') {
@@ -76,11 +73,11 @@ export class ProfileController {
       }
     }
     const value = Object.values(req.body)[0];
-    User.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
+    Users.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
       const user = userData;
       user[champ] = [value];
 
-      user.save(function (err) {
+      Users.save(function (err) {
         if (err) {
           console.log('fail');
           res.json({status: 500});
@@ -105,7 +102,7 @@ export class ProfileController {
       return res.status(400).send(errors);
     }
     const userId = req.body.userId, password = req.body.password;
-    User.findById(userId, function (err, user) {
+    Users.findById(userId, function (err, user) {
       /**
        * For Hashing BCrypt Function
        * @param passw
@@ -120,13 +117,13 @@ export class ProfileController {
           return cb(null, isMatch);
         });
       };
-      comparePassword(req.body.lastPassword, user.password, function (err, isMatch) {
+      comparePassword(req.body.lastPassword, Users.password, function (err, isMatch) {
         if (err) {
           res.status(401).send('error when comparing Pasword');
         } else {
           if (isMatch) {
-            user.password = bcrypt.hashSync(password);
-            user.save(() => {
+            Users.password = bcrypt.hashSync(password);
+            Users.save(() => {
               res.json({msg: 'password update from the server'});
             });
           } else {
@@ -145,11 +142,11 @@ export class ProfileController {
    */
   deleteAccount = (req, res) => {
     const id = req.params.id;
-    User.update({'following.userId': id}, {$pull: {following: {userId: id}}}, {multi: true}, (err, numberAffect) => {
+    Users.update({'following.userId': id}, {$pull: {following: {userId: id}}}, {multi: true}, (err, numberAffect) => {
       if (err) {
         res.status(404).json('cannot find the account');
       } else {
-        User.findByIdAndRemove(id, (err) => {
+        Users.findByIdAndRemove(id, (err) => {
           if (!err) {
             res.send(`Your account has been deleted, number of friend affected : ${numberAffect}`);
           } else {

@@ -2,6 +2,7 @@ import {ProfileController} from '../controllers/profile-controller';
 import {UserController} from '../controllers/users-controller';
 import {WasteController} from '../controllers/waste-controller';
 import {AuthentificationController} from '../controllers/authentication-controller';
+import {Router} from 'express';
 
 export class RouterApp {
   profileController;
@@ -9,8 +10,10 @@ export class RouterApp {
   authenticationController;
   wasteController;
   private app;
+  private router: Router;
 
   constructor(app, io) {
+    this.router = Router();
     // traitement socket
     this.app = app;
     this.profileController = new ProfileController(io);
@@ -27,50 +30,42 @@ export class RouterApp {
     });
   }
 
-  routing(app) {
-    const profileController = new ProfileController(io);
-    const usersController = new UserController(io);
-    const authenticationController = new AuthentificationController(io);
-    const wasteController = new WasteController(io);
+  routing() {
     // APIs
-
-
 // Route
 // Authentication
-    app.post('/api/verif', authenticationController.emailVerif);
-    app.post('/api/user/signup', authenticationController.signup);
-    app.get('/api/user/resendVerifEmail/:email', authenticationController.resendVerificationEmail);
-    app.post('/api/user/login', authenticationController.login);
-    app.get('/api/user/validCaptcha/:token', authenticationController.validCaptcha);
-    app.post('/api/user/refreshSocketId', authenticationController.refreshSocketIdOfConnectedUsers);
-    app.post('/api/user/refreshUserData', authenticationController.refreshUserData);
-    app.post('/api/user/logout', usersController.deconnection);
+    this.app.post('/api/verif', this.authenticationController.emailVerif);
+    this.app.post('/api/user/signup', this.authenticationController.signup);
+    this.app.get('/api/user/resendVerifEmail/:email', this.authenticationController.resendVerificationEmail);
+    this.app.post('/api/user/login', this.authenticationController.login);
+    this.app.get('/api/user/validCaptcha/:token', this.authenticationController.validCaptcha);
+    this.app.post('/api/user/refreshSocketId', this.authenticationController.refreshSocketIdOfConnectedUsers);
+    this.app.post('/api/user/refreshUserData', this.authenticationController.refreshUserData);
+    this.app.post('/api/user/logout', this.usersController.deconnection);
 
 // Profile profileController.updatePhoto
     // app.options('api/upload', cors(corsOptions)); // enable pre-flight request for request
-
-
-    app.post('/api/upload', profileController.updatePhoto);
-    app.post('/api/profile/updateChamp', profileController.updateChamp);
-    app.post('/api/profile/updatePassword', profileController.updatePassword);
-    app.delete('/api/profile/deleteAccount/:id', profileController.deleteAccount);
+    this.app.post('/api/upload', this.profileController.updatePhoto);
+    this.app.post('/api/profile/updateChamp', this.profileController.updateChamp);
+    this.app.post('/api/profile/updatePassword', this.profileController.updatePassword);
+    this.app.delete('/api/profile/deleteAccount/:id', this.profileController.deleteAccount);
 // Waste
-    app.post('/api/waste/getPost', wasteController.getPost);
-    app.post('/api/waste/sendPost', wasteController.sendPost);
-    app.delete('/api/waste/deletePost/:wasteId/:commentId?', wasteController.deletePost);
-    app.post('/api/waste/sendComments', wasteController.sendComments);
-    app.post('/api/waste/getCommentary', wasteController.getCommentary);
-    app.get('/api/waste/likeThisPostOrComment/:wasteId/:commentId?', wasteController.likeThisPostOrComment);
+    this.app.post('/api/waste/getPost', this.wasteController.getPost);
+    this.app.post('/api/waste/sendPost', this.wasteController.sendPost);
+    this.app.delete('/api/waste/deletePost/:wasteId/:commentId?', this.wasteController.deletePost);
+    this.app.post('/api/waste/sendComments', this.wasteController.sendComments);
+    this.app.post('/api/waste/getCommentary', this.wasteController.getCommentary);
+    this.app.get('/api/waste/likeThisPostOrComment/:wasteId/:commentId?', this.wasteController.likeThisPostOrComment);
 
 // User
-    app.get('/api/users/uploadPicture/:id', usersController.uploadPicture);
-    app.delete('/api/users/deleteAllPicture/:id', usersController.deleteAllPictures);
-    app.get('/api/users/get', usersController.getUsers);
-    app.post('/api/users/follow', usersController.followUser);
-    app.post('/api/users/getListOfFriends', usersController.getlistOfFriends);
-    app.post('/api/users/followOk', usersController.followUserOk);
-    app.post('/api/users/unfollow', usersController.unfollowUser);
-    app.post('/api/users/getThisUsers', usersController.getThisUser);
+    this.app.get('/api/users/uploadPicture/:id', this.usersController.uploadPicture);
+    this.app.delete('/api/users/deleteAllPicture/:id', this.usersController.deleteAllPictures);
+    this.app.get('/api/users/get', this.usersController.getUsers);
+    this.app.post('/api/users/follow', this.usersController.followUser);
+    this.app.post('/api/users/getListOfFriends', this.usersController.getlistOfFriends);
+    this.app.post('/api/users/followOk', this.usersController.followUserOk);
+    this.app.post('/api/users/unfollow', this.usersController.unfollowUser);
+    this.app.post('/api/users/getThisUsers', this.usersController.getThisUser);
   };
 }
 

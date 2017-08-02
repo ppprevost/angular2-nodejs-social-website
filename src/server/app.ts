@@ -4,7 +4,7 @@ import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
 import * as dotenv from 'dotenv';
 import {RouterApp} from './routes/routes';
-import {connect, connection, Promise} from 'mongoose';
+import * as mongoose from 'mongoose';
 import * as fs from 'fs';
 const expressValidator = require('express-validator');
 
@@ -37,8 +37,8 @@ class Server {
   }
 
   private databases() {
-    connect(process.env.MONGODB_URI);
-    const db = connection;
+    mongoose.connect(process.env.MONGODB_URI);
+    const db = mongoose.connection;
     (<any>mongoose).Promise = global.Promise;
     db.on('error', () => {
       console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
@@ -47,13 +47,11 @@ class Server {
 
     db.once('open', function () {
       console.log('Connected to MongoDB');
-
       // all other routes are handled by Angular
       const server = this.app.listen(this.app.get('port'), function () {
         console.log('Angular 4 Full Stack listening on port ' + this.app.get('port'));
       });
       this.io = require('socket.io')(server);
-      // const routes = require('./routes/routes.js')(this.app, this.io);
       const routes = new RouterApp(this.app, this.io);
       routes.routing();
       this.app.get('/*', function (req, res) {
