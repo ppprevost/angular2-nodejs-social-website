@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
 import * as dotenv from 'dotenv';
-import * as mongoose from 'mongoose';
+import {connect, connection, Promise} from 'mongoose';
 import * as fs from 'fs';
 const expressValidator = require('express-validator');
 
@@ -36,8 +36,8 @@ class Server {
   }
 
   private databases() {
-    mongoose.connect(process.env.MONGODB_URI);
-    const db = mongoose.connection;
+    connect(process.env.MONGODB_URI);
+    const db = connection;
     (<any>mongoose).Promise = global.Promise;
     db.on('error', () => {
       console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');

@@ -4,14 +4,13 @@ const Users = require('../datasets/users');
 
 // const request = require('request');
 // const jwt = require('jsonwebtoken');
-// const UsersConnected = require('../datasets/connected-users');
+const UsersConnected = require('../datasets/connected-users');
 
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 const nev = require('../services/email-verification')(mongoose);
 import * as request from 'request';
 import * as jwt from 'jsonwebtoken';
-import * as UsersConnected from '../datasets/connected-users';
 
 const myHasher = (password, tempUserData, insertTempUser, callback) => {
   bcrypt.genSalt(8, function (err, salt) {
@@ -77,8 +76,12 @@ nev.generateTempUserModel(Users, function (err, tempUserModel) {
 
 });
 
-module.exports = function (io) {
-  const utils = require('../utils/utils')(io);
+export class AuthentificationController {
+  private io;
+
+  constructor(io) {
+    this.io = io;
+  }
 
   /**
    * When user signup. Can desactivate or activate the module with process.env.EMAIL_VERIFICATION value
@@ -86,7 +89,7 @@ module.exports = function (io) {
    * @param res
    * @param next
    */
-  let signup = function (req, res, next) {
+  signup = function (req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('email', 'Email cannot be blank').notEmpty();
     req.assert('pass', 'Password must be at least 4 characters long').len(4);
@@ -121,7 +124,7 @@ module.exports = function (io) {
       if (newTempUser) {
         let URL = newTempUser[nev.options.URLFieldName];
 
-        let confirmTempUser = () => {
+        const confirmTempUser = () => {
           return nev.confirmTempUser(URL, function (err, user) {
             console.log(user);
             if (err) {
@@ -159,7 +162,7 @@ module.exports = function (io) {
     });
   };
 
-  let resendVerificationEmail = (req, res) => {
+  resendVerificationEmail = (req, res) => {
     // resend verification button was clicked
     nev.resendVerificationEmail(req.params.email, (err, userFound) => {
       if (err) {
@@ -182,7 +185,7 @@ module.exports = function (io) {
    * @param req
    * @param res
    */
-  let login = (req, res) => {
+  login = (req, res) => {
     console.log("req.body", req.body);
     req.assert('email', 'Email cannot be blank and must be a correct email').notEmpty().isEmail();
     req.assert('password', 'Password cannot be blank').notEmpty();
@@ -195,24 +198,24 @@ module.exports = function (io) {
       if (err) {
         console.log(err);
       } else {
-        if (results && results.length == 1) {
-          let userData = results[0];
+        if (results && results.length === 1) {
+          const userData = results[0];
           bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
             if (ok) {
               delete userData.password;
               UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
                 if (userAlreadyConnected) {
-                  userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
+                  userAlreadyConnected.location.push({socketId: req.body.socketId, IP: this.ipConnection(req)});
                   userAlreadyConnected.save(() => {
-                    locationSearch(userAlreadyConnected, req.body.socketId, userData, res)
-                  })
+                    this.locationSearch(userAlreadyConnected, req.body.socketId, userData, res)
+                  });
                 } else {
-                  let newUserConnected = new UsersConnected({
+                  const newUserConnected = new UsersConnected({
                     userId: userData._id,
-                    location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
+                    location: [{socketId: req.body.socketId, IP: this.ipConnection(req)}]
                   });
                   newUserConnected.save((err, savedUser) => {
-                    locationSearch(savedUser, req.body.socketId, userData, res)
+                    this.locationSearch(savedUser, req.body.socketId, userData, res)
                   });
                 }
                 const token = jwt.sign({
@@ -225,10 +228,9 @@ module.exports = function (io) {
               return res.status(401).send({msg: 'Invalid email or password'});
             }
           });
-          io.sockets.emit("userConnected", results[0]._id);
+          this.io.sockets.emit("userConnected", results[0]._id);
 
-        }
-        else {
+        } else {
           return res.status(401).send({
             msg: 'The email address ' + req.body.email + ' is not associated with any account. ' +
             'Double-check your email address and try again.'
@@ -237,28 +239,13 @@ module.exports = function (io) {
         ;
       }
     });
-  };
-
-  let locationSearch = (savedUser, socketId, userData) => {
-    let idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
-      return elem.socketId == socketId
-    }));
-    if (userData && userData._doc && userData._doc.password) {
-      delete userData._doc.password;
-      userData._doc.idOfLocation = savedUser.location[idOfLocation]["_id"];
-    } else {
-      userData.idOfLocation = savedUser.location[idOfLocation]["_id"];
-    }
-
-
-  };
-
+  }
   /**
    * Call this function uniquely if the user is refreshing the page of connnect again
    * @param req
    * @param res
    */
-  let refreshSocketIdOfConnectedUsers = (req, res) => {
+  refreshSocketIdOfConnectedUsers = (req, res) => {
     let socketId = req.body.socketId, token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
@@ -269,10 +256,10 @@ module.exports = function (io) {
               indexOfLocation = user.location.indexOf(user.location.find(elem => {
                 return elem._id.toString() == decoded.user.idOfLocation
               }));
-              user.location.push({socketId: socketId, IP: ipConnection(req)});
+              user.location.push({socketId: socketId, IP: this.ipConnection(req)});
               // user.location[indexOfLocation]["socketId"] = socketId
               let location = [];
-              Object.keys(io.sockets.connected).forEach(elem => {
+              Object.keys(this.io.sockets.connected).forEach(elem => {
                 user.location.forEach(theRealSocketUses => {
                   if (theRealSocketUses.socketId == elem) {
                     location.push(theRealSocketUses)
@@ -290,7 +277,7 @@ module.exports = function (io) {
             } else {
               let newUserConnected = new UsersConnected({
                 userId: decoded.user._id,
-                location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
+                location: [{socketId: req.body.socketId, IP: this.ipConnection(req)}]
               });
               newUserConnected.save((err, savedUser) => {
                 //locationSearch(savedUser, socketId, decoded.user, res)
@@ -310,7 +297,7 @@ module.exports = function (io) {
    * @param req
    * @returns {*}
    */
-  let ipConnection = (req) => {
+  private ipConnection = (req) => {
     let ip;
     if (req.headers['x-forwarded-for']) {
       ip = req.headers['x-forwarded-for'].split(",")[0];
@@ -319,7 +306,19 @@ module.exports = function (io) {
     } else {
       ip = req.ip;
     }
-    return ip
+    return ip;
+  }
+
+  private locationSearch = (savedUser, socketId, userData) => {
+    let idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
+      return elem.socketId == socketId
+    }));
+    if (userData && userData._doc && userData._doc.password) {
+      delete userData._doc.password;
+      userData._doc.idOfLocation = savedUser.location[idOfLocation]["_id"];
+    } else {
+      userData.idOfLocation = savedUser.location[idOfLocation]["_id"];
+    }
   }
 
   /**
@@ -327,7 +326,7 @@ module.exports = function (io) {
    * @param req
    * @param res
    */
-  let emailVerif = (req, res) => {
+  emailVerif = (req, res) => {
     console.log(req.body);
     let url = req.body.url;
     console.log(url);
@@ -346,20 +345,20 @@ module.exports = function (io) {
         return res.status(404).send('ERROR: confirming temp user FAILED' + err);
       }
     });
-  };
+  }
 
   /**
    * This function update lit of friends and information about a specific user (the connected user mainly)
    * @param req
    * @param res
    */
-  let refreshUserData = (req, res) => {
+  refreshUserData = (req, res) => {
     let token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
         Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
           if (!err) {
-            utils.listOfFriends(user.following, 10, false, waster => {
+            Users.listOfFriends(user.following, 10, false, waster => {
               waster.map(elem => {
                 user.following.map(doc => {
                   if (doc.userId === elem._id) {
@@ -375,36 +374,30 @@ module.exports = function (io) {
       } else {
         res.status(401).send(err)
       }
-
-    })
-  };
+    });
+  }
 
   /**
    * Valid Captcha of the Google Recaptcha
    * @param req
    * @param res
    */
-  let validCaptcha = (req, res) => {
+  validCaptcha = (req, res) => {
     let token = req.params.token;
-    let verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + process.env.SECRET_KEYCAPTCHA + "&response=" + token + "&remoteip=" + req.connection.remoteAddress;
+    const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' + process.env.SECRET_KEYCAPTCHA + '&response=' + token + '&remoteip=' + req.connection.remoteAddress;
     request(verificationUrl, (error, response, body) => {
       body = JSON.parse(body);
       // Success will be true or false depending upon captcha validation.
       if (body.success !== undefined && !body.success) {
-        return res.json({"responseCode": 1, "responseDesc": "Failed captcha verification"});
+        return res.json({'responseCode': 1, "responseDesc": "Failed captcha verification"});
       }
       res.json({"responseCode": 0, "responseDesc": "Sucess"});
     });
-  };
+  }
 
-  return {
-    validCaptcha,
-    emailVerif,
-    resendVerificationEmail,
-    refreshSocketIdOfConnectedUsers,
-    login,
-    refreshUserData,
-    signup
-  };
+}
+
+module.exports = function (io) {
+  const utils = require('../utils/utils')(io);
 
 };

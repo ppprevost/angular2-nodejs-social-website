@@ -1,10 +1,12 @@
 import {ProfileController} from '../controllers/profile-controller';
 import {UserController} from '../controllers/users-controller';
 import {WasteController} from '../controllers/waste-controller';
+import {AuthentificationController} from '../controllers/authentication-controller';
+
 export default function (app, io) {
   const profileController = new ProfileController(io);
   const usersController = new UserController(io);
-  const authenticationController = require('../controllers/authentication-controller')(io);
+  const authenticationController = new AuthentificationController(io);
   const wasteController = new WasteController(io);
   // APIs
 
