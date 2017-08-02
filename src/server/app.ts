@@ -3,6 +3,7 @@ import * as express from 'express';
 import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
 import * as dotenv from 'dotenv';
+import {RouterApp} from './routes/routes';
 import {connect, connection, Promise} from 'mongoose';
 import * as fs from 'fs';
 const expressValidator = require('express-validator');
@@ -52,7 +53,9 @@ class Server {
         console.log('Angular 4 Full Stack listening on port ' + this.app.get('port'));
       });
       this.io = require('socket.io')(server);
-      const routes = require('./routes/routes.js')(this.app, this.io);
+      // const routes = require('./routes/routes.js')(this.app, this.io);
+      const routes = new RouterApp(this.app, this.io);
+      routes.routing();
       this.app.get('/*', function (req, res) {
         res.sendFile(path.join(__dirname, '/../../dist/index.html'));
       });
