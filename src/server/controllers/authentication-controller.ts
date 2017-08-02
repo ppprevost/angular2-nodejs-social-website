@@ -254,7 +254,7 @@ export class AuthentificationController {
               }));
               user.location.push({socketId: socketId, IP: this.ipConnection(req)});
               // user.location[indexOfLocation]["socketId"] = socketId
-              let location = [];
+              const location = [];
               Object.keys(this.io.sockets.connected).forEach(elem => {
                 user.location.forEach(theRealSocketUses => {
                   if (theRealSocketUses.socketId == elem) {
