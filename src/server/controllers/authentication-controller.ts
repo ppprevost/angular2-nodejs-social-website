@@ -157,7 +157,7 @@ export class AuthentificationController {
     });
   };
 
-  resendVerificationEmail = (req, res) => {
+  resendVerificationEmail(req, res) {
     // resend verification button was clicked
     nev.resendVerificationEmail(req.params.email, (err, userFound) => {
       if (err) {

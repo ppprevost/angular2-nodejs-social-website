@@ -37,7 +37,7 @@ export class UserController {
    */
 
 
-  getUsers = function (req, res) {
+  getUsers(req, res) {
     const search = new RegExp(req.query.searchData, 'i'),
       limitData = req.query.limitData ? Number(req.query.limitData) : 0;
     Users.find({username: search} || {}).select({
@@ -78,7 +78,7 @@ export class UserController {
     })
   };
 
-  deconnection = function (req, res) {
+  deconnection(req, res) {
     console.log(req.body.userId);
     jwt.verify(req.body.token, process.env.SECRET_TOKEN, (err, decoded) => {
       UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
