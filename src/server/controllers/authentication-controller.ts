@@ -260,15 +260,15 @@ export class AuthentificationController {
                   if (theRealSocketUses.socketId == elem) {
                     location.push(theRealSocketUses)
                   }
-                })
+                });
               });
               if (!location.length) {
-                user.remove()
+                user.remove();
               } else {
                 user.location = location;
               }
               user.save(() => {
-                res.send(`socketnumber ${req.body.socketId} has been updated as an existing user`)
+                res.send(`socketnumber ${req.body.socketId} has been updated as an existing user`);
               });
             } else {
               const newUserConnected = new UsersConnected({
@@ -276,12 +276,12 @@ export class AuthentificationController {
                 location: [{socketId: req.body.socketId, IP: this.ipConnection(req)}]
               });
               newUserConnected.save((err, savedUser) => {
-                //locationSearch(savedUser, socketId, decoded.user, res)
-                res.send(`socketnumber ${req.body.socketId} has been updated as a new user`)
+                // locationSearch(savedUser, socketId, decoded.user, res)
+                res.send(`socketnumber ${req.body.socketId} has been updated as a new user`);
               });
             }
           } else {
-            console.log(err)
+            console.log(err);
           }
         });
       }
@@ -296,7 +296,7 @@ export class AuthentificationController {
   private ipConnection(req) {
     let ip;
     if (req.headers['x-forwarded-for']) {
-      ip = req.headers['x-forwarded-for'].split(",")[0];
+      ip = req.headers['x-forwarded-for'].split(',')[0];
     } else if (req.connection && req.connection.remoteAddress) {
       ip = req.connection.remoteAddress;
     } else {
@@ -305,121 +305,93 @@ export class AuthentificationController {
     return ip;
   }
 
-  private locationSearch(savedUser, socketId, userData)
+  private locationSearch(savedUser, socketId, userData) {
+    const idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
+      return elem.socketId === socketId;
+    }));
 
-=> {
-  let
-  idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
-    return elem.socketId == socketId
-  }));
-
-  if(userData
-
-&&
-  userData
-.
-  _doc
-&&
-  userData
-.
-  _doc
-.
-  password
-) {
-  delete
-  userData
-.
-  _doc
-.
-  password;
-  userData
-.
-  _doc
-.
-  idOfLocation = savedUser.location[idOfLocation]["_id"];
-}
-else
-{
-  userData.idOfLocation = savedUser.location[idOfLocation]["_id"];
-}
-}
-
-/**
- * Valid the email of user after clicking in the mail link
- * @param req
- * @param res
- */
-emailVerif(req, res)
-{
-  console.log(req.body);
-  let url = req.body.url;
-  console.log(url);
-  nev.confirmTempUser(url, function (err, user) {
-    console.log(user);
-    if (err) {
-
-    }
-    if (user) {
-      nev.sendConfirmationEmail(user['email'], (data) => {
-        console.log(data);
-        res.json(data);
-      });
-
+    if (userData && userData._doc && userData._doc.password
+    ) {
+      delete userData._doc.password;
+      userData._doc.idOfLocation = savedUser.location[idOfLocation]['_id'];
     } else {
-      return res.status(404).send('ERROR: confirming temp user FAILED' + err);
+      userData.idOfLocation = savedUser.location[idOfLocation]['_id'];
     }
-  });
-}
+  }
 
-/**
- * This function update lit of friends and information about a specific user (the connected user mainly)
- * @param req
- * @param res
- */
-refreshUserData(req, res)
-{
-  let token = req.body.token;
-  jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
-    if (!err) {
-      Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
-        if (!err) {
-          Users.listOfFriends(user.following, 10, false, waster => {
-            waster.map(elem => {
-              user.following.map(doc => {
-                if (doc.userId === elem._id) {
-                  doc = elem
-                }
-                return doc
-              })
-            });
-            res.status(200).json(user)
-          })
-        }
-      });
-    } else {
-      res.status(401).send(err)
-    }
-  });
-}
+  /**
+   * Valid the email of user after clicking in the mail link
+   * @param req
+   * @param res
+   */
+  emailVerif(req, res) {
+    console.log(req.body);
+    const url = req.body.url;
+    console.log(url);
+    nev.confirmTempUser(url, function (err, user) {
+      console.log(user);
+      if (err) {
 
-/**
- * Valid Captcha of the Google Recaptcha
- * @param req
- * @param res
- */
-validCaptcha(req, res)
-{
-  let token = req.params.token;
-  const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' + process.env.SECRET_KEYCAPTCHA + '&response=' + token + '&remoteip=' + req.connection.remoteAddress;
-  request(verificationUrl, (error, response, body) => {
-    body = JSON.parse(body);
-    // Success will be true or false depending upon captcha validation.
-    if (body.success !== undefined && !body.success) {
-      return res.json({'responseCode': 1, "responseDesc": "Failed captcha verification"});
-    }
-    res.json({"responseCode": 0, "responseDesc": "Sucess"});
-  });
-}
+      }
+      if (user) {
+        nev.sendConfirmationEmail(user['email'], (data) => {
+          console.log(data);
+          res.json(data);
+        });
+
+      } else {
+        return res.status(404).send('ERROR: confirming temp user FAILED' + err);
+      }
+    });
+  }
+
+  /**
+   * This function update lit of friends and information about a specific user (the connected user mainly)
+   * @param req
+   * @param res
+   */
+  refreshUserData(req, res) {
+    let token = req.body.token;
+    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
+      if (!err) {
+        Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
+          if (!err) {
+            Users.listOfFriends(user.following, 10, false, waster => {
+              waster.map(elem => {
+                user.following.map(doc => {
+                  if (doc.userId === elem._id) {
+                    doc = elem
+                  }
+                  return doc
+                })
+              });
+              res.status(200).json(user)
+            })
+          }
+        });
+      } else {
+        res.status(401).send(err)
+      }
+    });
+  }
+
+  /**
+   * Valid Captcha of the Google Recaptcha
+   * @param req
+   * @param res
+   */
+  validCaptcha(req, res) {
+    let token = req.params.token;
+    const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' + process.env.SECRET_KEYCAPTCHA + '&response=' + token + '&remoteip=' + req.connection.remoteAddress;
+    request(verificationUrl, (error, response, body) => {
+      body = JSON.parse(body);
+      // Success will be true or false depending upon captcha validation.
+      if (body.success !== undefined && !body.success) {
+        return res.json({'responseCode': 1, "responseDesc": "Failed captcha verification"});
+      }
+      res.json({"responseCode": 0, "responseDesc": "Sucess"});
+    });
+  }
 
 }
 
