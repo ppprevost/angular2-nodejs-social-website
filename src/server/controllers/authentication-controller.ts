@@ -84,7 +84,7 @@ export class AuthentificationController {
    * @param res
    * @param next
    */
-  signup = function (req, res, next) {
+  signup(req, res) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('email', 'Email cannot be blank').notEmpty();
     req.assert('pass', 'Password must be at least 4 characters long').len(4);
@@ -180,7 +180,7 @@ export class AuthentificationController {
    * @param req
    * @param res
    */
-  login = (req, res) => {
+  login(req, res) {
     console.log("req.body", req.body);
     req.assert('email', 'Email cannot be blank and must be a correct email').notEmpty().isEmail();
     req.assert('password', 'Password cannot be blank').notEmpty();
@@ -235,12 +235,13 @@ export class AuthentificationController {
       }
     });
   }
+
   /**
    * Call this function uniquely if the user is refreshing the page of connnect again
    * @param req
    * @param res
    */
-  refreshSocketIdOfConnectedUsers = (req, res) => {
+  refreshSocketIdOfConnectedUsers(req, res) {
     let socketId = req.body.socketId, token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
@@ -270,7 +271,7 @@ export class AuthentificationController {
                 res.send(`socketnumber ${req.body.socketId} has been updated as an existing user`)
               });
             } else {
-              let newUserConnected = new UsersConnected({
+              const newUserConnected = new UsersConnected({
                 userId: decoded.user._id,
                 location: [{socketId: req.body.socketId, IP: this.ipConnection(req)}]
               });
@@ -292,7 +293,7 @@ export class AuthentificationController {
    * @param req
    * @returns {*}
    */
-  private ipConnection = (req) => {
+  private ipConnection(req) {
     let ip;
     if (req.headers['x-forwarded-for']) {
       ip = req.headers['x-forwarded-for'].split(",")[0];
@@ -304,91 +305,121 @@ export class AuthentificationController {
     return ip;
   }
 
-  private locationSearch = (savedUser, socketId, userData) => {
-    let idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
-      return elem.socketId == socketId
-    }));
-    if (userData && userData._doc && userData._doc.password) {
-      delete userData._doc.password;
-      userData._doc.idOfLocation = savedUser.location[idOfLocation]["_id"];
-    } else {
-      userData.idOfLocation = savedUser.location[idOfLocation]["_id"];
+  private locationSearch(savedUser, socketId, userData)
+
+=> {
+  let
+  idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
+    return elem.socketId == socketId
+  }));
+
+  if(userData
+
+&&
+  userData
+.
+  _doc
+&&
+  userData
+.
+  _doc
+.
+  password
+) {
+  delete
+  userData
+.
+  _doc
+.
+  password;
+  userData
+.
+  _doc
+.
+  idOfLocation = savedUser.location[idOfLocation]["_id"];
+}
+else
+{
+  userData.idOfLocation = savedUser.location[idOfLocation]["_id"];
+}
+}
+
+/**
+ * Valid the email of user after clicking in the mail link
+ * @param req
+ * @param res
+ */
+emailVerif(req, res)
+{
+  console.log(req.body);
+  let url = req.body.url;
+  console.log(url);
+  nev.confirmTempUser(url, function (err, user) {
+    console.log(user);
+    if (err) {
+
     }
-  }
+    if (user) {
+      nev.sendConfirmationEmail(user['email'], (data) => {
+        console.log(data);
+        res.json(data);
+      });
 
-  /**
-   * Valid the email of user after clicking in the mail link
-   * @param req
-   * @param res
-   */
-  emailVerif = (req, res) => {
-    console.log(req.body);
-    let url = req.body.url;
-    console.log(url);
-    nev.confirmTempUser(url, function (err, user) {
-      console.log(user);
-      if (err) {
+    } else {
+      return res.status(404).send('ERROR: confirming temp user FAILED' + err);
+    }
+  });
+}
 
-      }
-      if (user) {
-        nev.sendConfirmationEmail(user['email'], (data) => {
-          console.log(data);
-          res.json(data);
-        });
+/**
+ * This function update lit of friends and information about a specific user (the connected user mainly)
+ * @param req
+ * @param res
+ */
+refreshUserData(req, res)
+{
+  let token = req.body.token;
+  jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
+    if (!err) {
+      Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
+        if (!err) {
+          Users.listOfFriends(user.following, 10, false, waster => {
+            waster.map(elem => {
+              user.following.map(doc => {
+                if (doc.userId === elem._id) {
+                  doc = elem
+                }
+                return doc
+              })
+            });
+            res.status(200).json(user)
+          })
+        }
+      });
+    } else {
+      res.status(401).send(err)
+    }
+  });
+}
 
-      } else {
-        return res.status(404).send('ERROR: confirming temp user FAILED' + err);
-      }
-    });
-  }
-
-  /**
-   * This function update lit of friends and information about a specific user (the connected user mainly)
-   * @param req
-   * @param res
-   */
-  refreshUserData = (req, res) => {
-    let token = req.body.token;
-    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
-      if (!err) {
-        Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
-          if (!err) {
-            Users.listOfFriends(user.following, 10, false, waster => {
-              waster.map(elem => {
-                user.following.map(doc => {
-                  if (doc.userId === elem._id) {
-                    doc = elem
-                  }
-                  return doc
-                })
-              });
-              res.status(200).json(user)
-            })
-          }
-        });
-      } else {
-        res.status(401).send(err)
-      }
-    });
-  }
-
-  /**
-   * Valid Captcha of the Google Recaptcha
-   * @param req
-   * @param res
-   */
-  validCaptcha = (req, res) => {
-    let token = req.params.token;
-    const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' + process.env.SECRET_KEYCAPTCHA + '&response=' + token + '&remoteip=' + req.connection.remoteAddress;
-    request(verificationUrl, (error, response, body) => {
-      body = JSON.parse(body);
-      // Success will be true or false depending upon captcha validation.
-      if (body.success !== undefined && !body.success) {
-        return res.json({'responseCode': 1, "responseDesc": "Failed captcha verification"});
-      }
-      res.json({"responseCode": 0, "responseDesc": "Sucess"});
-    });
-  }
+/**
+ * Valid Captcha of the Google Recaptcha
+ * @param req
+ * @param res
+ */
+validCaptcha(req, res)
+{
+  let token = req.params.token;
+  const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' + process.env.SECRET_KEYCAPTCHA + '&response=' + token + '&remoteip=' + req.connection.remoteAddress;
+  request(verificationUrl, (error, response, body) => {
+    body = JSON.parse(body);
+    // Success will be true or false depending upon captcha validation.
+    if (body.success !== undefined && !body.success) {
+      return res.json({'responseCode': 1, "responseDesc": "Failed captcha verification"});
+    }
+    res.json({"responseCode": 0, "responseDesc": "Sucess"});
+  });
+}
 
 }
 

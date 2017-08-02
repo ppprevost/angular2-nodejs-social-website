@@ -22,7 +22,7 @@ export class UserController {
   }
 
 
-  getlistOfFriends = (req, res) => {
+  getlistOfFriends(req, res) {
     return Users.listOfFriends(req.body, 0, false, (followers) => {
       res.json(followers);
     });
@@ -127,7 +127,7 @@ export class UserController {
     })
   };
 
-  followUser = function (req, res) {
+  followUser(req, res) {
     let userId = req.body.userId,
       wasterId = req.body.wasterId;
     let userIdWaster;
@@ -195,7 +195,7 @@ export class UserController {
    * @type {(p1?:*, p2?:*)}
    */
 
-  private sendSocketNotification = (waster, notif) => {
+  private sendSocketNotification(waster, notif) {
     UsersConnected.findOne({userId: waster._id}, (err, userCo) => {
       if (userCo) {
         userCo.location.forEach(elem => {
@@ -205,7 +205,7 @@ export class UserController {
     });
   };
 
-  followUserOk = function (req, res) {
+  followUserOk(req, res) {
     const userId = req.body.userId,
       wasterId = req.body.wasterId;
     console.log("user e waster");
@@ -240,7 +240,8 @@ export class UserController {
       }
     });
   };
-  unfollowUser = function (req, res) {
+
+  unfollowUser(req, res) {
     let userId = req.body.userId,
       wasterId = req.body.wasterId;
     Users.findById(wasterId, function (err, waster) {
@@ -262,7 +263,8 @@ export class UserController {
       });
     });
   };
-  getThisUser = (req, res) => {
+
+  getThisUser(req, res) {
     let userId = req.body.userId;
     Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
       if (!err) {
@@ -274,7 +276,7 @@ export class UserController {
     });
   };
 
-  uploadPicture = (req, res) => {
+  uploadPicture(req, res) {
     return uploadUtil(req, res, (files, directory, userId) => {
       if (files.length === 0) {
         fs.rmdir(directory, function (err) {
@@ -293,12 +295,12 @@ export class UserController {
    * @param req
    * @param res
    */
-  deleteAllPictures = (req, res) => {
+  deleteAllPictures(req, res) {
     uploadUtil(req, res, (files, directory, userId) => {
       if (files.length === 0) {
         fs.rmdir(directory, function (err) {
           if (err) {
-            res.status(400).send(err)
+            res.status(400).send(err);
           }
         });
       } else {

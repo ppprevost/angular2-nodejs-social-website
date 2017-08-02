@@ -17,7 +17,7 @@ export class WasteController {
 
   }
 
-  private actionGetPost = (requestedWastes, typePost, req, res) => {
+  private actionGetPost(requestedWastes, typePost, req, res) {
     if (requestedWastes.length) { // length == 1 means no friends
       const seekPosts: any = {userId: {$in: requestedWastes}};
       if (typePost === 'publicOnly') {
@@ -56,14 +56,14 @@ export class WasteController {
     }
   }
 
-  sendPost = (req, res) => {
+  sendPost(req, res) {
     const data = req.body.request;
     if (data) {
       const waste = new Waste(data);
       Users.findById(data.userId, (err, user) => {
         waste.save();
         if (!err) {
-          Users.getListOfFriendAndSentSocket(user, waste, 'getNewPost')
+          Users.getListOfFriendAndSentSocket(user, waste, 'getNewPost', this.io)
             .then(() => res.json(waste))
             .catch(err => res.status(400).send(err));
         }
@@ -79,7 +79,7 @@ export class WasteController {
    * onlyOwnPost Get own Post
    * @param res
    */
-  getPost = (req, res) => {
+  getPost(req, res) {
     const userData = req.body.following, onlyOwnPost = req.body.onlyOwnPost, typePost = req.body.typePost;
     let requestedWastes = [userData];
     Users.findById(userData, (err, user) => {
@@ -100,7 +100,7 @@ export class WasteController {
    * @param req
    * @param res
    */
-  sendComments = (req, res) => {
+  sendComments(req, res) {
     let comments = req.body.comments;
     Waste.findById(comments.wasteId, (err, waste) => {
       comments.date = new Date();
@@ -108,7 +108,7 @@ export class WasteController {
       waste.commentary.push(comments);
       waste.save(() => {
         Users.findById(comments.userId, (err, user) => {
-          Users.getListOfFriendAndSentSocket(user, waste, 'newComments')
+          Users.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
             .then(waster => res.json(comments))
             .catch(err => console.log(err));
         });
@@ -121,7 +121,7 @@ export class WasteController {
    * @param req
    * @param res
    */
-  getCommentary = (req, res) => {
+  getCommentary(req, res) {
     const commentary = req.body.commentary;
     const tableUserCommentary = commentary.map(elem => {
       return elem.userId;
@@ -151,13 +151,13 @@ export class WasteController {
    * @param res
    * @param typeOfFunction string
    */
-  private likeOrDeletePost = (req, res, typeOfFunction) => {
-    let wasteId = req.params.wasteId;
+  private likeOrDeletePost(req, res, typeOfFunction) {
+    const wasteId = req.params.wasteId;
     Waste.findById(wasteId, (err, result) => {
       if (!err) {
         if (!req.params.commentId) {
           if (typeOfFunction == 'likes') {
-            let testIfExist = result.likes.find(elem => {
+            const testIfExist = result.likes.find(elem => {
               return elem == result.userId;
             });
             if (!testIfExist) {
@@ -195,11 +195,11 @@ export class WasteController {
     });
   };
 
-  likeThisPostOrComment = (req, res) => {
+  likeThisPostOrComment(req, res) {
     return this.likeOrDeletePost(req, res, 'likes');
   }
 
-  deletePost = (req, res) => {
+  deletePost(req, res) {
     return this.likeOrDeletePost(req, res, 'delete');
   }
 
