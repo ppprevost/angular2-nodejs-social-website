@@ -1,11 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../tsconfig.json",
   "experimentalDecorators": true,
   "sourceMap": true,
-  "target": "es2015",
   "compilerOptions": {
     "outDir": "../dist/server",
-    "baseUrl": "",
-    "module": "es2015"
+    "baseUrl": "tsconfig"
   }
 }

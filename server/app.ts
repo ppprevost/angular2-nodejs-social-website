@@ -73,7 +73,7 @@ class Server {
         }
       }
     }
-    dotenv.load({path: '.env'});
+    dotenv.config();
   }
 }
 

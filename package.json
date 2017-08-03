@@ -8,10 +8,10 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build",
-    "start": "node --harmony src/server/app.js",
-    "predev": "tsc -p ./src/server",
+    "start": "node --harmony dist/server/app.js",
+    "predev": "tsc -p ./server",
     "prod": "concurrently \"ng build -aot -prod\" \"node --harmony src/server/app.js\"",
-    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"nodemon \"",
+    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"tsc -p ./server\"  \"nodemon \"",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -30,6 +30,7 @@
     "@angular/platform-browser": "^4.1.2",
     "@angular/platform-browser-dynamic": "^4.1.2",
     "@angular/router": "^4.1.2",
+    "@types/mongodb": "^2.2.0",
     "angular2-jwt": "^0.2.3",
     "angular2-recaptcha": "^0.4.1",
     "bcryptjs": "^2.4.3",
@@ -64,9 +65,11 @@
     "zone.js": "^0.8.12"
   },
   "devDependencies": {
+    "@types/dotenv": "^4.0.0",
     "@types/jasmine": "2.5.38",
     "@types/jquery": ">=2 <2.2",
     "@types/masonry-layout": "4.0.4",
+    "@types/mongodb": "2.2.0",
     "@types/mongoose": "^4.7.19",
     "@types/node": "~6.0.60",
     "@types/socket.io-client": "^1.4.29",

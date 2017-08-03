@@ -14,13 +14,11 @@ const uploadUtil = (req, res, callback) => {
 };
 
 export class UserController {
-
   private io;
 
   constructor(io) {
     this.io = io;
   }
-
 
   getlistOfFriends(req, res) {
     return Users.listOfFriends(req.body, 0, false, (followers) => {
@@ -40,42 +38,46 @@ export class UserController {
   getUsers(req, res) {
     const search = new RegExp(req.query.searchData, 'i'),
       limitData = req.query.limitData ? Number(req.query.limitData) : 0;
-    Users.find({username: search} || {}).select({
-      password: 0,
-      __v: 0
-    }).limit(limitData).sort({modifiedAt: 1}).exec(function (err, usersData) {
-      if (err) {
-        res.status(500).send(err);
-      } else {
-        if (Array.isArray(usersData) && usersData.length) {
-          let asyncLoop = (i, usersData) => {
-            Users.listOfFriends(usersData[i].following, 10, false, waster => {
-              usersData[i].following = waster;
-              if (i === usersData.length - 1) {
-                UsersConnected.find().exec((err, userConnected) => {
-                  let connectedId = userConnected.map(elem => {
-                    return elem.userId
-                  });
-                  usersData.map(doc => {
-                    if (doc && doc._id) {
-                      connectedId.forEach(elem => {
-                        return doc._doc.isConnected = elem === doc._id.toString()
-                      });
-                    }
-                  });
-                  res.json(usersData);
-                });
-              } else {
-                asyncLoop(++i, usersData);
-              }
-            });
-          };
-          asyncLoop(0, usersData);
+    Users
+      .find({username: search} || {})
+      .select({
+        password: 0,
+        __v: 0
+      }).limit(limitData)
+      .sort({createdAt: 1})
+      .exec(function (err, usersData) {
+        if (err) {
+          res.status(500).send(err);
         } else {
-          res.json([]);
+          if (Array.isArray(usersData) && usersData.length) {
+            const asyncLoop = (i, usersData) => {
+              Users.listOfFriends(usersData[i].following, 10, false, waster => {
+                usersData[i].following = waster;
+                if (i === usersData.length - 1) {
+                  UsersConnected.find().exec((err, userConnected) => {
+                    const connectedId = userConnected.map(elem => {
+                      return elem.userId;
+                    });
+                    usersData.map(doc => {
+                      if (doc && doc._id) {
+                        connectedId.forEach(elem => {
+                          return doc._doc.isConnected = elem === doc._id.toString();
+                        });
+                      }
+                    });
+                    res.json(usersData);
+                  });
+                } else {
+                  asyncLoop(++i, usersData);
+                }
+              });
+            };
+            asyncLoop(0, usersData);
+          } else {
+            res.json([]);
+          }
         }
-      }
-    })
+      });
   };
 
   deconnection(req, res) {
@@ -88,7 +90,7 @@ export class UserController {
               user.remove();
             } else {
               if (!err) {
-                let indexObj = user.location.indexOf(user.location.find(elem => {
+                const indexObj = user.location.indexOf(user.location.find(elem => {
                   return elem._id.toString() === decoded.user.idOfLocation;
                 }));
                 user.location.splice(indexObj, 1);
@@ -120,52 +122,52 @@ export class UserController {
             }));
             // locationUser.location[indexOfLocation].remove();
             locationUser.location.splice(indexOfLocation, 1);
-            locationUser.save()
+            locationUser.save();
           }
         }
       }
-    })
-  };
+    });
+  }
 
   followUser(req, res) {
-    let userId = req.body.userId,
+    const userId = req.body.userId,
       wasterId = req.body.wasterId;
     let userIdWaster;
-    let date = new Date();
-    console.log("req.body", req.body);
+    const date = new Date();
+    console.log('req.body', req.body);
     Users.findById(wasterId, function (err, waster) {
         if (!waster.following.length) { // init s tableau vide
           waster.following.push({
             userId: userId,
-            statut: "requested",
+            statut: 'requested',
             date: date
-          })
+          });
         } else {
           console.log(waster);
           // test si l'user ID est deja présent
           let already = waster.following.some(doc => {
-            console.log("deja présent");
-            return doc && doc.userId === userId
+            console.log('deja présent');
+            return doc && doc.userId === userId;
           });
           if (!already) {
             waster.following.push({
               userId: userId,
-              statut: "requested",
+              statut: 'requested',
               date: date
             });
           }
         }
         waster.save(function () {
           userIdWaster = waster.username;
-          this.sendSocketNotification(waster, 'friendRequest')
+          this.sendSocketNotification(waster, 'friendRequest');
         });
       }
     );
     Users.findById(userId, function (err, follower) {
-      if (!follower.following.length) { //init
+      if (!follower.following.length) { // init
         follower.following.push({
           userId: wasterId,
-          statut: "pending",
+          statut: 'pending',
           date: date
         });
       } else {
@@ -208,7 +210,7 @@ export class UserController {
   followUserOk(req, res) {
     const userId = req.body.userId,
       wasterId = req.body.wasterId;
-    console.log("user e waster");
+    console.log('user e waster');
     console.log(userId + wasterId);
     Users.findById(wasterId, function (err, waster) {
       if (!err) {
@@ -217,7 +219,7 @@ export class UserController {
       waster.following.forEach(function (doc) {
         console.log(doc);
         if (doc.userId == userId) {
-          doc.statut = "accepted"
+          doc.statut = 'accepted';
         }
 
       });
@@ -227,11 +229,11 @@ export class UserController {
     });
     Users.findById(userId, function (err, follower) {
       if (err) {
-        console.log("failed save");
+        console.log('failed save');
       } else {
         follower.following.forEach(function (doc) {
           if (doc.userId === wasterId) {
-            doc.statut = "accepted"
+            doc.statut = 'accepted';
           }
         });
         follower.save(function () {
@@ -242,18 +244,18 @@ export class UserController {
   };
 
   unfollowUser(req, res) {
-    let userId = req.body.userId,
+    const userId = req.body.userId,
       wasterId = req.body.wasterId;
     Users.findById(wasterId, function (err, waster) {
       console.log(waster);
-      let index = waster.following.findIndex(function (doc) {
+      const index = waster.following.findIndex(function (doc) {
         return doc.userId === userId
       });
       waster.following.splice(index, 1);
       waster.save(() => {
         this.sendSocketNotification(waster, 'removeFriend');
         Users.findById(userId, function (err, follower) {
-          let wasterIndex = follower.following.findIndex(function (doc) {
+          const wasterIndex = follower.following.findIndex(function (doc) {
             return doc.userId === wasterId;
           });
           follower.following.splice(wasterIndex, 1);
@@ -265,12 +267,12 @@ export class UserController {
   };
 
   getThisUser(req, res) {
-    let userId = req.body.userId;
+    const userId = req.body.userId;
     Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
       if (!err) {
         Users.listOfFriends(user.following, 10, false, waster => {
           user.following = waster;
-          res.json(user)
+          res.json(user);
         });
       }
     });
@@ -309,7 +311,7 @@ export class UserController {
             res.status(500).send('unerreru a la suppression:', err);
           }
           files.forEach((file, i) => {
-            let filePath = directory + file;
+            const filePath = directory + file;
             fs.stat(filePath, function (err, stats) {
               if (err) {
                 console.log(JSON.stringify(err));

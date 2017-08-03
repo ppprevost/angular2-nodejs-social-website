@@ -1,6 +1,23 @@
-import {Schema, model} from 'mongoose';
+import {Document, model, Model, Schema} from 'mongoose';
+import * as bcrypt from 'bcryptjs';
 // const friends = require('mongoose-friends');
 const UsersConnected = require('./connected-users');
+
+interface IUser extends Document {
+  email: string;
+  username: string;
+  password: string;
+  website: string;
+  gender: string;
+  image: string;
+  cover: string;
+  location: string;
+  createdAt: string;
+  bio: string;
+  role: number;
+  isConnected: boolean;
+  following: any;
+}
 
 const follower = new Schema(
   {
@@ -30,7 +47,7 @@ const schema = new Schema({
   image: String,
   cover: String,
   location: String,
-  modifiedAt: {
+  createdAt: {
     type: Date,
     default: Date.now
   },
@@ -98,7 +115,32 @@ schema.methods.getListOfFriendAndSentSocket = (userData, message, aliasSocketMes
   });
 };
 
+schema.methods.comparePassword = function (candidatePassword, callback) {
+  bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, isMatch);
+  });
+};
+
+schema.methods.hashingFunction = (password, tempUserData, insertTempUser, callback) => {
+  bcrypt.genSalt(8, function (err, salt) {
+    bcrypt.hash(password, salt, function (err, hash) {
+      return insertTempUser(hash, tempUserData, callback);
+    });
+  });
+};
+
+// Omit the password when returning a user
+schema.set('toJSON', {
+  transform: function (doc, ret, options) {
+    delete ret.password;
+    return ret;
+  }
+});
+
 // schema.plugin(friends({pathName: 'friendManagement'}));
 
-export default model('User', schema);
+export default model<IUser>('User', schema);
 

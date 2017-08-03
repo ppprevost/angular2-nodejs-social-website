@@ -1,9 +1,8 @@
 const Users = require('../datasets/users');
 const UsersConnected = require('../datasets/connected-users');
-
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
-const nev = require('../services/email-verification')(mongoose);
+const nev = require('email-verification')(mongoose);
 import * as request from 'request';
 import * as jwt from 'jsonwebtoken';
 
@@ -14,6 +13,8 @@ const myHasher = (password, tempUserData, insertTempUser, callback) => {
     });
   });
 };
+
+console.log('3DSKJDSQ', process.env)
 
 /**
  * Think to see :
@@ -185,7 +186,7 @@ export class AuthentificationController {
     req.assert('email', 'Email cannot be blank and must be a correct email').notEmpty().isEmail();
     req.assert('password', 'Password cannot be blank').notEmpty();
     req.sanitize('email').normalizeEmail({remove_dots: false});
-    let errors = req.validationErrors();
+    const errors = req.validationErrors();
     if (errors) {
       return res.status(400).send(errors);
     }
@@ -202,7 +203,7 @@ export class AuthentificationController {
                 if (userAlreadyConnected) {
                   userAlreadyConnected.location.push({socketId: req.body.socketId, IP: this.ipConnection(req)});
                   userAlreadyConnected.save(() => {
-                    this.locationSearch(userAlreadyConnected, req.body.socketId, userData, res)
+                    this.locationSearch(userAlreadyConnected, req.body.socketId, userData, res);
                   });
                 } else {
                   const newUserConnected = new UsersConnected({
@@ -242,7 +243,7 @@ export class AuthentificationController {
    * @param res
    */
   refreshSocketIdOfConnectedUsers(req, res) {
-    let socketId = req.body.socketId, token = req.body.token;
+    const socketId = req.body.socketId, token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
         UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {

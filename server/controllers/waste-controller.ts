@@ -17,6 +17,13 @@ export class WasteController {
 
   }
 
+  /**
+   *
+   * @param {Array} requestedWastes userId
+   * @param {['public','private']} typePost
+   * @param req
+   * @param res
+   */
   private actionGetPost(requestedWastes, typePost, req, res) {
     if (requestedWastes.length) { // length == 1 means no friends
       const seekPosts: any = {userId: {$in: requestedWastes}};
@@ -65,11 +72,11 @@ export class WasteController {
         if (!err) {
           Users.getListOfFriendAndSentSocket(user, waste, 'getNewPost', this.io)
             .then(() => res.json(waste))
-            .catch(err => res.status(400).send(err));
+            .catch(error => res.status(400).send(error));
         }
       });
     } else {
-      res.status(404).send('aucun contenu enregistré dans la base')
+      res.status(404).send('aucun contenu enregistré dans la base');
     }
   };
 
@@ -101,7 +108,7 @@ export class WasteController {
    * @param res
    */
   sendComments(req, res) {
-    let comments = req.body.comments;
+    const comments = req.body.comments;
     Waste.findById(comments.wasteId, (err, waste) => {
       comments.date = new Date();
       // delete comments.wasteId
@@ -110,7 +117,7 @@ export class WasteController {
         Users.findById(comments.userId, (err, user) => {
           Users.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
             .then(waster => res.json(comments))
-            .catch(err => console.log(err));
+            .catch(error => console.log(error));
         });
       });
     });
@@ -135,7 +142,7 @@ export class WasteController {
             comment.image = user.image;
             comment.username = user.username;
           }
-          return comment
+          return comment;
         });
       });
       req.body.commentary = commentary;
@@ -170,13 +177,13 @@ export class WasteController {
           }
           result.save(() => {
             res.json(result)
-          })
+          });
         } else {
           const index = result.commentary.indexOf(result.commentary.find(elem => {
             return req.params.commentId == elem._id;
           }));
           if (typeOfFunction === 'likes') {
-            let testIfComment = result.commentary[index].likes.find(elem => {
+            const testIfComment = result.commentary[index].likes.find(elem => {
               return elem === result.commentary[index].userId;
             });
             if (!testIfComment) {

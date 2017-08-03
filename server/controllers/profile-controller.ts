@@ -72,21 +72,23 @@ export class ProfileController {
         return res.status(400).send(errors);
       }
     }
-    const value = Object.values(req.body)[0];
-    Users.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
-      const user = userData;
-      user[champ] = [value];
-
-      Users.save(function (err) {
-        if (err) {
-          console.log('fail');
-          res.json({status: 500});
-        } else {
-          console.log('champ sauvegardé ' + champ);
-          res.json(user);
-        }
+    const value = req.body[Object.keys(req.body)[0]];
+    Users
+      .findById(userId)
+      .select({password: 0, __v: 0})
+      .exec((err, userData) => {
+        const user = userData;
+        user[champ] = [value];
+        Users.save(err => {
+          if (err) {
+            console.log('fail');
+            res.json({status: 500});
+          } else {
+            console.log('champ sauvegardé ' + champ);
+            res.json(user);
+          }
+        });
       });
-    });
   };
 
   /**
