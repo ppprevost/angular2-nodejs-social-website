@@ -2,25 +2,28 @@ import {ProfileController} from '../controllers/profile-controller';
 import {UserController} from '../controllers/users-controller';
 import {WasteController} from '../controllers/waste-controller';
 import {AuthentificationController} from '../controllers/authentication-controller';
-import {Router} from 'express';
+import {Router, Application} from 'express';
+
 
 export class RouterApp {
   profileController;
   usersController;
   authenticationController;
-  wasteController;
+  private io;
+  private wasteController;
   private app;
   private router: Router;
 
-  constructor(app, io) {
+  constructor(app: Application, io) {
     this.router = Router();
     // traitement socket
     this.app = app;
+    this.io = io;
     this.profileController = new ProfileController(io);
     this.usersController = new UserController(io);
     this.authenticationController = new AuthentificationController(io);
     this.wasteController = new WasteController(io);
-    io.on('connection', function (socket) {
+    this.io.on('connection', socket => {
       console.log('connection socket server ok');
       socket.emit('news', {hello: 'bienvenue sur mon reseau'});
       socket.on('disconnect', () => {

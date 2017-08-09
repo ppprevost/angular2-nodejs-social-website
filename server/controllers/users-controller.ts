@@ -1,4 +1,4 @@
-const Users = require('../datasets/users'), UsersConnected = require('../datasets/connected-users');
+const Users = require('../datasets/users').default, UsersConnected = require('../datasets/connected-users').default;
 import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
 
@@ -20,7 +20,7 @@ export class UserController {
     this.io = io;
   }
 
-  getlistOfFriends(req, res) {
+  getlistOfFriends = (req, res) => {
     return Users.listOfFriends(req.body, 0, false, (followers) => {
       res.json(followers);
     });
@@ -35,7 +35,7 @@ export class UserController {
    */
 
 
-  getUsers(req, res) {
+  getUsers = (req, res) => {
     const search = new RegExp(req.query.searchData, 'i'),
       limitData = req.query.limitData ? Number(req.query.limitData) : 0;
     Users
@@ -78,9 +78,9 @@ export class UserController {
           }
         }
       });
-  };
+  }
 
-  deconnection(req, res) {
+  deconnection = (req, res) => {
     console.log(req.body.userId);
     jwt.verify(req.body.token, process.env.SECRET_TOKEN, (err, decoded) => {
       UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
@@ -103,7 +103,7 @@ export class UserController {
       });
       // TODO  deconnectionMethod('userId', decoded.user._id)
     });
-  };
+  }
 
   /**
    * Delete socket ID from MongoDB server
@@ -129,7 +129,7 @@ export class UserController {
     });
   }
 
-  followUser(req, res) {
+  followUser = (req, res) => {
     const userId = req.body.userId,
       wasterId = req.body.wasterId;
     let userIdWaster;
@@ -207,7 +207,7 @@ export class UserController {
     });
   };
 
-  followUserOk(req, res) {
+  followUserOk = (req, res) => {
     const userId = req.body.userId,
       wasterId = req.body.wasterId;
     console.log('user e waster');
@@ -243,7 +243,7 @@ export class UserController {
     });
   };
 
-  unfollowUser(req, res) {
+  unfollowUser = (req, res) => {
     const userId = req.body.userId,
       wasterId = req.body.wasterId;
     Users.findById(wasterId, function (err, waster) {
@@ -266,7 +266,7 @@ export class UserController {
     });
   };
 
-  getThisUser(req, res) {
+  getThisUser = (req, res) => {
     const userId = req.body.userId;
     Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
       if (!err) {
@@ -278,7 +278,7 @@ export class UserController {
     });
   };
 
-  uploadPicture(req, res) {
+  uploadPicture = (req, res) => {
     return uploadUtil(req, res, (files, directory, userId) => {
       if (files.length === 0) {
         fs.rmdir(directory, function (err) {
@@ -297,7 +297,7 @@ export class UserController {
    * @param req
    * @param res
    */
-  deleteAllPictures(req, res) {
+  deleteAllPictures = (req, res) => {
     uploadUtil(req, res, (files, directory, userId) => {
       if (files.length === 0) {
         fs.rmdir(directory, function (err) {

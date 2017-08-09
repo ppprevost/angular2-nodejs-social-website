@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import {RouterApp} from './routes/routes';
 import * as mongoose from 'mongoose';
 import * as fs from 'fs';
+// import * as expressValidator from 'express-validator';
 const expressValidator = require('express-validator');
 
 class Server {
@@ -21,8 +22,9 @@ class Server {
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({extended: false}));
     this.app.set('port', (process.env.PORT || 3000));
-    this.app.use('/', express.static(path.join(__dirname, '/../../dist')));
+    this.app.use('/', express.static(path.join(__dirname, './../dist')));
     this.app.use(morgan('dev'));
+
     this.limiter({
       method: 'all',
       total: 100,
@@ -32,11 +34,11 @@ class Server {
         next({message: 'Rate limit exceeded', status: 429});
       }
     });
-    this.databases();
     this.environment();
+    this.databases();
   }
 
-  private databases() {
+  databases() {
     mongoose.connect(process.env.MONGODB_URI);
     const db = mongoose.connection;
     (<any>mongoose).Promise = global.Promise;
@@ -45,23 +47,24 @@ class Server {
       process.exit(1);
     });
 
-    db.once('open', function () {
+    db.once('open', () => {
       console.log('Connected to MongoDB');
       // all other routes are handled by Angular
-      const server = this.app.listen(this.app.get('port'), function () {
+      const server = this.app.listen(this.app.get('port'), () => {
         console.log('Angular 4 Full Stack listening on port ' + this.app.get('port'));
       });
       this.io = require('socket.io')(server);
       const routes = new RouterApp(this.app, this.io);
       routes.routing();
       this.app.get('/*', function (req, res) {
-        res.sendFile(path.join(__dirname, '/../../dist/index.html'));
+        res.sendFile(path.join(__dirname, './../dist/index.html'));
       });
     });
   }
 
-  private environment() {
+  environment() {
     const dirEnv = path.join(process.cwd(), '/.env');
+    dotenv.config({path: '.env'});
     const contentEnv = 'MONGODB_URI=mongodb://localhost:27017/test \nMAILVERIF=Gmail \nURLVERIF=http://example.com/email-verification/${URL} \nMAILACCOUNT= \nMAILPASS= \nCLIENTID= \nACCESSTOKEN= \nREFRESHTOKEN= \nCLIENTSECRET= \nSECRET_TOKEN=social\nSECRET_KEYCAPTCHA= \nRECAPTCHA_MODULE=false \nEMAIL_VERIFICATION=false';
     try {
       fs.statSync(dirEnv).isFile();
@@ -73,7 +76,6 @@ class Server {
         }
       }
     }
-    dotenv.config();
   }
 }
 

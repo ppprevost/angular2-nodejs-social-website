@@ -142,5 +142,5 @@ schema.set('toJSON', {
 
 // schema.plugin(friends({pathName: 'friendManagement'}));
 
-export default model<IUser>('User', schema);
+export default model('User', schema);
 

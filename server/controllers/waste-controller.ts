@@ -63,7 +63,7 @@ export class WasteController {
     }
   }
 
-  sendPost(req, res) {
+  sendPost = (req, res) => {
     const data = req.body.request;
     if (data) {
       const waste = new Waste(data);
@@ -86,7 +86,7 @@ export class WasteController {
    * onlyOwnPost Get own Post
    * @param res
    */
-  getPost(req, res) {
+  getPost = (req, res) => {
     const userData = req.body.following, onlyOwnPost = req.body.onlyOwnPost, typePost = req.body.typePost;
     let requestedWastes = [userData];
     Users.findById(userData, (err, user) => {
@@ -107,7 +107,7 @@ export class WasteController {
    * @param req
    * @param res
    */
-  sendComments(req, res) {
+  sendComments = (req, res) => {
     const comments = req.body.comments;
     Waste.findById(comments.wasteId, (err, waste) => {
       comments.date = new Date();
@@ -128,7 +128,7 @@ export class WasteController {
    * @param req
    * @param res
    */
-  getCommentary(req, res) {
+  getCommentary = (req, res) => {
     const commentary = req.body.commentary;
     const tableUserCommentary = commentary.map(elem => {
       return elem.userId;
@@ -202,20 +202,15 @@ export class WasteController {
     });
   };
 
-  likeThisPostOrComment(req, res) {
+  likeThisPostOrComment = (req, res) => {
     return this.likeOrDeletePost(req, res, 'likes');
   }
 
-  deletePost(req, res) {
+  deletePost = (req, res) => {
     return this.likeOrDeletePost(req, res, 'delete');
   }
 
 }
 
-module.exports = function (io) {
-  const utils = require('../utils/utils')(io);
-
-
-};
 
 

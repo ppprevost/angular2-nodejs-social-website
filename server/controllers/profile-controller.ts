@@ -35,7 +35,7 @@ export class ProfileController {
     this.io = io;
   }
 
-  updatePhoto(req, res) {
+  updatePhoto = (req, res) => {
     upload(req, res, function (err) {
       console.log('req.file', req.file);
       if (err) {
@@ -58,7 +58,7 @@ export class ProfileController {
     });
   };
 
-  updateChamp(req, res) {
+  updateChamp = (req, res) => {
     const userId = req.body.userId;
     console.log(req.body);
     delete req.body.userId;

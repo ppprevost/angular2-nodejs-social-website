@@ -1,10 +1,11 @@
-const Users = require('../datasets/users');
-const UsersConnected = require('../datasets/connected-users');
+const Users = require('../datasets/users').default;
+const UsersConnected = require('../datasets/connected-users').default;
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 const nev = require('email-verification')(mongoose);
 import * as request from 'request';
 import * as jwt from 'jsonwebtoken';
+// import {SocketIO.serv} from 'socket.io'
 
 const myHasher = (password, tempUserData, insertTempUser, callback) => {
   bcrypt.genSalt(8, function (err, salt) {
@@ -14,69 +15,67 @@ const myHasher = (password, tempUserData, insertTempUser, callback) => {
   });
 };
 
-console.log('3DSKJDSQ', process.env)
-
-/**
- * Think to see :
- * https://medium.com/@pandeysoni/nodemailer-service-in-node-js-using-smtp-and-xoauth2-7c638a39a37e
- * https://nodemailer.com/smtp/oauth2/
- * and update nodemailer
- */
-
-/**
- * Information to add if your are using the Verification Module
- */
-nev.configure({
-  persistentUserModel: Users,
-  expirationTime: 600, // 10 minutes
-  verificationURL: process.env.URLVERIF,
-  shouldSendConfirmation: false,
-  transportOptions: {
-    service: process.env.MAILVERIF,
-    // auth: {
-    //   type: 'OAuth2',
-    //   user: process.env.MAILACCOUNT, // Your gmail address.
-    //   clientSecret: process.env.CLIENTSECRET,
-    //   accessToken: process.env.ACCESSTOKEN,
-    //   refreshToken: process.env.REFRESHTOKEN,
-    //   clientId: process.env.CLIENTID
-    // },
-
-    secure: true, // use SSL
-    auth: {
-      user: process.env.MAILACCOUNT,
-      pass: process.env.MAILPASS
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  },
-
-  hashingFunction: myHasher,
-  passwordFieldName: 'password',
-}, function (err, options) {
-  if (err) {
-    console.log(err);
-    return;
-  }
-  console.log('configured: ' + (typeof options === 'object'));
-});
-
-nev.generateTempUserModel(Users, function (err, tempUserModel) {
-  if (err) {
-    console.log(err);
-    return;
-  } else {
-    console.log('generated temp user model: ' + (typeof tempUserModel === 'function'));
-  }
-
-});
-
 export class AuthentificationController {
-  private io;
+  io;
 
   constructor(io) {
     this.io = io;
+    /**
+     * Think to see :
+     * https://medium.com/@pandeysoni/nodemailer-service-in-node-js-using-smtp-and-xoauth2-7c638a39a37e
+     * https://nodemailer.com/smtp/oauth2/
+     * and update nodemailer
+     */
+
+    /**
+     * Information to add if your are using the Verification Module
+     */
+    nev.configure({
+      persistentUserModel: Users,
+      expirationTime: 600, // 10 minutes
+      verificationURL: process.env.URLVERIF,
+      shouldSendConfirmation: false,
+      transportOptions: {
+        service: process.env.MAILVERIF,
+        // auth: {
+        //   type: 'OAuth2',
+        //   user: process.env.MAILACCOUNT, // Your gmail address.
+        //   clientSecret: process.env.CLIENTSECRET,
+        //   accessToken: process.env.ACCESSTOKEN,
+        //   refreshToken: process.env.REFRESHTOKEN,
+        //   clientId: process.env.CLIENTID
+        // },
+
+        secure: true, // use SSL
+        auth: {
+          user: process.env.MAILACCOUNT,
+          pass: process.env.MAILPASS
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      },
+
+      hashingFunction: myHasher,
+      passwordFieldName: 'password',
+    }, function (err, options) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log('configured: ' + (typeof options === 'object'));
+    });
+    console.log(Users.default);
+    nev.generateTempUserModel(Users, function (err, tempUserModel) {
+      if (err) {
+        console.log(err);
+        return;
+      } else {
+        console.log('generated temp user model: ' + (typeof tempUserModel === 'function'));
+      }
+
+    });
+
   }
 
   /**
@@ -85,18 +84,17 @@ export class AuthentificationController {
    * @param res
    * @param next
    */
-  signup(req, res) {
+  signup = (req, res) => {
+    console.log('test THIIIIIIS', this);
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('email', 'Email cannot be blank').notEmpty();
     req.assert('pass', 'Password must be at least 4 characters long').len(4);
     req.sanitize('email').normalizeEmail({remove_dots: false});
-    let errors = req.validationErrors();
-
+    const errors = req.validationErrors();
     if (errors) {
       return res.status(400).send(errors);
     }
     const email = req.body.email;
-
     const newUser = new Users({
       email: req.body.email,
       password: req.body.pass,
@@ -110,7 +108,7 @@ export class AuthentificationController {
         return res.status(404).send('ERROR: creating temp user FAILED');
       }
       // user already exists in persistent collection
-      console.log("logAlors", err, existingPersistentUser, newTempUser);
+      console.log('logAlors', err, existingPersistentUser, newTempUser);
       if (existingPersistentUser) {
         return res.json({
           msg: 'You have already signed up and confirmed your account. Did you forget your password?'
@@ -118,7 +116,7 @@ export class AuthentificationController {
       }
       // new user created
       if (newTempUser) {
-        let URL = newTempUser[nev.options.URLFieldName];
+        const URL = newTempUser[nev.options.URLFieldName];
 
         const confirmTempUser = () => {
           return nev.confirmTempUser(URL, function (err, user) {
@@ -127,7 +125,7 @@ export class AuthentificationController {
 
             }
             if (user) {
-              res.json(user)
+              res.json(user);
             } else {
               return res.status(404).send('ERROR: confirming temp user FAILED' + err);
             }
@@ -158,7 +156,7 @@ export class AuthentificationController {
     });
   };
 
-  resendVerificationEmail(req, res) {
+  resendVerificationEmail = (req, res) => {
     // resend verification button was clicked
     nev.resendVerificationEmail(req.params.email, (err, userFound) => {
       if (err) {
@@ -181,8 +179,9 @@ export class AuthentificationController {
    * @param req
    * @param res
    */
-  login(req, res) {
-    console.log("req.body", req.body);
+  login = (req, res) => {
+    console.log(this);
+    console.log('req.body', req.body);
     req.assert('email', 'Email cannot be blank and must be a correct email').notEmpty().isEmail();
     req.assert('password', 'Password cannot be blank').notEmpty();
     req.sanitize('email').normalizeEmail({remove_dots: false});
@@ -196,14 +195,14 @@ export class AuthentificationController {
       } else {
         if (results && results.length === 1) {
           const userData = results[0];
-          bcrypt.compare(req.body.password, results[0].password, function (err, ok) {
+          bcrypt.compare(req.body.password, results[0].password, (err, ok) => {
             if (ok) {
               delete userData.password;
               UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
                 if (userAlreadyConnected) {
                   userAlreadyConnected.location.push({socketId: req.body.socketId, IP: this.ipConnection(req)});
                   userAlreadyConnected.save(() => {
-                    this.locationSearch(userAlreadyConnected, req.body.socketId, userData, res);
+                    this.locationSearch(userAlreadyConnected, req.body.socketId, userData);
                   });
                 } else {
                   const newUserConnected = new UsersConnected({
@@ -211,7 +210,7 @@ export class AuthentificationController {
                     location: [{socketId: req.body.socketId, IP: this.ipConnection(req)}]
                   });
                   newUserConnected.save((err, savedUser) => {
-                    this.locationSearch(savedUser, req.body.socketId, userData, res)
+                    this.locationSearch(savedUser, req.body.socketId, userData);
                   });
                 }
                 const token = jwt.sign({
@@ -224,15 +223,13 @@ export class AuthentificationController {
               return res.status(401).send({msg: 'Invalid email or password'});
             }
           });
-          this.io.sockets.emit("userConnected", results[0]._id);
-
+          this.io.sockets.emit('userConnected', results[0]._id);
         } else {
           return res.status(401).send({
             msg: 'The email address ' + req.body.email + ' is not associated with any account. ' +
             'Double-check your email address and try again.'
           });
         }
-        ;
       }
     });
   }
@@ -242,7 +239,7 @@ export class AuthentificationController {
    * @param req
    * @param res
    */
-  refreshSocketIdOfConnectedUsers(req, res) {
+  refreshSocketIdOfConnectedUsers = (req, res) => {
     const socketId = req.body.socketId, token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
@@ -325,7 +322,7 @@ export class AuthentificationController {
    * @param req
    * @param res
    */
-  emailVerif(req, res) {
+  emailVerif = (req, res) => {
     console.log(req.body);
     const url = req.body.url;
     console.log(url);
@@ -351,8 +348,8 @@ export class AuthentificationController {
    * @param req
    * @param res
    */
-  refreshUserData(req, res) {
-    let token = req.body.token;
+  refreshUserData = (req, res) => {
+    const token = req.body.token;
     jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (!err) {
         Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
@@ -361,17 +358,17 @@ export class AuthentificationController {
               waster.map(elem => {
                 user.following.map(doc => {
                   if (doc.userId === elem._id) {
-                    doc = elem
+                    doc = elem;
                   }
-                  return doc
-                })
+                  return doc;
+                });
               });
-              res.status(200).json(user)
-            })
+              res.status(200).json(user);
+            });
           }
         });
       } else {
-        res.status(401).send(err)
+        res.status(401).send(err);
       }
     });
   }
@@ -381,22 +378,16 @@ export class AuthentificationController {
    * @param req
    * @param res
    */
-  validCaptcha(req, res) {
-    let token = req.params.token;
+  validCaptcha = (req, res) => {
+    const token = req.params.token;
     const verificationUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' + process.env.SECRET_KEYCAPTCHA + '&response=' + token + '&remoteip=' + req.connection.remoteAddress;
     request(verificationUrl, (error, response, body) => {
       body = JSON.parse(body);
       // Success will be true or false depending upon captcha validation.
       if (body.success !== undefined && !body.success) {
-        return res.json({'responseCode': 1, "responseDesc": "Failed captcha verification"});
+        return res.json({'responseCode': 1, 'responseDesc': 'Failed captcha verification'});
       }
-      res.json({"responseCode": 0, "responseDesc": "Sucess"});
+      res.json({'responseCode': 0, 'responseDesc': 'Sucess'});
     });
   }
-
 }
-
-module.exports = function (io) {
-  const utils = require('../utils/utils')(io);
-
-};
