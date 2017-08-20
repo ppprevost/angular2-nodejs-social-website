@@ -1,5 +1,7 @@
 import * as mongoose from 'mongoose';
-module.exports = mongoose.model('Waste', new mongoose.Schema({
+
+
+var schema = new mongoose.Schema({
   userId: {type: String, required: true},
   userType: {type: String, enum: ['public', 'private']},
   content: String,
@@ -10,4 +12,19 @@ module.exports = mongoose.model('Waste', new mongoose.Schema({
     data: String, date: {type: Date, default: Date.now}
   }],
   date: {type: Date, default: Date.now}
-}));
+});
+
+
+/**
+ * Add image and username to waste
+ * @param {User} user -the userinformation
+ * @returns {schema.methods}
+ */
+schema.methods.getMoreWasteInfo = function (user) {
+  let waste = this.toObject();
+  waste.username = user.username;
+  waste.image = user.image;
+  return waste
+};
+
+module.exports = mongoose.model('Waste', schema);

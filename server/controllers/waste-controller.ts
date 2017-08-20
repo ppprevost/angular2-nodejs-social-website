@@ -73,14 +73,17 @@ export class WasteController {
   sendPost = (req, res) => {
     const data = req.body.request;
     if (data) {
-      const waste = new Waste(data);
-      waste.save((err) => {
-        if (!err) {
-          Users.getListOfFriendAndSentSocket(data.userId, waste, 'getNewPost', this.io)
-            .then(() => res.json(waste))
-            .catch(error => res.status(400).send(error));
-        }
-      });
+      Users.findById(data.userId, (err, user) => {
+        let waste = new Waste(data);
+        waste.save((er) => {
+          if (!er) {
+            waste = waste.getMoreWasteInfo(user);
+            Users.getListOfFriendAndSentSocket(user, waste, 'getNewPost', this.io)
+              .then(() => res.json(waste))
+              .catch(error => res.status(400).send(error));
+          }
+        });
+      })
     } else {
       res.status(404).send('no content saved in the database');
     }

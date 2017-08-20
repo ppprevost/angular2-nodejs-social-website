@@ -102,12 +102,8 @@ schema.statics.listOfFriends = function (followingTable: Follower[] = [], number
  */
 schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message, aliasSocketMessage: string, socketSource): Promise<any> {
   return new Promise((resolve, rej) => {
-    if (typeof userData == 'string') {
-      this.findById(userData, (err, user) => {
-        this.listOfFriends(user.following, 0, false, function (waster) {
+        this.listOfFriends(userData.following, 0, false, function (waster) {
           const socketUser = waster.map(elem => elem.userId);
-          // let socketIds = [];
-          // send uniquely if the user is connected
           UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
             if (!err) {
               userCo.forEach(userConected => {
@@ -125,8 +121,6 @@ schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message
             }
           });
         });
-      })
-    }
   });
 };
 
