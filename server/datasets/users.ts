@@ -98,9 +98,9 @@ schema.statics.listOfFriends = function (followingTable: Follower[] = [], number
  * @param {any} socketSource
  * @returns {Promise<T>}
  */
-schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message: string, aliasSocketMessage: string, socketSource): Promise<any> {
+schema.methods.getListOfFriendAndSentSocket = function (userData: IUser, message: string, aliasSocketMessage: string, socketSource): Promise<any> {
   return new Promise((resolve, rej) => {
-    this.listOfFriends(userData.following, 0, false, waster => {
+    this.listOfFriends(userData.following, 0, false, function(waster) {
       const socketUser = waster.map(elem => elem.userId);
       let socketIds = [];
       // send uniquely if the user is connected

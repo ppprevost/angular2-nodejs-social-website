@@ -77,7 +77,7 @@ export class WasteController {
       Users.findById(data.userId, (err, user) => {
         waste.save();
         if (!err) {
-          Users.getListOfFriendAndSentSocket(user, waste, 'getNewPost', this.io)
+          user.getListOfFriendAndSentSocket(user, waste, 'getNewPost', this.io)
             .then(() => res.json(waste))
             .catch(error => res.status(400).send(error));
         }
@@ -122,7 +122,7 @@ export class WasteController {
       waste.commentary.push(comments);
       waste.save(() => {
         Users.findById(comments.userId, (err, user) => {
-          Users.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
+          user.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
             .then(waster => res.json(comments))
             .catch(error => console.log(error));
         });
