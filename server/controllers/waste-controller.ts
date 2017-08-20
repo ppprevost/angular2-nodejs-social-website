@@ -2,7 +2,6 @@ const Waste = require('../datasets/wastes');
 const Users = require('../datasets/users');
 const mongoose = require('mongoose');
 
-
 export class WasteController {
   private io;
 
@@ -19,10 +18,12 @@ export class WasteController {
 
   /**
    *
-   * @param {Array} requestedWastes userId
-   * @param {['public','private']} typePost
-   * @param req
-   * @param res
+   * @param {Array} requestedWastes -Array of userId
+   * @param {string} typePost -either public or private
+   * @param {Express.Request} req
+   * @param {number} req.body.numberOfWaste
+   * @param {number} req.body.skipLimit
+   * @param {Express.Response} res
    */
   private actionGetPost(requestedWastes, typePost, req, res) {
     if (requestedWastes.length) { // length == 1 means no friends
@@ -32,6 +33,7 @@ export class WasteController {
       }
       Waste.find(seekPosts)
         .sort({date: -1})
+        .skip(req.body.skipLimit)
         .limit(req.body.numberOfWaste)
         .exec(function (err, allWastes) {
           if (err) {
@@ -91,8 +93,8 @@ export class WasteController {
 
   /**
    * Get all Post from a user
-   * @param req Object
-   * onlyOwnPost Get own Post
+   * @param {Express.Request} req
+   * @param {boolean} onlyOwnPost Get own Post
    * @param res
    */
   getPost = (req, res) => {
@@ -124,7 +126,7 @@ export class WasteController {
       waste.commentary.push(comments);
       waste.save(() => {
         Users.findById(comments.userId, (err, user) => {
-          user.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
+          Users.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
             .then(waster => res.json(comments))
             .catch(error => console.log(error));
         });
