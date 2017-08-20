@@ -34,7 +34,6 @@ class Server {
         next({message: 'Rate limit exceeded', status: 429});
       }
     });
-    this.environment();
     this.databases();
   }
 

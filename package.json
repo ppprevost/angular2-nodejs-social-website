@@ -8,10 +8,12 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build",
+    "postinstall":"node install-env.js",
     "start": "node  dist/server/app.js",
     "predev": "tsc -p ./server",
     "prod": "concurrently \"ng build -aot -prod\" \"node --harmony src/server/app.js\"",
-    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"tsc -w -p  ./server\"  \"node %NODE_DEBUG_OPTION% dist/server/app.js  \"",
+    "dev": "concurrently \"ng serve -pc proxy.conf.json \" \"tsc -w -p  ./server\"  \"node dist/server/app.js  \"",
+    "debug": "npm run predev & concurrently \"ng serve -pc proxy.conf.json \" \"tsc -w -p  ./server\"  \"node %NODE_DEBUG_OPTION% dist/server/app.js  \"",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
