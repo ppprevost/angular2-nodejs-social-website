@@ -1,9 +1,10 @@
-import {Document, model, Model, Schema} from 'mongoose';
+import mongoose = require('mongoose')
 import * as bcrypt from 'bcryptjs';
+import {} from 'socket.io'
 // const friends = require('mongoose-friends');
 const UsersConnected = require('./connected-users');
 
-interface IUser extends Document {
+interface IUser {
   email: string;
   username: string;
   password: string;
@@ -16,10 +17,18 @@ interface IUser extends Document {
   bio: string;
   role: number;
   isConnected: boolean;
-  following: any;
+  following: Follower[];
 }
 
-const follower = new Schema(
+interface Follower {
+  userId: string,
+  date: Date,
+  statut: string,
+  image: string,
+  username: string
+}
+
+const follower = new mongoose.Schema(
   {
     userId: {required: true, type: String},
     date: Date,
@@ -28,7 +37,7 @@ const follower = new Schema(
     username: String
   });
 
-const schema = new Schema({
+const schema = new mongoose.Schema({
   email: {
     type: String,
     trim: true,
@@ -63,13 +72,13 @@ const schema = new Schema({
  * @param followingTable
  * @param {Number} numberOfFriends
  * @param {String} fullDataWanted If you want a lot of data of just picture and username
- * @param {Function} callback
+ * @param {RequestedCallback} callback
  */
-schema.methods.listOfFriends = (followingTable = [], numberOfFriends = 0, fullDataWanted = false, callback) => {
+schema.statics.listOfFriends = function (followingTable: Follower[] = [], numberOfFriends: number = 0, fullDataWanted: boolean = false, callback: (IUser)=>void) {
   const following = followingTable;
   const newTable = following.filter(elem => elem.statut === 'accepted').map(doc => doc.userId);
   const valueSeek = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};
-  schema.methods.find({_id: {$in: newTable}}).select(valueSeek).limit(numberOfFriends)
+  this.find({_id: {$in: newTable}}).select(valueSeek).limit(numberOfFriends)
     .exec(function (err, waster) {
       waster.map(el => {
         el._doc.userId = el._id.toString();
@@ -84,12 +93,12 @@ schema.methods.listOfFriends = (followingTable = [], numberOfFriends = 0, fullDa
 /**
  * Get list of friend and sent notf to all friend list that are connected
  * @param {Users} userData
- * @param {} message
- * @param {} aliasSocketMessage
+ * @param {string} message -the message to send to the other friends
+ * @param {string} aliasSocketMessage -the alias of the socket
  * @param {any} socketSource
  * @returns {Promise<T>}
  */
-schema.methods.getListOfFriendAndSentSocket = (userData, message, aliasSocketMessage, socketSource): Promise<any> => {
+schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message: string, aliasSocketMessage: string, socketSource): Promise<any> {
   return new Promise((resolve, rej) => {
     this.listOfFriends(userData.following, 0, false, waster => {
       const socketUser = waster.map(elem => elem.userId);
@@ -115,7 +124,7 @@ schema.methods.getListOfFriendAndSentSocket = (userData, message, aliasSocketMes
   });
 };
 
-schema.methods.comparePassword = function (candidatePassword, callback) {
+schema.statics.comparePassword = function (candidatePassword, callback) {
   bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
     if (err) {
       return callback(err);
@@ -124,7 +133,7 @@ schema.methods.comparePassword = function (candidatePassword, callback) {
   });
 };
 
-schema.methods.hashingFunction = (password, tempUserData, insertTempUser, callback) => {
+schema.statics.hashingFunction = function (password, tempUserData, insertTempUser, callback) {
   bcrypt.genSalt(8, function (err, salt) {
     bcrypt.hash(password, salt, function (err, hash) {
       return insertTempUser(hash, tempUserData, callback);
@@ -141,6 +150,6 @@ schema.set('toJSON', {
 });
 
 // schema.plugin(friends({pathName: 'friendManagement'}));
-
-export default model('User', schema);
+const User = mongoose.model('User', schema);
+module.exports = User;
 

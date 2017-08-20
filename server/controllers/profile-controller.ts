@@ -1,10 +1,12 @@
 const Users = require('../datasets/users');
+// import {hashSync, compare} from 'bcryptjs';
 import * as bcrypt from 'bcryptjs';
+import {Request, Response} from 'express'
 import * as multer from 'multer';
 import * as fs from 'fs-extra';
 
 const storage = multer.diskStorage({ // multers disk storage settings
-  destination: function (req, file, cb) {
+  destination: function (req: any, file, cb) {
     const dir = './src/assets/upload/' + req.body.userId;
     if (!fs.existsSync(dir)) {
       console.log('le path n\'existe pas lors de la creation demulter', dir);
@@ -15,7 +17,7 @@ const storage = multer.diskStorage({ // multers disk storage settings
       cb(null, dir);
     }
   },
-  filename: function (req, file, cb) {
+  filename: function (req, file, cb: any) {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       return cb(new Error('Only image files are allowed!'), false);
     }
@@ -29,40 +31,52 @@ const upload = multer({ // multer settings
 }).single('file');
 
 export class ProfileController {
-  io;
+  public io;
 
   constructor(io) {
-    this.io = io;
+
   }
 
-  updatePhoto = (req, res) => {
+  /**
+   *
+   * @param req
+   * @param res
+   */
+  updatePhoto = (req, res: Response) => {
     upload(req, res, function (err) {
       console.log('req.file', req.file);
       if (err) {
         res.json({error_code: 1, err_desc: err});
       }
       const userId = req.body.userId;
-      Users.findById(userId).select({password: 0, __v: 0}).exec(function (err, userData) {
-        const user = userData;
-        user[req.body.uploadType] = req.file.path.substr(4);
-        Users.save(function (err) {
-          if (err) {
-            console.log('failed save');
-            res.status(500).send(err + 'error uploading image');
-          } else {
-            console.log('save successful', userData);
-            res.json(user);
-          }
+      Users.findById(userId)
+        .select({password: 0, __v: 0})
+        .exec(function (err, userData) {
+          const user = userData;
+          user[req.body.uploadType] = req.file.path.substr(4);
+          user.save(function (err) {
+            if (err) {
+              console.log('failed save');
+              res.status(500).send(err + 'error uploading image');
+            } else {
+              console.log('save successful', userData);
+              res.json(user);
+            }
+          });
         });
-      });
     });
   };
 
+  /**
+   * update any type of DataValue
+   * @param {Request} req
+   * @param {Response} res
+   */
   updateChamp = (req, res) => {
     const userId = req.body.userId;
     console.log(req.body);
     delete req.body.userId;
-    const champ = Object.keys(req.body)[0];
+    const champ = Object.keys(req.body).filter(elem => elem !== 'userId').toString();
     if (champ === 'email') {
       req.assert('email', 'Email is not valid').isEmail();
       req.assert('email', 'Email cannot be blank').notEmpty();
@@ -79,7 +93,7 @@ export class ProfileController {
       .exec((err, userData) => {
         const user = userData;
         user[champ] = [value];
-        Users.save(err => {
+        user.save(err => {
           if (err) {
             console.log('fail');
             res.json({status: 500});
@@ -112,7 +126,7 @@ export class ProfileController {
        * @param cb
        */
       const comparePassword = (passw, userPass, cb) => {
-        bcrypt.compare(passw, userPass, function (err, isMatch) {
+        bcrypt.compare(passw, userPass, (err, isMatch) => {
           if (err) {
             return cb(err, false);
           }

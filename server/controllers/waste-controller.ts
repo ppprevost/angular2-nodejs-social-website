@@ -63,6 +63,13 @@ export class WasteController {
     }
   }
 
+  /**
+   * Send post function
+   * @param req
+   * @param {Object} req.body.request
+   * @param {string} req.body.request.userId
+   * @param res
+   */
   sendPost = (req, res) => {
     const data = req.body.request;
     if (data) {
@@ -76,7 +83,7 @@ export class WasteController {
         }
       });
     } else {
-      res.status(404).send('aucun contenu enregistré dans la base');
+      res.status(404).send('no content saved in the database');
     }
   };
 

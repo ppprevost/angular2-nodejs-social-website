@@ -1,6 +1,6 @@
-import * as mongoose from 'mongoose';
+import {model, Schema} from 'mongoose';
 
-export default mongoose.model('UsersConnected', new mongoose.Schema({
+const UsersConnected = model('UsersConnected', new Schema({
   userId: String,
   location: [
     {
@@ -11,3 +11,4 @@ export default mongoose.model('UsersConnected', new mongoose.Schema({
   isConnected: Boolean,
   date: {type: Date, default: Date.now}
 }));
+module.exports = UsersConnected;

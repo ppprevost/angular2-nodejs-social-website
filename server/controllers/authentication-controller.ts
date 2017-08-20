@@ -1,19 +1,10 @@
-const Users = require('../datasets/users').default;
-const UsersConnected = require('../datasets/connected-users').default;
+const Users = require('../datasets/users');
+const UsersConnected = require('../datasets/connected-users');
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 const nev = require('email-verification')(mongoose);
 import * as request from 'request';
 import * as jwt from 'jsonwebtoken';
-// import {SocketIO.serv} from 'socket.io'
-
-const myHasher = (password, tempUserData, insertTempUser, callback) => {
-  bcrypt.genSalt(8, function (err, salt) {
-    bcrypt.hash(password, salt, function (err, hash) {
-      return insertTempUser(hash, tempUserData, callback);
-    });
-  });
-};
 
 export class AuthentificationController {
   io;
@@ -56,7 +47,7 @@ export class AuthentificationController {
         }
       },
 
-      hashingFunction: myHasher,
+      hashingFunction: Users.hashingFunction,
       passwordFieldName: 'password',
     }, function (err, options) {
       if (err) {
@@ -65,7 +56,6 @@ export class AuthentificationController {
       }
       console.log('configured: ' + (typeof options === 'object'));
     });
-    console.log(Users.default);
     nev.generateTempUserModel(Users, function (err, tempUserModel) {
       if (err) {
         console.log(err);
@@ -85,7 +75,6 @@ export class AuthentificationController {
    * @param next
    */
   signup = (req, res) => {
-    console.log('test THIIIIIIS', this);
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('email', 'Email cannot be blank').notEmpty();
     req.assert('pass', 'Password must be at least 4 characters long').len(4);

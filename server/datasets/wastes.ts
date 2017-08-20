@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-export default mongoose.model('Waste', new mongoose.Schema({
+module.exports = mongoose.model('Waste', new mongoose.Schema({
   userId: {type: String, required: true},
   userType: {type: String, enum: ['public', 'private']},
   content: String,

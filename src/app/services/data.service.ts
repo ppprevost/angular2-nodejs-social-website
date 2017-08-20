@@ -21,11 +21,15 @@ export class DataService {
   }
 
   /**
-   * Get all Users {User}
-   * @returns {Promise<Observable<Response>>}
+   * Get all Users
+   * @param {Object} args -key limitData and searchData and precise value
    */
-  getUsers(searchData?, limit = 0): Promise<any> {
-    return Promise.resolve(this.http.get(`api/users/get?limitData=${limit}&searchData=${searchData}`));
+  getUsers(...args): Promise<any> {
+    let str = '';
+    args
+      .filter(elem => elem)
+      .forEach(doc => str += `${doc.key}=${doc.value}`);
+    return Promise.resolve(this.http.get('api/users/get' + (str ? '?' + str : '')));
   }
 
   /**

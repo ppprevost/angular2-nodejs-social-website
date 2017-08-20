@@ -1,4 +1,4 @@
-const Users = require('../datasets/users').default, UsersConnected = require('../datasets/connected-users').default;
+const Users = require('../datasets/users'), UsersConnected = require('../datasets/connected-users');
 import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
 
@@ -36,10 +36,10 @@ export class UserController {
 
 
   getUsers = (req, res) => {
-    const search = new RegExp(req.query.searchData, 'i'),
+    const search = req.query.searchData? {username:new RegExp(req.query.searchData, 'i')} : {},
       limitData = req.query.limitData ? Number(req.query.limitData) : 0;
     Users
-      .find({username: search} || {})
+      .find(search)
       .select({
         password: 0,
         __v: 0
@@ -78,7 +78,7 @@ export class UserController {
           }
         }
       });
-  }
+  };
 
   deconnection = (req, res) => {
     console.log(req.body.userId);
@@ -190,7 +190,7 @@ export class UserController {
       });
     });
   }
-  ;
+    ;
 
   /**
    * Send private notification to the receiver of the request
