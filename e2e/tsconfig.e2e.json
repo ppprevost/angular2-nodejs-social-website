@@ -5,8 +5,7 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": [
-      "es2016"
+    "lib": ["es2016"
     ],
     "outDir": "../out-tsc/e2e",
     "module": "commonjs",

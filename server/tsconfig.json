@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "experimentalDecorators": true,
+  "sourceMap": true,
+  "compilerOptions": {
+    "outDir": "../dist/server",
+    "baseUrl": "tsconfig"
+  }
+}

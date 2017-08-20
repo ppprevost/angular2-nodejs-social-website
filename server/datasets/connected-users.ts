@@ -1,5 +1,6 @@
-let mongoose = require("mongoose");
-module.exports = mongoose.model('UsersConnected', {
+import {model, Schema} from 'mongoose';
+
+const UsersConnected = model('UsersConnected', new Schema({
   userId: String,
   location: [
     {
@@ -9,4 +10,5 @@ module.exports = mongoose.model('UsersConnected', {
     }],
   isConnected: Boolean,
   date: {type: Date, default: Date.now}
-});
+}));
+module.exports = UsersConnected;
