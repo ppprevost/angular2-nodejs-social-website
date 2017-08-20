@@ -80,12 +80,14 @@ schema.statics.listOfFriends = function (followingTable: Follower[] = [], number
   const valueSeek = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};
   this.find({_id: {$in: newTable}}).select(valueSeek).limit(numberOfFriends)
     .exec(function (err, waster) {
-      waster.map(el => {
-        el._doc.userId = el._id.toString();
-        el._doc.statut = 'accepted';
-        delete el._doc._id;
-        return el;
-      });
+      waster = waster
+        .map(doc => doc.toObject())
+        .map(el => {
+          el.userId = el._id.toString();
+          el.statut = 'accepted';
+          delete el._id;
+          return el;
+        });
       callback(waster);
     });
 };
@@ -93,34 +95,38 @@ schema.statics.listOfFriends = function (followingTable: Follower[] = [], number
 /**
  * Get list of friend and sent notf to all friend list that are connected
  * @param {Users} userData
- * @param {string} message -the message to send to the other friends
+ * @param {Object} message -the message to send to the other friends
  * @param {string} aliasSocketMessage -the alias of the socket
  * @param {any} socketSource
  * @returns {Promise<T>}
  */
-schema.methods.getListOfFriendAndSentSocket = function (userData: IUser, message: string, aliasSocketMessage: string, socketSource): Promise<any> {
+schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message, aliasSocketMessage: string, socketSource): Promise<any> {
   return new Promise((resolve, rej) => {
-    this.listOfFriends(userData.following, 0, false, function(waster) {
-      const socketUser = waster.map(elem => elem.userId);
-      let socketIds = [];
-      // send uniquely if the user is connected
-      UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
-        if (!err) {
-          userCo.forEach(userConected => {
-            userConected.location.forEach(socketId => {
-              if (socketSource.sockets.connected[socketId.socketId]) {
-                console.log('send to friend==>', socketId.socketId);
-                socketIds = [...socketIds, socketId.socketId];
-                socketSource.sockets.connected[socketId.socketId].emit(aliasSocketMessage, message);
-              }
-            });
+    if (typeof userData == 'string') {
+      this.findById(userData, (err, user) => {
+        this.listOfFriends(user.following, 0, false, function (waster) {
+          const socketUser = waster.map(elem => elem.userId);
+          // let socketIds = [];
+          // send uniquely if the user is connected
+          UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
+            if (!err) {
+              userCo.forEach(userConected => {
+                userConected.location.forEach(socketObject => {
+                  if (socketSource.sockets.connected[socketObject.socketId]) {
+                    console.log('send to friend==>', socketObject.socketId);
+                    //  socketIds = [...socketIds, socketObject.socketId];
+                    socketSource.sockets.connected[socketObject.socketId].emit(aliasSocketMessage, message);
+                  }
+                });
+              });
+              resolve(waster);
+            } else {
+              rej(err);
+            }
           });
-          resolve(waster);
-        } else {
-          rej(err);
-        }
-      });
-    });
+        });
+      })
+    }
   });
 };
 

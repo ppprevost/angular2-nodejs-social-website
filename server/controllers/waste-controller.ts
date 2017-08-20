@@ -74,10 +74,9 @@ export class WasteController {
     const data = req.body.request;
     if (data) {
       const waste = new Waste(data);
-      Users.findById(data.userId, (err, user) => {
-        waste.save();
+      waste.save((err) => {
         if (!err) {
-          user.getListOfFriendAndSentSocket(user, waste, 'getNewPost', this.io)
+          Users.getListOfFriendAndSentSocket(data.userId, waste, 'getNewPost', this.io)
             .then(() => res.json(waste))
             .catch(error => res.status(400).send(error));
         }
@@ -99,7 +98,7 @@ export class WasteController {
     Users.findById(userData, (err, user) => {
       if (!err && !onlyOwnPost && user.following && user.following.length) {
         Users.listOfFriends(user.following, 0, false, following => {
-          following = following.map(elem => elem._doc.userId);
+          following = following.map(elem => elem.userId);
           requestedWastes = requestedWastes.concat(following);
           this.actionGetPost(requestedWastes, typePost, req, res);
         });
@@ -107,7 +106,7 @@ export class WasteController {
         this.actionGetPost(requestedWastes, typePost, req, res);
       }
     });
-  }
+  };
 
   /**
    * Send a new comment from a specific
