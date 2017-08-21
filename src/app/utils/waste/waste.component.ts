@@ -30,7 +30,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   @Input() onlyOwnPost;
   @Input() userId: string;
   masonry;
-  wastes: Array<Waste>;
+  wastes: Array<Waste> = [];
   connection;
   private subComment;
 
@@ -66,7 +66,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
 
   @HostListener('window:scroll', ['$event']) onScroll($event) {
     this.infinite.getInfiniteScroll(() => {
-      this.data.getPost(this.userId, 10, 'all', false, 10).map(res => res.json())
+      this.data.getPost(this.userId, 10, 'all', false, this.wastes.length).map(res => res.json())
         .subscribe((data) => this.wastes = this.wastes.concat(data), err => console.log(err));
     });
   }
@@ -79,7 +79,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   getPosts() {
-    this.data.getPost(this.userId, this.numberOfWaste, this.typePost, this.onlyOwnPost, 10)
+    this.data.getPost(this.userId, this.numberOfWaste, this.typePost, this.onlyOwnPost, this.wastes.length)
       .map(res => res.json())
       .subscribe(
         data => {

@@ -1,7 +1,7 @@
 const Waste = require('../datasets/wastes');
 const Users = require('../datasets/users');
 const mongoose = require('mongoose');
-type TypePost = 'public' | 'private'|'all';
+type TypePost = 'publicOnly'|'all';
 
 export class WasteController {
   private io;
@@ -21,15 +21,13 @@ export class WasteController {
    *
    * @param {Array} requestedWastes -Array of userId
    * @param {string} typePost -either public or private
-   * @param {Express.Request} req
-   * @param {number} req.body.numberOfWaste
-   * @param {number} req.body.skipLimit
-   * @param {Express.Response} res
+   * @param {number} numberOfWaste
+   * @param {number} skipLimit
    */
-  private actionGetPost(requestedWastes, typePost, req, res) {
+  private actionGetPost(requestedWastes, req, res) {
     if (requestedWastes.length) { // length == 1 means no friends
       const seekPosts: any = {userId: {$in: requestedWastes}};
-      if (typePost === 'publicOnly') {
+      if (req.body.typePost === 'publicOnly') {
         seekPosts.userType = 'public';
       }
       Waste.find(seekPosts)
@@ -52,10 +50,11 @@ export class WasteController {
                 allUserImage.forEach((elem) => {
                   if (doc.userId == elem._id) {
                     doc._doc.image = elem.image; // hack Mongoose
-                    doc._doc.user = elem.username;
+                    doc._doc.username = elem.username;
                     return doc
                   }
                 });
+
               });
               res.json(allWastes);
             });
@@ -65,6 +64,29 @@ export class WasteController {
       res.status(400).send('pas de posts trouvés ou erreurs envoi userId');
     }
   }
+
+  /**
+   * Get all Post from a user
+   * @param {Express.Request} req
+   * @param {boolean} req.body.onlyOwnPost -if true get your own Post
+   * @param {string] req.body.typePost -private or public
+   * @param {Express.Response} res
+   */
+  getPost = (req, res) => {
+    const userData = req.body.following, onlyOwnPost: boolean = req.body.onlyOwnPost;
+    let requestedWastes = [userData];
+    Users.findById(userData, (err, user) => {
+      if (!err && !onlyOwnPost && user.following && user.following.length) {
+        Users.listOfFriends(user.following, 0, false, following => {
+          following = following.map(elem => elem.userId);
+          requestedWastes = requestedWastes.concat(following);
+          this.actionGetPost(requestedWastes, req, res);
+        });
+      } else {
+        this.actionGetPost(requestedWastes, req, res);
+      }
+    });
+  };
 
   /**
    * Send post function
@@ -92,29 +114,6 @@ export class WasteController {
     }
   };
 
-  /**
-   * Get all Post from a user
-   * @param {Express.Request} req
-   * @param {boolean} req.body.onlyOwnPost -if true get your own Post
-   * @param {string] req.body.typePost -private or public
-   * @param {Express.Response} res
-   */
-  getPost = (req, res) => {
-    const userData = req.body.following, onlyOwnPost: boolean = req.body.onlyOwnPost,
-      typePost: TypePost = req.body.typePost;
-    let requestedWastes = [userData];
-    Users.findById(userData, (err, user) => {
-      if (!err && !onlyOwnPost && user.following && user.following.length) {
-        Users.listOfFriends(user.following, 0, false, following => {
-          following = following.map(elem => elem.userId);
-          requestedWastes = requestedWastes.concat(following);
-          this.actionGetPost(requestedWastes, typePost, req, res);
-        });
-      } else {
-        this.actionGetPost(requestedWastes, typePost, req, res);
-      }
-    });
-  };
 
   /**
    * Send a new comment from a specific

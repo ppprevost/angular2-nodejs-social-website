@@ -21,10 +21,9 @@ var schema = new mongoose.Schema({
  * @returns {schema.methods}
  */
 schema.methods.getMoreWasteInfo = function (user) {
-  let waste = this.toObject();
-  waste.username = user.username;
-  waste.image = user.image;
-  return waste
+  this._doc.username = user.username;
+  this._doc.image = user.image;
+  return this
 };
 
 module.exports = mongoose.model('Waste', schema);

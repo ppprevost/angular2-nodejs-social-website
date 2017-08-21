@@ -17,7 +17,7 @@
                   class="icon-reply-all-fill fa fa-2x "></i></a>
                 <a (click)="deleteWasteOrPost(waste._id)" *ngIf="auth.user._id === waste.userId"
                    class="fa fa-close pull-right"></a>
-                <a href="">{{waste.user}}</a>
+                <a href="">{{waste.username}}</a>
                 <p>{{waste.userType}} post</p>
                 <span>on {{waste.date | date: 'MM/dd/yyyy hh:mm'}}</span>
               </div>

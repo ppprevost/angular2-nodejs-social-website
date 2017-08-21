@@ -49,34 +49,39 @@ export class InfiniteScrollService {
    * @param context
    * @returns {()=>any}
    */
-  debounce(func, wait, immediate, context?) {
-    let result;
-    let timeout = null;
+  debounce(func, wait, immediate) {
+    var timeout;
     return function () {
-      let ctx = context || this, args = arguments;
-      let later = function () {
+      var context = window,
+        args = arguments;
+      var later = function () {
         timeout = null;
-        if (!immediate) result = func.apply(ctx, args);
+        if (!immediate) {
+          func.apply(context, args);
+        }
       };
       var callNow = immediate && !timeout;
-      // Tant que la fonction est appelée, on reset le timeout.
       clearTimeout(timeout);
       timeout = setTimeout(later, wait);
-      if (callNow) result = func.apply(ctx, args);
-      return result;
+      if (callNow) {
+        func.apply(context, args);
+      }
     };
-  }
+  };
 
   /**
    * get the function
    */
   getInfiniteScroll(callback?) {
-    if (this.getDocHeight() - 20 <= this.getScrollXY()[1] + window.innerHeight) {
-      this.debounce((d) => console.log(d), 250, false);
-      console.log('edeors debounce');
-      if (callback) {
-        callback();
+    this.debounce((d) => {
+      if (this.getDocHeight() - 20 <= this.getScrollXY()[1] + window.innerHeight) {
+        console.log('edeors debounce');
+        if (callback) {
+          callback();
+        }
       }
-    }
+
+    }, 500, false).bind(window);
+
   }
 }

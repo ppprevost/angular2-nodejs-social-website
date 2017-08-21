@@ -123,12 +123,12 @@ export class DataService {
    * Get post from a user and all this different friends
    * @param userId {String}
    * @param numberOfWaste {Number}
-   * @param typePost {String} means private or public
+   * @param typePost {String} means publicOnly or all
    * @param onlyOwnPost {Boolean} means that i only want my own post
    * @param skipLimit for infinite scrollig
    * @returns {Observable<Response>}
    */
-  getPost(userId: string, numberOfWaste: number, typePost: TypePost, onlyOwnPost: boolean, skipLimit) {
+  getPost(userId: string, numberOfWaste: number, typePost: TypePost, onlyOwnPost: boolean, skipLimit:number) {
     return this.http.post('/api/waste/getPost', JSON.stringify({
       following: userId,
       numberOfWaste,
