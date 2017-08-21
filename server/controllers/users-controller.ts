@@ -88,30 +88,33 @@ export class UserController {
    * @param res
    */
   deconnection = (req, res) => {
-    console.log(req.body.userId);
+    console.log('body de deconnection', req.body.userId);
     jwt.verify(req.body.token, process.env.SECRET_TOKEN, (err, decoded) => {
-      UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
-        if (!err) {
-          if (user) {
-            if (user.location.length <= 1) {
-              user.remove();
-            } else {
-              if (!err) {
-                const indexObj = user.location.indexOf(user.location.find(elem => {
-                  return elem._id.toString() === decoded.user.idOfLocation;
-                }));
-                user.location.splice(indexObj, 1);
-                user.save();
+      if (decoded) { // means that the token is good
+        UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
+          if (!err) {
+            if (user) {
+              if (user.location.length <= 1) {
+                user.remove();
+              } else {
+                if (!err) {
+                  const indexObj = user.location.indexOf(user.location.find(elem => {
+                    return elem._id.toString() === decoded.user.idOfLocation;
+                  }));
+                  user.location.splice(indexObj, 1);
+                  user.save();
+                }
               }
             }
+            res.send('deconnection effectuée');
           }
-          res.send('deconnection effectuée');
-        }
-      });
+        });
+      } else {
+        res.status(401).send('invalid Token');
+      }
       // TODO  deconnectionMethod('userId', decoded.user._id)
     });
   }
-
   /**
    * Delete socket ID from MongoDB server
    * @param {string} socketId string

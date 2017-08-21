@@ -134,7 +134,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.auth.countFriendRequest++;
       }
     });
-    //TODO search server side
+    // TODO search server side
     // auto completion
     // this.data.getUsers()
     //   .then(tableOfUsers => {
