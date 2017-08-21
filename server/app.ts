@@ -38,6 +38,7 @@ class Server {
   }
 
   databases() {
+    dotenv.config({path: '.env'});
     mongoose.connect(process.env.MONGODB_URI);
     const db = mongoose.connection;
     (<any>mongoose).Promise = global.Promise;

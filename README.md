@@ -1,6 +1,6 @@
 # Angular 4 Node.js MEAN Social Website 
 
-Social website created with Angular 4, Angular-cli, MongoDB, Node.js, Express.js, Bootstrap and Socket.io.
+Social website created with Angular 4, Angular-cli, MongoDB, Node.js, Express.js, Typescript, Bootstrap and Socket.io.
 
 ## Getting Started
 
@@ -33,8 +33,7 @@ npm run dev
 Your application is listening to localhost:4200
 ### Production mode and Heroku
 
-if you want push to Heroku : Add 
-Put your environment var.
+if you want push to Heroku : Add your environment var. Then :
 ```
 "postinstall": "ng build -aot -prod",
 ```
