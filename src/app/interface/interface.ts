@@ -19,6 +19,8 @@ export interface User {
   modifiedAt: Date;
 }
 
+export type TypePost = 'public' | 'private' |'all';
+
 export interface Waste {
   readonly _id: string;
   userId: string;
@@ -27,7 +29,7 @@ export interface Waste {
   date: Date;
   likes: Array<string>;
   likeItVeryMuch: boolean;
-  userType: string;
+  userType: TypePost;
   isOpeningCommentary?: boolean;
 }
 

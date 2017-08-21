@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AppComponent} from '../app.component';
 
 @Component({
@@ -8,12 +8,14 @@ import {AppComponent} from '../app.component';
 })
 export class SidebarComponent implements OnInit {
 
-  constructor(public appComponent:AppComponent) { }
+  constructor(public appComponent: AppComponent) {
+  }
 
   ngOnInit() {
   }
-logOut(){
+
+  logOut() {
     return this.appComponent.logOut()
-}
+  }
 
 }

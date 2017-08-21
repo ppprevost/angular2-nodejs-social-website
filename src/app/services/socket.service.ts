@@ -15,7 +15,7 @@ export class SocketService {
 
   /**
    * Manage all socket function of the client app.
-   * @param receiver {String} sync with the backend
+   * @param {String} receiver  -alias to sync with the backend
    * @returns {Observable<any>|"../../Observable".Observable<any>|"../../../Observable".Observable<any>}
    */
   socketFunction(receiver: string) {

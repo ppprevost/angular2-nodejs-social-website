@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
-import {Commentary, Waste, Friends} from '../interface/interface';
+import {Commentary, Waste, Friends, TypePost} from '../interface/interface';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
@@ -128,7 +128,7 @@ export class DataService {
    * @param skipLimit for infinite scrollig
    * @returns {Observable<Response>}
    */
-  getPost(userId: string, numberOfWaste: number, typePost: string, onlyOwnPost: boolean, skipLimit) {
+  getPost(userId: string, numberOfWaste: number, typePost: TypePost, onlyOwnPost: boolean, skipLimit) {
     return this.http.post('/api/waste/getPost', JSON.stringify({
       following: userId,
       numberOfWaste,

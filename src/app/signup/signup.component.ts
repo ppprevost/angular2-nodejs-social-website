@@ -1,11 +1,11 @@
-import {Component, OnInit, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {PublicService} from '../services/public.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {Router} from '@angular/router';
 import {ToastyService} from 'ng2-toasty';
 import swal from 'sweetalert2';
 import 'rxjs/add/operator/map';
-import { environment } from '../../environments/environment';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-signup',

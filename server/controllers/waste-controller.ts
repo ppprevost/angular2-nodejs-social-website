@@ -1,6 +1,7 @@
 const Waste = require('../datasets/wastes');
 const Users = require('../datasets/users');
 const mongoose = require('mongoose');
+type TypePost = 'public' | 'private'|'all';
 
 export class WasteController {
   private io;
@@ -85,7 +86,7 @@ export class WasteController {
               .catch(error => res.status(400).send(error));
           }
         });
-      })
+      });
     } else {
       res.status(404).send('no content saved in the database');
     }
@@ -99,7 +100,8 @@ export class WasteController {
    * @param {Express.Response} res
    */
   getPost = (req, res) => {
-    const userData = req.body.following, onlyOwnPost = req.body.onlyOwnPost, typePost = req.body.typePost;
+    const userData = req.body.following, onlyOwnPost: boolean = req.body.onlyOwnPost,
+      typePost: TypePost = req.body.typePost;
     let requestedWastes = [userData];
     Users.findById(userData, (err, user) => {
       if (!err && !onlyOwnPost && user.following && user.following.length) {

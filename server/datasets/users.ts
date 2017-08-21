@@ -20,11 +20,11 @@ interface IUser {
 }
 
 interface Follower {
-  userId: string,
-  date: Date,
-  statut: string,
-  image: string,
-  username: string
+  userId: string;
+  date: Date;
+  statut: string;
+  image: string;
+  username: string;
 }
 
 const follower = new mongoose.Schema(

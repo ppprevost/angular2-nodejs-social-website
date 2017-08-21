@@ -6,7 +6,7 @@ import {FileUploader} from 'ng2-file-upload';
 import {environment} from '../../environments/environment';
 import {FileSelectDirective, FileDropDirective} from 'ng2-file-upload';
 import {User} from '../interface/interface';
-import * as swal from 'sweetalert2';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
