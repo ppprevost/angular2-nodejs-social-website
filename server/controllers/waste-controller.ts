@@ -94,8 +94,9 @@ export class WasteController {
   /**
    * Get all Post from a user
    * @param {Express.Request} req
-   * @param {boolean} onlyOwnPost Get own Post
-   * @param res
+   * @param {boolean} req.body.onlyOwnPost -if true get your own Post
+   * @param {string] req.body.typePost -private or public
+   * @param {Express.Response} res
    */
   getPost = (req, res) => {
     const userData = req.body.following, onlyOwnPost = req.body.onlyOwnPost, typePost = req.body.typePost;
@@ -187,7 +188,7 @@ export class WasteController {
             result.remove();
           }
           result.save(() => {
-            res.json(result)
+            res.json(result);
           });
         } else {
           const index = result.commentary.indexOf(result.commentary.find(elem => {

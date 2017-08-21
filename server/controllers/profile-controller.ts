@@ -69,13 +69,14 @@ export class ProfileController {
 
   /**
    * update any type of DataValue
-   * @param {Request} req
+   * @param {Express.Request} req
+   * @param {string} req.body.userId -mongoose userId
+   * @param {Object} req.body -the userId plus the key you want to change
    * @param {Response} res
    */
   updateChamp = (req, res) => {
     const userId = req.body.userId;
     console.log(req.body);
-    delete req.body.userId;
     const champ = Object.keys(req.body).filter(elem => elem !== 'userId').toString();
     if (champ === 'email') {
       req.assert('email', 'Email is not valid').isEmail();
@@ -106,8 +107,9 @@ export class ProfileController {
   };
 
   /**
-   * Update password
+   * Update password Put request
    * @param req
+   * @param {string} req.body.userId
    * @param res
    */
   updatePassword = (req, res) => {

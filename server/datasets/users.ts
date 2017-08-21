@@ -1,7 +1,6 @@
 import mongoose = require('mongoose')
 import * as bcrypt from 'bcryptjs';
 import {} from 'socket.io'
-// const friends = require('mongoose-friends');
 const UsersConnected = require('./connected-users');
 
 interface IUser {
@@ -74,7 +73,7 @@ const schema = new mongoose.Schema({
  * @param {String} fullDataWanted If you want a lot of data of just picture and username
  * @param {RequestedCallback} callback
  */
-schema.statics.listOfFriends = function (followingTable: Follower[] = [], numberOfFriends: number = 0, fullDataWanted: boolean = false, callback: (IUser)=>void) {
+schema.statics.listOfFriends = function (followingTable: Follower[] = [], numberOfFriends: number = 0, fullDataWanted: boolean = false, callback: (IUser) => void) {
   const following = followingTable;
   const newTable = following.filter(elem => elem.statut === 'accepted').map(doc => doc.userId);
   const valueSeek = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};
@@ -102,25 +101,25 @@ schema.statics.listOfFriends = function (followingTable: Follower[] = [], number
  */
 schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message, aliasSocketMessage: string, socketSource): Promise<any> {
   return new Promise((resolve, rej) => {
-        this.listOfFriends(userData.following, 0, false, function (waster) {
-          const socketUser = waster.map(elem => elem.userId);
-          UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
-            if (!err) {
-              userCo.forEach(userConected => {
-                userConected.location.forEach(socketObject => {
-                  if (socketSource.sockets.connected[socketObject.socketId]) {
-                    console.log('send to friend==>', socketObject.socketId);
-                    //  socketIds = [...socketIds, socketObject.socketId];
-                    socketSource.sockets.connected[socketObject.socketId].emit(aliasSocketMessage, message);
-                  }
-                });
-              });
-              resolve(waster);
-            } else {
-              rej(err);
-            }
+    this.listOfFriends(userData.following, 0, false, function (waster) {
+      const socketUser = waster.map(elem => elem.userId);
+      UsersConnected.find({userId: {$in: socketUser}}).exec((err, userCo) => {
+        if (!err) {
+          userCo.forEach(userConected => {
+            userConected.location.forEach(socketObject => {
+              if (socketSource.sockets.connected[socketObject.socketId]) {
+                console.log('send to friend==>', socketObject.socketId);
+                //  socketIds = [...socketIds, socketObject.socketId];
+                socketSource.sockets.connected[socketObject.socketId].emit(aliasSocketMessage, message);
+              }
+            });
           });
-        });
+          resolve(waster);
+        } else {
+          rej(err);
+        }
+      });
+    });
   });
 };
 

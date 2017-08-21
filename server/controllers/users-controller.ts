@@ -28,15 +28,14 @@ export class UserController {
 
   /**
    * Get all Users and add the connected carcterisitc
-   * limitData
-   * searchData for autocompletion
    * @param req
-   * @param res
+   * @param {string} [req.body.searchData] -the sepcific users you are looking for
+   * @param {number} [req.body.limitData] -the number of users you want to send
+   * @param {number} [req.body.skipLimit] -for scrolling users
+   * @param {express.Response} res
    */
-
-
   getUsers = (req, res) => {
-    const search = req.query.searchData? {username:new RegExp(req.query.searchData, 'i')} : {},
+    const search = req.query.searchData ? {username: new RegExp(req.query.searchData, 'i')} : {},
       limitData = req.query.limitData ? Number(req.query.limitData) : 0;
     Users
       .find(search)
@@ -45,6 +44,7 @@ export class UserController {
         __v: 0
       }).limit(limitData)
       .sort({createdAt: 1})
+      .skip(req.body.skipLimit)
       .exec(function (err, usersData) {
         if (err) {
           res.status(500).send(err);
@@ -80,6 +80,13 @@ export class UserController {
       });
   };
 
+  /**
+   *
+   * @param req
+   * @param {string} req.body.userId -mongoose userId
+   * @param {string} req.body.token -json web token
+   * @param res
+   */
   deconnection = (req, res) => {
     console.log(req.body.userId);
     jwt.verify(req.body.token, process.env.SECRET_TOKEN, (err, decoded) => {
@@ -107,7 +114,7 @@ export class UserController {
 
   /**
    * Delete socket ID from MongoDB server
-   * @param socketId string
+   * @param {string} socketId string
    */
   deleteSocketIdDB = (socketId) => {
     // TODO  deconnectionMethod('location.socketId', socketId)
@@ -190,7 +197,7 @@ export class UserController {
       });
     });
   }
-    ;
+  ;
 
   /**
    * Send private notification to the receiver of the request

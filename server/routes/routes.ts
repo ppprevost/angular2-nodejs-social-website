@@ -14,6 +14,11 @@ export class RouterApp {
   private app;
   private router: Router;
 
+  /**
+   * @constructor
+   * @param {express.Application} app -express injection
+   * @param {SocketServer} io -socket io
+   */
   constructor(app: Application, io) {
     this.router = Router();
     // traitement socket

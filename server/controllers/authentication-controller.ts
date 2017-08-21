@@ -309,6 +309,7 @@ export class AuthentificationController {
   /**
    * Valid the email of user after clicking in the mail link
    * @param req
+   * @param {string} req.body.url -token to ensure that you could sign in
    * @param res
    */
   emailVerif = (req, res) => {
@@ -335,6 +336,7 @@ export class AuthentificationController {
   /**
    * This function update lit of friends and information about a specific user (the connected user mainly)
    * @param req
+   * @param {string} req.body.token -JsonWebToken
    * @param res
    */
   refreshUserData = (req, res) => {
@@ -364,7 +366,8 @@ export class AuthentificationController {
 
   /**
    * Valid Captcha of the Google Recaptcha
-   * @param req
+   * @param {Express.Appliication} req
+   * @params {string} req.params.token -token to valid captcha
    * @param res
    */
   validCaptcha = (req, res) => {

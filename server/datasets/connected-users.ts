@@ -1,5 +1,9 @@
 import {model, Schema} from 'mongoose';
 
+/**
+ * The waste model
+ * @type {"mongoose".Model<T>}
+ */
 const UsersConnected = model('UsersConnected', new Schema({
   userId: String,
   location: [

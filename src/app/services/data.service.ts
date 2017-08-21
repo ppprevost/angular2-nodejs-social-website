@@ -34,7 +34,8 @@ export class DataService {
 
   /**
    * Get data from a specific user and load data from the backend
-   * @param userid {String}
+   * @param {String} userid
+   * @path {Post}
    * @returns {Observable<Response>}
    */
   getThisUser(userid): Observable<any> {
@@ -52,7 +53,7 @@ export class DataService {
 
   /**
    * Update perso data
-   * @param champ
+   * @param {Object} champ -userId and the value to change
    * @returns {Observable<Response>}
    */
   updateChamp(champ): Observable<any> {
@@ -70,7 +71,7 @@ export class DataService {
 
   /**
    * Delete my account
-   * @param userId {String}
+   * @param {String} userId -mongooose UserId
    * @returns {Observable<Response>}
    */
   deleteAccount(userId: string): Observable<any> {
@@ -81,6 +82,11 @@ export class DataService {
     return this.http.get(`api/users/uploadPicture/${userId}`, this.options);
   }
 
+  /**
+   * Delete all your own Picture
+   * @param userId
+   * @returns {Observable<Response>}
+   */
   deleteAllPicture(userId: string): Observable<any> {
     return this.http.delete(`/api/users/deleteAllPicture/${userId}`, this.options);
   }
