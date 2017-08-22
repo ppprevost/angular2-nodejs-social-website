@@ -26,7 +26,9 @@ import {MdRadioModule, MdInputModule, MdTooltipModule} from '@angular/material';
 import {ListOfFriendComponent} from './utils/list-of-friend/list-of-friend.component';
 import {TooltipDirective} from './utils/tooltip.directive';
 import {ReCaptchaModule} from 'angular2-recaptcha';
-import { Ng2CompleterModule } from "ng2-completer";
+import {Ng2CompleterModule} from "ng2-completer";
+import {AuthModule} from './auth-http/auth-http.module';
+
 
 const routing = RouterModule.forRoot([
   {path: '', component: HomeComponent},
@@ -75,6 +77,7 @@ const routing = RouterModule.forRoot([
     FormsModule,
     FileUploadModule,
     ReactiveFormsModule,
+    AuthModule,
     MdRadioModule,
     ReCaptchaModule,
     Ng2CompleterModule,

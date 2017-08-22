@@ -1,5 +1,6 @@
 const Users = require('../datasets/users');
 const UsersConnected = require('../datasets/connected-users');
+import {ipConnection} from '../utils/utils';
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 const nev = require('email-verification')(mongoose);
@@ -108,10 +109,10 @@ export class AuthentificationController {
         const URL = newTempUser[nev.options.URLFieldName];
 
         const confirmTempUser = () => {
-          return nev.confirmTempUser(URL, function (err, user) {
+          return nev.confirmTempUser(URL, function (error, user) {
             console.log(user);
-            if (err) {
-
+            if (error) {
+              console.log(error);
             }
             if (user) {
               res.json(user);
@@ -143,7 +144,7 @@ export class AuthentificationController {
         });
       }
     });
-  };
+  }
 
   resendVerificationEmail = (req, res) => {
     // resend verification button was clicked
@@ -189,14 +190,14 @@ export class AuthentificationController {
               delete userData.password;
               UsersConnected.findOne({userId: userData._id.toString()}, (err, userAlreadyConnected) => {
                 if (userAlreadyConnected) {
-                  userAlreadyConnected.location.push({socketId: req.body.socketId, IP: this.ipConnection(req)});
+                  userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
                   userAlreadyConnected.save(() => {
                     this.locationSearch(userAlreadyConnected, req.body.socketId, userData);
                   });
                 } else {
                   const newUserConnected = new UsersConnected({
                     userId: userData._id,
-                    location: [{socketId: req.body.socketId, IP: this.ipConnection(req)}]
+                    location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
                   });
                   newUserConnected.save((err, savedUser) => {
                     this.locationSearch(savedUser, req.body.socketId, userData);
@@ -223,74 +224,6 @@ export class AuthentificationController {
     });
   }
 
-  /**
-   * Call this function uniquely if the user is refreshing the page of connnect again
-   * @param req
-   * @param res
-   */
-  refreshSocketIdOfConnectedUsers = (req, res) => {
-    const socketId = req.body.socketId, token = req.body.token;
-    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
-      if (!err) {
-        UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
-          if (!err) {
-            let indexOfLocation;
-            if (user) {
-              indexOfLocation = user.location.indexOf(user.location.find(elem => {
-                return elem._id.toString() == decoded.user.idOfLocation
-              }));
-              user.location.push({socketId: socketId, IP: this.ipConnection(req)});
-              // user.location[indexOfLocation]["socketId"] = socketId
-              const location = [];
-              Object.keys(this.io.sockets.connected).forEach(elem => {
-                user.location.forEach(theRealSocketUses => {
-                  if (theRealSocketUses.socketId == elem) {
-                    location.push(theRealSocketUses)
-                  }
-                });
-              });
-              if (!location.length) {
-                user.remove();
-              } else {
-                user.location = location;
-              }
-              user.save(() => {
-                res.send(`socketnumber ${req.body.socketId} has been updated as an existing user`);
-              });
-            } else {
-              const newUserConnected = new UsersConnected({
-                userId: decoded.user._id,
-                location: [{socketId: req.body.socketId, IP: this.ipConnection(req)}]
-              });
-              newUserConnected.save((err, savedUser) => {
-                // locationSearch(savedUser, socketId, decoded.user, res)
-                res.send(`socketnumber ${req.body.socketId} has been updated as a new user`);
-              });
-            }
-          } else {
-            console.log(err);
-          }
-        });
-      }
-    });
-  };
-
-  /**
-   * Get ipconnection to spy
-   * @param req
-   * @returns {*}
-   */
-  private ipConnection(req) {
-    let ip;
-    if (req.headers['x-forwarded-for']) {
-      ip = req.headers['x-forwarded-for'].split(',')[0];
-    } else if (req.connection && req.connection.remoteAddress) {
-      ip = req.connection.remoteAddress;
-    } else {
-      ip = req.ip;
-    }
-    return ip;
-  }
 
   private locationSearch(savedUser, socketId, userData) {
     const idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
@@ -333,36 +266,6 @@ export class AuthentificationController {
     });
   }
 
-  /**
-   * This function update lit of friends and information about a specific user (the connected user mainly)
-   * @param req
-   * @param {string} req.body.token -JsonWebToken
-   * @param res
-   */
-  refreshUserData = (req, res) => {
-    const token = req.body.token;
-    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
-      if (!err) {
-        Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
-          if (!err) {
-            Users.listOfFriends(user.following, 10, false, waster => {
-              waster.map(elem => {
-                user.following.map(doc => {
-                  if (doc.userId === elem._id) {
-                    doc = elem;
-                  }
-                  return doc;
-                });
-              });
-              res.status(200).json(user);
-            });
-          }
-        });
-      } else {
-        res.status(401).send(err);
-      }
-    });
-  }
 
   /**
    * Valid Captcha of the Google Recaptcha

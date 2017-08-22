@@ -1,5 +1,4 @@
 const Users = require('../datasets/users');
-// import {hashSync, compare} from 'bcryptjs';
 import * as bcrypt from 'bcryptjs';
 import {Request, Response} from 'express'
 import * as multer from 'multer';
@@ -65,7 +64,7 @@ export class ProfileController {
           });
         });
     });
-  };
+  }
 
   /**
    * update any type of DataValue
@@ -87,15 +86,15 @@ export class ProfileController {
         return res.status(400).send(errors);
       }
     }
-    const value = req.body[Object.keys(req.body)[0]];
+    const value = req.body[champ];
     Users
       .findById(userId)
       .select({password: 0, __v: 0})
       .exec((err, userData) => {
         const user = userData;
         user[champ] = [value];
-        user.save(err => {
-          if (err) {
+        user.save(error => {
+          if (error) {
             console.log('fail');
             res.json({status: 500});
           } else {
@@ -121,34 +120,17 @@ export class ProfileController {
     }
     const userId = req.body.userId, password = req.body.password;
     Users.findById(userId, function (err, user) {
-      /**
-       * For Hashing BCrypt Function
-       * @param passw
-       * @param userPass
-       * @param cb
-       */
-      const comparePassword = (passw, userPass, cb) => {
-        bcrypt.compare(passw, userPass, (err, isMatch) => {
-          if (err) {
-            return cb(err, false);
-          }
-          return cb(null, isMatch);
-        });
-      };
-      comparePassword(req.body.lastPassword, Users.password, function (err, isMatch) {
-        if (err) {
-          res.status(401).send('error when comparing Pasword');
-        } else {
+      user.comparePassword(req.body.lastPassword, function (err, isMatch) {
           if (isMatch) {
-            Users.password = bcrypt.hashSync(password);
-            Users.save(() => {
+            user.password = bcrypt.hashSync(password);
+            user.save(() => {
               res.json({msg: 'password update from the server'});
             });
           } else {
-            res.status(401).send('Match error, please be sure to fill your good old password');
+            res.status(401).send(err);
           }
         }
-      });
+      );
     });
   }
 
@@ -164,8 +146,8 @@ export class ProfileController {
       if (err) {
         res.status(404).json('cannot find the account');
       } else {
-        Users.findByIdAndRemove(id, (err) => {
-          if (!err) {
+        Users.findByIdAndRemove(id, (error) => {
+          if (!error) {
             res.send(`Your account has been deleted, number of friend affected : ${numberAffect}`);
           } else {
             res.status(404).json('cannot find the account');

@@ -1,6 +1,7 @@
 const Users = require('../datasets/users'), UsersConnected = require('../datasets/connected-users');
 import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
+import {ipConnection} from '../utils/utils';
 
 const uploadUtil = (req, res, callback) => {
   const userId = req.params.id;
@@ -88,7 +89,6 @@ export class UserController {
    * @param res
    */
   deconnection = (req, res) => {
-    console.log('body de deconnection', req.body.userId);
     jwt.verify(req.body.token, process.env.SECRET_TOKEN, (err, decoded) => {
       if (decoded) { // means that the token is good
         UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
@@ -271,7 +271,7 @@ export class UserController {
           follower.following.splice(wasterIndex, 1);
           follower.save();
           res.json(follower);
-        })
+        });
       });
     });
   };
@@ -343,7 +343,91 @@ export class UserController {
         });
       }
     });
+  }
+
+
+  /**
+   * Call this function uniquely if the user is refreshing the page of connnect again
+   * @param req
+   * @param res
+   */
+  refreshSocketIdOfConnectedUsers = (req, res) => {
+    const socketId = req.body.socketId, token = req.body.token;
+    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
+      if (!err) {
+        UsersConnected.findOne({userId: decoded.user._id}, (err, user) => {
+          if (!err) {
+            let indexOfLocation;
+            if (user) {
+              indexOfLocation = user.location.indexOf(user.location.find(elem => {
+                return elem._id.toString() == decoded.user.idOfLocation
+              }));
+              user.location.push({socketId: socketId, IP: ipConnection(req)});
+              // user.location[indexOfLocation]["socketId"] = socketId
+              const location = [];
+              Object.keys(this.io.sockets.connected).forEach(elem => {
+                user.location.forEach(theRealSocketUses => {
+                  if (theRealSocketUses.socketId == elem) {
+                    location.push(theRealSocketUses)
+                  }
+                });
+              });
+              if (!location.length) {
+                user.remove();
+              } else {
+                user.location = location;
+              }
+              user.save(() => {
+                res.send(`socketnumber ${req.body.socketId} has been updated as an existing user`);
+              });
+            } else {
+              const newUserConnected = new UsersConnected({
+                userId: decoded.user._id,
+                location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
+              });
+              newUserConnected.save((err, savedUser) => {
+                // locationSearch(savedUser, socketId, decoded.user, res)
+                res.send(`socketnumber ${req.body.socketId} has been updated as a new user`);
+              });
+            }
+          } else {
+            console.log(err);
+          }
+        });
+      }
+    });
   };
+
+  /**
+   * This function update lit of friends and information about a specific user (the connected user mainly)
+   * @param req
+   * @param {string} req.body.token -JsonWebToken
+   * @param res
+   */
+  refreshUserData = (req, res) => {
+    const token = req.body.token;
+    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
+      if (!err) {
+        Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
+          if (!err) {
+            Users.listOfFriends(user.following, 10, false, waster => {
+              waster.map(elem => {
+                user.following.map(doc => {
+                  if (doc.userId === elem._id) {
+                    doc = elem;
+                  }
+                  return doc;
+                });
+              });
+              res.status(200).json(user);
+            });
+          }
+        });
+      } else {
+        res.status(401).send(err);
+      }
+    });
+  }
 
 }
 

@@ -1,6 +1,6 @@
-import mongoose = require('mongoose')
+import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
-import {} from 'socket.io'
+import {} from 'socket.io';
 const UsersConnected = require('./connected-users');
 
 interface IUser {
@@ -99,7 +99,7 @@ schema.statics.listOfFriends = function (followingTable: Follower[] = [], number
  * @param {any} socketSource
  * @returns {Promise<T>}
  */
-schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message, aliasSocketMessage: string, socketSource): Promise<any> {
+schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message, aliasSocketMessage: string, socketSource): Promise<IUser[]> {
   return new Promise((resolve, rej) => {
     this.listOfFriends(userData.following, 0, false, function (waster) {
       const socketUser = waster.map(elem => elem.userId);
@@ -123,16 +123,29 @@ schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message
   });
 };
 
-schema.statics.comparePassword = function (candidatePassword, callback) {
+/**
+ * Compare your password to change it
+ * @param candidatePassword
+ * @param callback
+ */
+schema.methods.comparePassword = function (candidatePassword, callback: (err: Error|string, isMatch: boolean) => any) {
   bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
-    if (err) {
-      return callback(err);
+    if (isMatch) {
+      callback(null, isMatch);
+    } else {
+      callback(err || 'Match error, please be sure to fill your good old password', null);
     }
-    callback(null, isMatch);
   });
 };
 
-schema.statics.hashingFunction = function (password, tempUserData, insertTempUser, callback) {
+/**
+ * To create a new secure user
+ * @param password
+ * @param tempUserData
+ * @param insertTempUser
+ * @param callback
+ */
+schema.statics.hashingFunction = function (password: string, tempUserData, insertTempUser, callback: Function) {
   bcrypt.genSalt(8, function (err, salt) {
     bcrypt.hash(password, salt, function (err, hash) {
       return insertTempUser(hash, tempUserData, callback);
