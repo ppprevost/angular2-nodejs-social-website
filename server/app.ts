@@ -5,7 +5,6 @@ import * as bodyParser from 'body-parser';
 import * as dotenv from 'dotenv';
 import {RouterApp} from './routes/routes';
 import * as mongoose from 'mongoose';
-import * as fs from 'fs';
 // import * as expressValidator from 'express-validator';
 const expressValidator = require('express-validator');
 

@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import {} from 'socket.io';
+import {Response} from 'express';
 const UsersConnected = require('./connected-users');
 
 interface IUser {
@@ -128,7 +129,8 @@ schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message
  * @param candidatePassword
  * @param callback
  */
-schema.methods.comparePassword = function (candidatePassword, callback: (err: Error|string, isMatch: boolean) => any) {
+schema.methods.comparePassword = function (candidatePassword, callback: (err: Error
+  | string, isMatch: boolean) => any) {
   bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
     if (isMatch) {
       callback(null, isMatch);
@@ -152,6 +154,93 @@ schema.statics.hashingFunction = function (password: string, tempUserData, inser
     });
   });
 };
+
+interface InfoMethod {
+  typeFunction: string;
+  socketMessage: string;
+  userId: string;
+  wasterId: string;
+}
+/**
+ *
+ * @param {Object} infoFollowMethod
+ * @param {string} infoFollowMethod.userId
+ * @param {string} infoFollowMethod.wasterId
+ * @param {string} infoFollowMethod.typeFunction
+ * @param {string} infoFollowMethod.socketMessage
+ * @param {Express Response} res
+ */
+schema.statics.followMethod = (infoFollowMethod: InfoMethod, res: Response, func: (IUser) => any) => {
+  const userId = infoFollowMethod.userId, wasterId = infoFollowMethod.wasterId;
+  let exist: boolean;
+  const typeFunctionMethod = [
+    {
+      type: 'unfollow',
+      associatedMethod: function (user, objUserId) {
+        const index = user.following.findIndex(function (doc) {
+          return doc.userId === objUserId.waster;
+        });
+        user.following.splice(index, 1);
+      },
+      socketMessage: 'removeFriend'
+    }, {
+      type: 'followOk',
+      statut: 'accepted',
+      associatedMethod: function (user, objUserId) {
+
+      }
+    },
+    {
+      type: 'follow',
+      statut: ['pending', 'requested'],
+      associatedMethod: function (user, objUserId) {
+
+      }
+    }
+  ];
+  const actualMethodObject = typeFunctionMethod.find(elem => elem.type === infoFollowMethod.typeFunction);
+  actualMethodObject.users = [{
+    user: userId,
+    waster: wasterId,
+  }, {
+    user: wasterId,
+    waster: userId,
+  }];
+  const statut = actualMethodObject.statut;
+  actualMethodObject.users = actualMethodObject.users.map((addStatutUser, i) => {
+    if (statut) {
+      if (Array.isArray(statut)) {
+        addStatutUser.statut = statut[i];
+      } else {
+        addStatutUser.statut = statut;
+      }
+    }
+    return addStatutUser;
+  });
+  delete actualMethodObject.statut;
+
+  this.find({_id: {$in: [userId, wasterId]}}, (err, users) => {
+    users.forEach(user => {
+      exist = actualMethodObject.users.some(objUserId => {
+        if (user._id === objUserId.user) {
+          actualMethodObject.associatedMethod(user, objUserId);
+          user.save(function () {
+            if (objUserId.user === userId) {
+              res.json(user);
+            } else {
+              this.sendSocketNotification(user, actualMethodObject.socketMessage);
+            }
+          });
+        }
+        return user._id === objUserId.user;
+      });
+    });
+    if (!exist) {
+      res.status(403).send('unable to find the query');
+    }
+  });
+};
+
 
 // Omit the password when returning a user
 schema.set('toJSON', {

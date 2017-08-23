@@ -6,11 +6,11 @@ import {Router, Application} from 'express';
 import * as jwt from 'jsonwebtoken';
 
 export class RouterApp {
-  profileController;
-  usersController;
-  authenticationController;
+  private profileController: ProfileController;
+  private usersController: UserController;
+  private authenticationController: AuthentificationController;
   private io;
-  private wasteController;
+  private wasteController: WasteController;
   private app;
   private router: Router;
 
@@ -57,7 +57,6 @@ export class RouterApp {
           res.json({success: false, message: 'Failed to authenticate token.'});
         } else {
           // if everything is good, save to request for use in other routes
-          console.log('token decoded', req.decoded);
           req.decoded = decoded;
           next();
         }
