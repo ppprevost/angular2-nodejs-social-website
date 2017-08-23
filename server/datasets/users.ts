@@ -68,13 +68,16 @@ const schema = new mongoose.Schema({
 });
 
 /**
- *Get the list of friends of a specific user.
+ *Get the list of friends('accepted') of a specific user.
  * @param followingTable
  * @param {Number} numberOfFriends
  * @param {String} fullDataWanted If you want a lot of data of just picture and username
  * @param {RequestedCallback} callback
  */
-schema.statics.listOfFriends = function (followingTable: Follower[] = [], numberOfFriends: number = 0, fullDataWanted: boolean = false, callback: (IUser) => void) {
+schema.statics.listOfFriends = function (followingTable: Follower[] = [],
+                                         numberOfFriends: number = 0,
+                                         fullDataWanted: boolean = false,
+                                         callback: (IUser) => void) {
   const following = followingTable;
   const newTable = following.filter(elem => elem.statut === 'accepted').map(doc => doc.userId);
   const valueSeek = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};
@@ -238,11 +241,7 @@ schema.statics.followMethod = (infoFollowMethod: InfoMethod, res: Response, func
   const statut = actualMethodObject.statut;
   actualMethodObject.users = actualMethodObject.users.map((addStatutUser, i) => {
     if (statut) {
-      if (Array.isArray(statut)) {
-        addStatutUser.statut = statut[i];
-      } else {
-        addStatutUser.statut = statut;
-      }
+      addStatutUser.statut = Array.isArray(statut) ? statut[i] : statut;
     }
     return addStatutUser;
   });

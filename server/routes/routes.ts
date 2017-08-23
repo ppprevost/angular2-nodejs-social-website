@@ -47,10 +47,13 @@ export class RouterApp {
    */
   checkIfUser(req, res, next) {
     let token: string;
-    if (req.headers['authorization'] && req.headers['authorization'].split(' ')[1] !== null) {
-      token = req.headers['authorization'].split(' ')[1];
+    if (req.headers['authorization'] && req.headers['authorization'].split(' ')[1] !== null || req.query.token) {
+      try {
+        token = req.headers['authorization'].split(' ')[1];
+      } catch (err) {
+        token = req.query.token || req.body.token;
+      }
     }
-
     if (token) {
       jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
         if (err) {

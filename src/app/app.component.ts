@@ -101,7 +101,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   logOut() {
     console.log('click sur logout avec socket');
-    this.data.logOut(this.auth.user._id, localStorage.token).subscribe(res => {
+    this.data.logOut(this.auth.user._id).subscribe(res => {
       console.log(res);
       localStorage.clear();
       this.auth.countFriendRequest = 0;
@@ -143,7 +143,7 @@ export class AppComponent implements OnInit, OnDestroy {
     //     });
     //   });
     this.dataUser = this.completerService.remote(null, 'username', 'username').imageField('image');
-    this.dataUser.urlFormater(term => `api/users/get?limitData=0&searchData=${term}`);
+    this.dataUser.urlFormater(term => `api/users/get?token=${localStorage.token}&limitData=0&searchData=${term}`);
 
     // the socket is connected
     this.connectionOfUser = this.socket.socketFunction('connect')

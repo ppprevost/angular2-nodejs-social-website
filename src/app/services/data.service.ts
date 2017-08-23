@@ -57,8 +57,8 @@ export class DataService {
   }
 
 
-  logOut(userId, token): Observable<any> {
-    return this.http.post(`/api/user/logout/`, JSON.stringify({userId, token}));
+  logOut(userId): Observable<any> {
+    return this.http.post(`/api/user/logout/`, JSON.stringify({userId}));
   }
 
   /**

@@ -15,7 +15,7 @@ export class SidebarComponent implements OnInit {
   }
 
   logOut() {
-    return this.appComponent.logOut()
+    return this.appComponent.logOut();
   }
 
 }

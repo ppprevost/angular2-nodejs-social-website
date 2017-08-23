@@ -60,11 +60,14 @@ export class UserController {
                     const connectedId = userConnected.map(elem => {
                       return elem.userId;
                     });
-                    usersData.map(doc => {
+                    usersData = usersData.map(doc => {
+                      let isConnected: boolean;
                       if (doc && doc._id) {
-                        connectedId.forEach(elem => {
-                          return doc._doc.isConnected = elem === doc._id.toString();
+                        isConnected = connectedId.some(elem => {
+                          return elem === doc._id.toString();
                         });
+                        doc._doc.isConnected = isConnected;
+                        return doc;
                       }
                     });
                     res.json(usersData);
@@ -90,8 +93,9 @@ export class UserController {
    * @param res
    */
   deconnection = (req, res) => {
+    console.log(req.body);
     const userId = req.body.userId;
-    Users.findOne(userId, (err, result) => {
+    Users.findOne({_id: userId}, (err, result) => {
       UsersConnected.findOne({userId: userId}, (err, user) => {
         if (!err) {
           if (user) {
@@ -272,7 +276,6 @@ export class UserController {
       });
     });
   };
-
 
 
   getThisUser = (req, res) => {
