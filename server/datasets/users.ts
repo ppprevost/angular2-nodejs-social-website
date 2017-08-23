@@ -100,7 +100,8 @@ schema.statics.listOfFriends = function (followingTable: Follower[] = [], number
  * @param {any} socketSource
  * @returns {Promise<T>}
  */
-schema.statics.getListOfFriendAndSentSocket = function (userData: IUser, message, aliasSocketMessage: string, socketSource): Promise<IUser[]> {
+schema.statics
+  .getListOfFriendAndSentSocket = function (userData: IUser, message, aliasSocketMessage: string, socketSource): Promise<IUser[]> {
   return new Promise((resolve, rej) => {
     this.listOfFriends(userData.following, 0, false, function (waster) {
       const socketUser = waster.map(elem => elem.userId);
@@ -160,6 +161,8 @@ interface InfoMethod {
   socketMessage: string;
   userId: string;
   wasterId: string;
+  statut: string;
+  users?: any;
 }
 /**
  *
@@ -181,24 +184,50 @@ schema.statics.followMethod = (infoFollowMethod: InfoMethod, res: Response, func
           return doc.userId === objUserId.waster;
         });
         user.following.splice(index, 1);
+        return user;
       },
       socketMessage: 'removeFriend'
     }, {
       type: 'followOk',
       statut: 'accepted',
       associatedMethod: function (user, objUserId) {
-
+        user.following.forEach(function (doc) {
+          console.log(doc);
+          if (doc.userId === objUserId.waste) {
+            doc.statut = 'accepted';
+          }
+        });
+        return user;
       }
     },
     {
       type: 'follow',
       statut: ['pending', 'requested'],
       associatedMethod: function (user, objUserId) {
-
+        if (!user.following.length) { // init s tableau vide
+          user.following.push({
+            userId: objUserId.waster,
+            statut: 'requested'
+          });
+        } else {
+          console.log(user);
+          // test si l'user ID est deja présent
+          const already = user.following.some(doc => {
+            console.log('deja présent');
+            return doc && doc.userId === userId;
+          });
+          if (!already) {
+            user.following.push({
+              userId: objUserId.waster,
+              statut: 'requested'
+            });
+          }
+        }
+        return user;
       }
     }
   ];
-  const actualMethodObject = typeFunctionMethod.find(elem => elem.type === infoFollowMethod.typeFunction);
+  const actualMethodObject: any = typeFunctionMethod.find(elem => elem.type === infoFollowMethod.typeFunction);
   actualMethodObject.users = [{
     user: userId,
     waster: wasterId,
