@@ -87,7 +87,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         userType: this.typeWaste || 'public',
         content: this.newWaste
       };
-      return this.data.sendWaste({request: request}).map(res => res.json())
+      return this.data.sendWaste({request: request})
+        .map(res => res.json())
         .subscribe(data => {
             this.newWaste = '';
           },

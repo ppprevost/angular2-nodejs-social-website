@@ -1,12 +1,7 @@
 import {Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges, OnDestroy} from '@angular/core';
-import {Http, Headers, RequestOptions} from '@angular/http';
 import {AuthService} from '../../services/auth.service';
 import {SocketService} from '../../services/socket.service';
-
-interface Obj {
-  userId: string;
-  wasterId: string;
-}
+import {AuthHttp} from 'angular2-jwt';
 
 @Component({
   selector: 'app-follow',
@@ -21,8 +16,6 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
   @Output() follower: EventEmitter<any> = new EventEmitter<any>();
   @Output() notify: EventEmitter<any> = new EventEmitter<any>();
-  private headers = new Headers({'Content-Type': 'application/json', 'charset': 'UTF-8'});
-  private options = new RequestOptions({headers: this.headers});
   private obj = (wasterValue, typeFollowing?) => {
     const obj: any = {
       userId: this.user._id,
@@ -34,7 +27,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     return obj;
   }
 
-  constructor(private socket: SocketService, private auth: AuthService, private http: Http) {
+  constructor(private socket: SocketService, private auth: AuthService, private http: AuthHttp) {
   }
 
   ngOnInit() {
@@ -44,7 +37,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   followUserOk(wasterId) {
-    this.http.post('/api/users/followOk', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
+    this.http.post('/api/users/followOk', JSON.stringify(this.obj(wasterId))).toPromise().then(data => {
       this.auth.countFriendRequest--;
       this.getThisUser(data.json());
     });
@@ -57,7 +50,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   follow(wasterId) {
-    this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
+    this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId))).toPromise().then(data => {
       this.getThisUser(data.json());
 
     });
@@ -74,7 +67,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   unfollow(wasterId) {
-    this.http.post('/api/users/unfollow', JSON.stringify(this.obj(wasterId)), this.options).toPromise().then(data => {
+    this.http.post('/api/users/unfollow', JSON.stringify(this.obj(wasterId))).toPromise().then(data => {
       this.getThisUser(data.json());
     }, err => console.log(err));
   }
@@ -109,7 +102,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
   typeFollowing(typeFollowing, wasterId) {
     return this.http.post
-    (`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId, typeFollowing)), this.options).toPromise().then(data => {
+    (`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId, typeFollowing))).toPromise().then(data => {
       this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
     });

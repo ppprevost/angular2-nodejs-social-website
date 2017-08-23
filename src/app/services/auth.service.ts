@@ -14,6 +14,8 @@ export class AuthService {
   constructor(private publicService: PublicService, private data: DataService) {
     this.token = localStorage.getItem('token');
     if (this.token) {
+      // TODO seek a connection between having the auth service
+      // this.callRefreshUserData();
       this.user = this.decodeUserFromToken(this.token);
     }
   }
@@ -53,9 +55,9 @@ export class AuthService {
    */
   callRefreshUserData(userData?: User, callback?: Function) {
     if (userData) {
-      return this.user = userData
+      return this.user = userData;
     } else {
-      return this.data.refreshUserData({token: this.token}).subscribe(user => {
+      return this.data.refreshUserData({userId: this.decodeUserFromToken(this.token)}).subscribe(user => {
         this.user = user.json();
         if (callback) {
           callback(this.user);

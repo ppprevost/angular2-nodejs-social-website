@@ -95,7 +95,7 @@ export class UserController {
   deconnection = (req, res) => {
     console.log(req.body);
     const userId = req.body.userId;
-    Users.findOne({_id: userId}, (err, result) => {
+    Users.findOne({_id: userId}, (err, user) => {
       UsersConnected.findOne({userId: userId}, (err, user) => {
         if (!err) {
           if (user) {
@@ -104,7 +104,7 @@ export class UserController {
             } else {
               if (!err) {
                 const indexObj = user.location.findIndex(elem => {
-                  return elem._id.toString() === result.idOfLocation;
+                  return elem._id.toString() === user.idOfLocation;
                 });
                 user.location.splice(indexObj, 1);
                 user.save();
@@ -138,6 +138,13 @@ export class UserController {
         }
       }
     });
+  }
+
+  followingFunction = (req, res) => {
+    return Users.followMethod(req.body, function (user) {
+      res.json(user);
+    });
+
   }
 
   followUser = (req, res) => {
@@ -398,26 +405,20 @@ export class UserController {
    * @param res
    */
   refreshUserData = (req, res) => {
-    const token = req.body.token;
-    jwt.verify(token, process.env.SECRET_TOKEN, (err, decoded) => {
+    const userId = req.body.userId;
+    Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
       if (!err) {
-        Users.findById(decoded.user._id).select({password: 0, __v: 0}).exec((err, user) => {
-          if (!err) {
-            Users.listOfFriends(user.following, 10, false, waster => {
-              waster.map(elem => {
-                user.following.map(doc => {
-                  if (doc.userId === elem._id) {
-                    doc = elem;
-                  }
-                  return doc;
-                });
-              });
-              res.status(200).json(user);
+        Users.listOfFriends(user.following, 10, false, waster => {
+          waster.map(elem => {
+            user.following.map(doc => {
+              if (doc.userId === elem._id) {
+                doc = elem;
+              }
+              return doc;
             });
-          }
+          });
+          res.status(200).json(user);
         });
-      } else {
-        res.status(401).send(err);
       }
     });
   };

@@ -39,8 +39,8 @@ export class DataService {
    * @param token {String} Json web token
    * @returns {Observable<Response>}
    */
-  refreshUserData(token): Observable<any> {
-    return this.http.post('/api/user/refreshUserData', JSON.stringify(token));
+  refreshUserData(userId): Observable<any> {
+    return this.http.post('/api/user/refreshUserData', JSON.stringify(userId));
   }
 
   /**

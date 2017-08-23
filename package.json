@@ -9,7 +9,7 @@
     "ng": "ng",
     "build": "ng build",
     "postinstall": "node install-env.js",
-    "start": "node  dist/server/app.js",
+    "start": "node dist/server/app.js",
     "predev": "tsc -p ./server",
     "prod": "concurrently \"ng build -aot -prod\" \"node --harmony src/server/app.js\"",
     "dev": "concurrently  \"tsc -w -p  ./server\" \"ng serve -pc proxy.conf.json\" ",

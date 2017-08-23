@@ -2,9 +2,11 @@ import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import {} from 'socket.io';
 import {Response} from 'express';
+import {ipConnection} from '../utils/utils';
 const UsersConnected = require('./connected-users');
 
 interface IUser {
+  _id: string;
   email: string;
   username: string;
   password: string;
@@ -12,7 +14,8 @@ interface IUser {
   gender: string;
   image: string;
   cover: string;
-  location: string;
+  idOfLocation?: string;
+  location: Array<any>;
   createdAt: string;
   bio: string;
   role: number;
@@ -176,7 +179,7 @@ interface InfoMethod {
  * @param {string} infoFollowMethod.socketMessage
  * @param {Express Response} res
  */
-schema.statics.followMethod = (infoFollowMethod: InfoMethod, res: Response, func: (IUser) => any) => {
+schema.statics.followMethod = (infoFollowMethod: InfoMethod, callback: (err, IUser) => Response) => {
   const userId = infoFollowMethod.userId, wasterId = infoFollowMethod.wasterId;
   let exist: boolean;
   const typeFunctionMethod = [
@@ -254,7 +257,8 @@ schema.statics.followMethod = (infoFollowMethod: InfoMethod, res: Response, func
           actualMethodObject.associatedMethod(user, objUserId);
           user.save(function () {
             if (objUserId.user === userId) {
-              res.json(user);
+              callback(null, user);
+              //  res.json(user);
             } else {
               this.sendSocketNotification(user, actualMethodObject.socketMessage);
             }
@@ -264,10 +268,68 @@ schema.statics.followMethod = (infoFollowMethod: InfoMethod, res: Response, func
       });
     });
     if (!exist) {
-      res.status(403).send('unable to find the query');
+      callback(new Error('unable to find the query'),null)
+     // res.status(403).send('unable to find the query');
     }
   });
 };
+
+const locationSearch = function (savedUser, socketId, userData) {
+  const idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
+    return elem.socketId === socketId;
+  }));
+
+  if (userData && userData._doc && userData._doc.password
+  ) {
+    delete userData._doc.password;
+    userData._doc.idOfLocation = savedUser.location[idOfLocation]['_id'];
+  } else {
+    userData.idOfLocation = savedUser.location[idOfLocation]['_id'];
+  }
+}
+
+schema.methods.setconnectedStatuts = function (userData, req, callback) {
+  UsersConnected.findOne({userId: userData._id}, (err, userAlreadyConnected) => {
+    if (userAlreadyConnected) {
+      userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
+      userAlreadyConnected.save(() => {
+        locationSearch(userAlreadyConnected, req.body.socketId, userData);
+      });
+    } else {
+      const newUserConnected = new UsersConnected({
+        userId: userData._id,
+        location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
+      });
+      newUserConnected.save((err, savedUser) => {
+        locationSearch(savedUser, req.body.socketId, userData);
+      });
+    }
+    callback(userData);
+  });
+}
+
+
+schema.methods.deleteConnectedStatus = function (user: IUser, callback: (err, result?) => any) {
+  UsersConnected.findOne({userId: user._id}, (err, userCo) => {
+    if (!err) {
+      if (userCo) {
+        if (userCo.location.length <= 1) {
+          userCo.remove();
+        } else {
+          const indexObj = user.location.findIndex(elem => {
+            return elem._id.toString() === user.idOfLocation;
+          });
+          userCo.location.splice(indexObj, 1);
+          userCo.save();
+        }
+      }
+      callback(null);
+      // res.send('deconnection effectuée');
+    } else {
+      callback(err, null);
+    }
+  });
+}
 
 
 // Omit the password when returning a user
