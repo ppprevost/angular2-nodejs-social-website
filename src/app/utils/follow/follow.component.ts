@@ -44,9 +44,9 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
-    // for (var i = 0; i < this.table.length; i++) {
-    //   this['connection' + i].unsubscribe();
-    // }
+    for (var i = 0; i < this.table.length; i++) {
+      this['connection' + i].unsubscribe();
+    }
   }
 
   follow(wasterId) {
@@ -102,7 +102,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
   typeFollowing(typeFollowing, wasterId) {
     return this.http.post
-    (`/api/users/${typeFollowing}`, JSON.stringify(this.obj(wasterId, typeFollowing))).toPromise().then(data => {
+    (`/api/users/followingFunction`, JSON.stringify(this.obj(wasterId, typeFollowing))).toPromise().then(data => {
       this.auth.callRefreshUserData(data.json());
       this.getThisUser(data.json());
     });

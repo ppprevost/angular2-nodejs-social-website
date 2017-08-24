@@ -3,7 +3,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
-import {RouterModule, CanActivate} from '@angular/router';
+import {RouterModule} from '@angular/router';
 import {AppComponent} from './app.component';
 import {DataService} from './services/data.service';
 import {PublicService} from './services/public.service';
@@ -26,12 +26,13 @@ import {MdRadioModule, MdInputModule, MdTooltipModule} from '@angular/material';
 import {ListOfFriendComponent} from './utils/list-of-friend/list-of-friend.component';
 import {TooltipDirective} from './utils/tooltip.directive';
 import {ReCaptchaModule} from 'angular2-recaptcha';
-import {Ng2CompleterModule} from "ng2-completer";
+import {Ng2CompleterModule} from 'ng2-completer';
 import {AuthModule} from './auth-http/auth-http.module';
 
-
 const routing = RouterModule.forRoot([
-  {path: '', component: HomeComponent},
+  {
+    path: '', component: HomeComponent
+  },
   {path: 'profil', component: ProfileComponent, canActivate: [AuthGuard]},
   {path: 'signup', component: SignupComponent},
   {

@@ -1,11 +1,13 @@
-import {Component, OnInit, OnDestroy, ViewContainerRef, ViewChild} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {RequestOptions, Headers} from '@angular/http';
 import {DataService} from './services/data.service';
-import {CompleterService, CompleterData, RemoteData} from 'ng2-completer';
+import {CompleterService, CompleterItem, RemoteData} from 'ng2-completer';
 import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {Router} from '@angular/router';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 import {SocketService} from './services/socket.service';
+
 
 @Component({
   selector: 'app-root',
@@ -42,6 +44,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   }
 
+  sendData(dd) {
+    console.log(dd);
+    this.router.navigate(['/my-profile', dd.originalObject._id]);
+  }
+
   ngOnInit() {
     this.loginUser = this.addUserForm.group({
       email: this.email,
@@ -58,9 +65,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.connectionOfUser.unsubscribe();
     this.connection.unsubscribe();
     this.commentarySub.unsubscribe();
-    // for (let i = 0; i < this.table.length; i++) {
-    //   this['connection' + i].unsubscribe();
-    // }
+    for (let i = 0; i < this.table.length; i++) {
+      this['connection' + i].unsubscribe();
+    }
   }
 
   loginAccount() {
@@ -142,8 +149,10 @@ export class AppComponent implements OnInit, OnDestroy {
     //       this.dataUser = this.completerService.local(dataElement.json(), 'username', 'username').imageField('image');
     //     });
     //   });
-    this.dataUser = this.completerService.remote(null, 'username', 'username').imageField('image');
+    this.dataUser = this.completerService.remote(null, 'username', 'username')
+      .imageField('image');
     this.dataUser.urlFormater(term => `api/users/get?token=${localStorage.token}&limitData=0&searchData=${term}`);
+
 
     // the socket is connected
     this.connectionOfUser = this.socket.socketFunction('connect')

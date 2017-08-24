@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import {} from 'socket.io';
 import {Response} from 'express';
-import {ipConnection} from '../utils/utils';
+import {ipConnection, typeFunctionMethod} from '../utils/utils';
 const UsersConnected = require('./connected-users');
 
 interface IUser {
@@ -136,7 +136,7 @@ schema.statics
  * @param candidatePassword
  * @param callback
  */
-schema.methods.comparePassword = function (candidatePassword, callback: (err: Error
+schema.methods.comparePassword = async function (candidatePassword, callback: (err: Error
   | string, isMatch: boolean) => any) {
   bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
     if (isMatch) {
@@ -154,13 +154,14 @@ schema.methods.comparePassword = function (candidatePassword, callback: (err: Er
  * @param insertTempUser
  * @param callback
  */
-schema.statics.hashingFunction = function (password: string, tempUserData, insertTempUser, callback: Function) {
+schema.statics.hashingFunction = async function (password: string, tempUserData, insertTempUser, callback: Function) {
   bcrypt.genSalt(8, function (err, salt) {
     bcrypt.hash(password, salt, function (err, hash) {
       return insertTempUser(hash, tempUserData, callback);
     });
   });
 };
+
 
 interface InfoMethod {
   typeFunction: string;
@@ -179,60 +180,10 @@ interface InfoMethod {
  * @param {string} infoFollowMethod.socketMessage
  * @param {Express Response} res
  */
-schema.statics.followMethod = (infoFollowMethod: InfoMethod, callback: (err, IUser) => Response) => {
+schema.statics.followMethod = async (infoFollowMethod: InfoMethod, callback: (err, IUser) => Response) => {
   const userId = infoFollowMethod.userId, wasterId = infoFollowMethod.wasterId;
   let exist: boolean;
-  const typeFunctionMethod = [
-    {
-      type: 'unfollow',
-      associatedMethod: function (user, objUserId) {
-        const index = user.following.findIndex(function (doc) {
-          return doc.userId === objUserId.waster;
-        });
-        user.following.splice(index, 1);
-        return user;
-      },
-      socketMessage: 'removeFriend'
-    }, {
-      type: 'followOk',
-      statut: 'accepted',
-      associatedMethod: function (user, objUserId) {
-        user.following.forEach(function (doc) {
-          console.log(doc);
-          if (doc.userId === objUserId.waste) {
-            doc.statut = 'accepted';
-          }
-        });
-        return user;
-      }
-    },
-    {
-      type: 'follow',
-      statut: ['pending', 'requested'],
-      associatedMethod: function (user, objUserId) {
-        if (!user.following.length) { // init s tableau vide
-          user.following.push({
-            userId: objUserId.waster,
-            statut: 'requested'
-          });
-        } else {
-          console.log(user);
-          // test si l'user ID est deja présent
-          const already = user.following.some(doc => {
-            console.log('deja présent');
-            return doc && doc.userId === userId;
-          });
-          if (!already) {
-            user.following.push({
-              userId: objUserId.waster,
-              statut: 'requested'
-            });
-          }
-        }
-        return user;
-      }
-    }
-  ];
+  const typeFunctionMethod = typeFunctionMethod();
   const actualMethodObject: any = typeFunctionMethod.find(elem => elem.type === infoFollowMethod.typeFunction);
   actualMethodObject.users = [{
     user: userId,
@@ -249,7 +200,6 @@ schema.statics.followMethod = (infoFollowMethod: InfoMethod, callback: (err, IUs
     return addStatutUser;
   });
   delete actualMethodObject.statut;
-
   this.find({_id: {$in: [userId, wasterId]}}, (err, users) => {
     users.forEach(user => {
       exist = actualMethodObject.users.some(objUserId => {
@@ -268,8 +218,8 @@ schema.statics.followMethod = (infoFollowMethod: InfoMethod, callback: (err, IUs
       });
     });
     if (!exist) {
-      callback(new Error('unable to find the query'),null)
-     // res.status(403).send('unable to find the query');
+      callback(new Error('unable to find the query'), null);
+      // res.status(403).send('unable to find the query');
     }
   });
 };
@@ -278,7 +228,6 @@ const locationSearch = function (savedUser, socketId, userData) {
   const idOfLocation = savedUser.location.indexOf(savedUser.location.find(elem => {
     return elem.socketId === socketId;
   }));
-
   if (userData && userData._doc && userData._doc.password
   ) {
     delete userData._doc.password;
@@ -288,7 +237,7 @@ const locationSearch = function (savedUser, socketId, userData) {
   }
 }
 
-schema.methods.setconnectedStatuts = function (userData, req, callback) {
+schema.methods.setconnectedStatuts = async function (userData, req, callback) {
   UsersConnected.findOne({userId: userData._id}, (err, userAlreadyConnected) => {
     if (userAlreadyConnected) {
       userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
@@ -308,8 +257,20 @@ schema.methods.setconnectedStatuts = function (userData, req, callback) {
   });
 }
 
+schema.methods.getConnectedStatus = async function (userId, callback) {
+  return new Promise((rej, res) => {
+    this.findOne('userId').select({isConnected: 1}).exec((err, result) => {
+      if (err) {
+        rej(err);
+      } else {
+        res(result);
+      }
+    });
+  });
 
-schema.methods.deleteConnectedStatus = function (user: IUser, callback: (err, result?) => any) {
+};
+
+schema.methods.deleteConnectedStatus = async function (user: IUser, callback: (err, result?) => any) {
   UsersConnected.findOne({userId: user._id}, (err, userCo) => {
     if (!err) {
       if (userCo) {
