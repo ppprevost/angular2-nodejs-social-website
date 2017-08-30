@@ -1,4 +1,4 @@
-<header>
+<header *ngIf="auth.user">
   <nav class="principal-navbar navbar navbar-default navbar-fixed-top principal-header">
     <div class="container">
       <div class="navbar-header">
@@ -16,7 +16,8 @@
            routerLinkActive="active">My
           Profile</a>
         <a *ngIf="auth.loggedIn()">
-          <ng2-completer [clearUnselected]="true" #value=ngModel [placeholder]="'find a user'" [pause]="1000" [(ngModel)]="searchUser" (selected)="sendData($event)"
+          <ng2-completer [clearUnselected]="true" #value=ngModel [placeholder]="'find a user'" [pause]="1000"
+                         [(ngModel)]="searchUser" (selected)="sendData($event)"
                          [datasource]="dataUser"
                          [minSearchLength]="0"></ng2-completer>
         </a>
@@ -44,7 +45,6 @@
               <li class="divider"></li>
               <li><a [routerLink]="['/app-follow-user']" routerLinkActive="active">Follow Users</a></li>
               <li class="divider"></li>
-
               <li><a (click)="logOut()">Logout</a></li>
             </ul>
           </li>
@@ -64,7 +64,7 @@
 </header>
 
 <!-- Contenu  -->
-<article>
+<article *ngIf="auth.user">
   <div class="container primaryContent">
     <router-outlet></router-outlet>
     <!--<app-sidebar>CONTETN</app-sidebar>-->

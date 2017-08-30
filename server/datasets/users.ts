@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import {} from 'socket.io';
 import {Response} from 'express';
-import {ipConnection, typeFunctionMethod} from '../utils/utils';
+import * as utils from '../utils/utils';
 const UsersConnected = require('./connected-users');
 
 interface IUser {
@@ -162,9 +162,8 @@ schema.statics.hashingFunction = async function (password: string, tempUserData,
   });
 };
 
-
 interface InfoMethod {
-  typeFunction: string;
+  typeFollowing: string;
   socketMessage: string;
   userId: string;
   wasterId: string;
@@ -176,15 +175,15 @@ interface InfoMethod {
  * @param {Object} infoFollowMethod
  * @param {string} infoFollowMethod.userId
  * @param {string} infoFollowMethod.wasterId
- * @param {string} infoFollowMethod.typeFunction
+ * @param {string} infoFollowMethod.typeFollowing
  * @param {string} infoFollowMethod.socketMessage
  * @param {Express Response} res
  */
-schema.statics.followMethod = async (infoFollowMethod: InfoMethod, callback: (err, IUser) => Response) => {
+schema.statics.followMethod = function (infoFollowMethod: InfoMethod, io, callback: (err, IUser) => Response) {
   const userId = infoFollowMethod.userId, wasterId = infoFollowMethod.wasterId;
   let exist: boolean;
-  const typeFunctionMethod = typeFunctionMethod();
-  const actualMethodObject: any = typeFunctionMethod.find(elem => elem.type === infoFollowMethod.typeFunction);
+  // take the good type of following function and the associated method
+  const actualMethodObject: any = utils.typeFunctionMethod().find(elem => elem.type === infoFollowMethod.typeFollowing);
   actualMethodObject.users = [{
     user: userId,
     waster: wasterId,
@@ -200,27 +199,29 @@ schema.statics.followMethod = async (infoFollowMethod: InfoMethod, callback: (er
     return addStatutUser;
   });
   delete actualMethodObject.statut;
+  // now we know the following method and each users  have type Object with property {statut, userId,wasterId}
   this.find({_id: {$in: [userId, wasterId]}}, (err, users) => {
-    users.forEach(user => {
-      exist = actualMethodObject.users.some(objUserId => {
-        if (user._id === objUserId.user) {
+    exist = users.some(user => {
+      actualMethodObject.users.forEach(objUserId => {
+        if (user._id.toString() === objUserId.user) {
           actualMethodObject.associatedMethod(user, objUserId);
           user.save(function () {
-            if (objUserId.user === userId) {
+            if (user._id.toString() === userId) {
               callback(null, user);
               //  res.json(user);
             } else {
-              this.sendSocketNotification(user, actualMethodObject.socketMessage);
+              utils.sendSocketNotification(user, actualMethodObject.socketMessage, io, UsersConnected);
             }
           });
         }
-        return user._id === objUserId.user;
       });
+      return false;
     });
-    if (!exist) {
-      callback(new Error('unable to find the query'), null);
-      // res.status(403).send('unable to find the query');
-    }
+    // modifier cette fonction c'et ca qui fait que ca marche pas
+    // if (!exist) {
+    //   callback(new Error('unable to find the query'), null);
+    //   // res.status(403).send('unable to find the query');
+    // }
   });
 };
 
@@ -240,14 +241,14 @@ const locationSearch = function (savedUser, socketId, userData) {
 schema.methods.setconnectedStatuts = async function (userData, req, callback) {
   UsersConnected.findOne({userId: userData._id}, (err, userAlreadyConnected) => {
     if (userAlreadyConnected) {
-      userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
+      userAlreadyConnected.location.push({socketId: req.body.socketId, IP: utils.ipConnection(req)});
       userAlreadyConnected.save(() => {
         locationSearch(userAlreadyConnected, req.body.socketId, userData);
       });
     } else {
       const newUserConnected = new UsersConnected({
         userId: userData._id,
-        location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
+        location: [{socketId: req.body.socketId, IP: utils.ipConnection(req)}]
       });
       newUserConnected.save((err, savedUser) => {
         locationSearch(savedUser, req.body.socketId, userData);
@@ -285,7 +286,7 @@ schema.methods.deleteConnectedStatus = async function (user: IUser, callback: (e
         }
       }
       callback(null);
-      // res.send('deconnection effectuée');
+// res.send('deconnection effectuée');
     } else {
       callback(err, null);
     }

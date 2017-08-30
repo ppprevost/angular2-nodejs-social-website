@@ -63,7 +63,7 @@ export class ProfileComponent implements OnInit {
     obj['userId'] = this.user['_id'];
     obj[event.target.name] = event.target.value;
 
-    this.data.updateChamp(obj).subscribe(res => {
+    this.data.updateChamp(obj).then(res => {
       console.log(res);
       this.auth.callRefreshUserData(res.json());
     });

@@ -48,8 +48,8 @@ export class DataService {
    * @param {Object} champ -userId and the value to change
    * @returns {Observable<Response>}
    */
-  updateChamp(champ): Observable<any> {
-    return this.http.post('/api/profile/updateChamp', JSON.stringify(champ));
+  updateChamp(champ): Promise<any> {
+    return this.http.post('/api/profile/updateChamp', JSON.stringify(champ)).toPromise();
   }
 
   updatePassword(pass): Observable<any> {

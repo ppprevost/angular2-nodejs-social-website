@@ -1,6 +1,6 @@
 const Users = require('../datasets/users'), UsersConnected = require('../datasets/connected-users');
 import * as fs from 'fs';
-import * as jwt from 'jsonwebtoken';
+import * as utils from '../utils/utils';
 
 import {ipConnection} from '../utils/utils';
 
@@ -140,150 +140,16 @@ export class UserController {
     });
   }
 
+
   followingFunction = (req, res) => {
-    return Users.followMethod(req.body, function (user) {
-      res.json(user);
-    });
-
-  }
-
-  followUser = (req, res) => {
-    const userId = req.body.userId,
-      wasterId = req.body.wasterId;
-    let userIdWaster;
-    const date = new Date();
-    console.log('req.body', req.body);
-    Users.findById(wasterId, function (err, waster) {
-        if (!waster.following.length) { // init s tableau vide
-          waster.following.push({
-            userId: userId,
-            statut: 'requested',
-            date: date
-          });
-        } else {
-          console.log(waster);
-          // test si l'user ID est deja présent
-          const already = waster.following.some(doc => {
-            console.log('deja présent');
-            return doc && doc.userId === userId;
-          });
-          if (!already) {
-            waster.following.push({
-              userId: userId,
-              statut: 'requested',
-              date: date
-            });
-          }
-        }
-        waster.save(function () {
-          userIdWaster = waster.username;
-          this.sendSocketNotification(waster, 'friendRequest');
-        });
-      }
-    );
-    Users.findById(userId, function (err, follower) {
-      if (!follower.following.length) { // init
-        follower.following.push({
-          userId: wasterId,
-          statut: 'pending',
-          date: date
-        });
-      } else {
-        let already = false; // test si l'user ID est deja présent
-        follower.following.forEach(function (doc) {
-          if (doc.userId && doc.userId === wasterId) {
-            already = true;
-          }
-        });
-        if (!already) {
-          follower.following.push({
-            userId: wasterId,
-            statut: 'pending',
-            date: date
-          });
-        }
-      }
-      follower.save(function () {
-        res.json(follower);
-      });
-    });
-  }
-  ;
-
-  /**
-   * Send private notification to the receiver of the request
-   * @type {(p1?:*, p2?:*)}
-   */
-
-  private sendSocketNotification(waster, notif) {
-    UsersConnected.findOne({userId: waster._id}, (err, userCo) => {
-      if (userCo) {
-        userCo.location.forEach(elem => {
-          this.io.sockets.connected[elem.socketId].emit(notif, waster);
-        });
-      }
-    });
-  };
-
-  followUserOk = (req, res) => {
-    const userId = req.body.userId,
-      wasterId = req.body.wasterId;
-    console.log('user e waster');
-    console.log(userId + wasterId);
-    Users.findById(wasterId, function (err, waster) {
-      if (!err) {
-
-      }
-      waster.following.forEach(function (doc) {
-        console.log(doc);
-        if (doc.userId == userId) {
-          doc.statut = 'accepted';
-        }
-
-      });
-      waster.save(() => {
-        this.sendSocketNotification(waster, 'friendRequestAccepted');
-      });
-    });
-    Users.findById(userId, function (err, follower) {
+    return Users.followMethod(req.body, this.io, function (err, user) {
       if (err) {
-        console.log('failed save');
+        res.status(403).json(err);
       } else {
-        follower.following.forEach(function (doc) {
-          if (doc.userId === wasterId) {
-            doc.statut = 'accepted';
-          }
-        });
-        follower.save(function () {
-        });
-        res.json(follower);
+        res.status(200).json(user);
       }
     });
-  };
-
-  unfollowUser(req, res) {
-    const userId = req.body.userId,
-      wasterId = req.body.wasterId;
-    Users.findById(wasterId, function (err, waster) {
-      console.log(waster);
-      const index = waster.following.findIndex(function (doc) {
-        return doc.userId === userId
-      });
-      waster.following.splice(index, 1);
-      waster.save(() => {
-        this.sendSocketNotification(waster, 'removeFriend');
-        Users.findById(userId, function (err, follower) {
-          const wasterIndex = follower.following.findIndex(function (doc) {
-            return doc.userId === wasterId;
-          });
-          follower.following.splice(wasterIndex, 1);
-          follower.save();
-          res.json(follower);
-        });
-      });
-    });
-  };
-
+  }
 
   getThisUser = (req, res) => {
     const userId = req.body.userId;

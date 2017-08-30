@@ -35,7 +35,7 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
           follower.following.filter(contact => contact.statut === 'accepted');
           return follower;
         });
-      console.log(this.wasters);
+      //    console.log(this.wasters);
     });
   }
 

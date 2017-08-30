@@ -14,10 +14,10 @@
     "prod": "concurrently \"ng build -aot -prod\" \"node --harmony src/server/app.js\"",
     "dev": "concurrently  \"tsc -w -p  ./server\" \"ng serve -pc proxy.conf.json\" ",
     "servDev": "tsc -w -p  ./server&& nodemon dist/server/app.js",
-    "startNodemon": "nodemon dist/server/app.js",
+    "startNodemon": "tsc -p ./server & node %NODE_DEBUG_OPTION%  dist/server/app.js",
     "buildDev": "ng serve -pc proxy.conf.json",
-    "dev2": "npm run dev && npm run buildDev",
-    "debug": "npm run predev & concurrently \"ng serve -pc proxy.conf.json \" \"tsc -w -p  ./server\"  \"nodemon %NODE_DEBUG_OPTION% dist/server/app.js  \"",
+    "dev2": "npm run startNodemon & npm run dev",
+    "debug": "concurrently \"nodemon %NODE_DEBUG_OPTION% dist/server/app.js  \"",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

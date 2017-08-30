@@ -1,5 +1,4 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {RequestOptions, Headers} from '@angular/http';
 import {DataService} from './services/data.service';
 import {CompleterService, CompleterItem, RemoteData} from 'ng2-completer';
 import {AuthService} from './services/auth.service';
@@ -7,7 +6,6 @@ import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {Router} from '@angular/router';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 import {SocketService} from './services/socket.service';
-
 
 @Component({
   selector: 'app-root',
@@ -135,11 +133,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private initSocket() {
-    this.auth.callRefreshUserData();
-    this.auth.user.following.forEach(elem => {
-      if (elem.statut === 'requested') {
-        this.auth.countFriendRequest++;
-      }
+    this.auth.callRefreshUserData(null,(user) => {
+      user.following.forEach(elem => {
+        if (elem.statut === 'requested') {
+          this.auth.countFriendRequest++;
+        }
+      });
     });
     // TODO search server side
     // auto completion

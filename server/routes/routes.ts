@@ -99,11 +99,8 @@ export class RouterApp {
     this.app.get('/api/users/uploadPicture/:id', this.checkIfUser, this.usersController.uploadPicture);
     this.app.delete('/api/users/deleteAllPicture/:id', this.checkIfUser, this.usersController.deleteAllPictures);
     this.app.get('/api/users/get', this.checkIfUser, this.usersController.getUsers);
-    this.app.post('/api/users/follow', this.checkIfUser, this.usersController.followUser);
     this.app.post('/api/users/getListOfFriends', this.checkIfUser, this.usersController.getlistOfFriends);
     this.app.post('/api/users/followingFunction', this.checkIfUser, this.usersController.followingFunction);
-    this.app.post('/api/users/followOk', this.checkIfUser, this.usersController.followUserOk);
-    this.app.post('/api/users/unfollow', this.checkIfUser, this.usersController.unfollowUser);
     this.app.post('/api/users/getThisUsers', this.checkIfUser, this.usersController.getThisUser);
     this.app.post('/api/user/refreshSocketId', this.checkIfUser, this.usersController.refreshSocketIdOfConnectedUsers);
     this.app.post('/api/user/refreshUserData', this.checkIfUser, this.usersController.refreshUserData);

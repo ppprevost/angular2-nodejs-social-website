@@ -15,8 +15,8 @@ export class AuthService {
     this.token = localStorage.getItem('token');
     if (this.token) {
       // TODO seek a connection between having the auth service
-      // this.callRefreshUserData();
-      this.user = this.decodeUserFromToken(this.token);
+       this.callRefreshUserData();
+      // this.user = this.decodeUserFromToken(this.token);
     }
   }
 
@@ -53,11 +53,11 @@ export class AuthService {
    * @param callback
    * @returns {any}
    */
-  callRefreshUserData(userData?: User, callback?: Function) {
+  callRefreshUserData(userData?: User, callback?: (User)=>any) {
     if (userData) {
       return this.user = userData;
     } else {
-      return this.data.refreshUserData({userId: this.decodeUserFromToken(this.token)}).subscribe(user => {
+      return this.data.refreshUserData({userId: this.decodeUserFromToken(this.token)._id}).subscribe(user => {
         this.user = user.json();
         if (callback) {
           callback(this.user);

@@ -4,7 +4,7 @@
   <a class="btn btn-default btn-sm" *ngSwitchCase="'pending'">Waiting for connection<i
     class="fa fa-share"></i></a>
   <a class="btn btn-default btn-sm"
-     *ngSwitchCase="'requested'" (click)="typeFollowing('followUserOk',waste._id)">Accept friends request<i
+     *ngSwitchCase="'requested'" (click)="typeFollowing('followOk',waste._id)">Accept friends request<i
     class="fa fa-share"></i></a>
   <a class="btn btn-danger btn-sm" (click)="typeFollowing('unfollow',waste._id)"
      *ngSwitchCase="'accepted'">Remove Friend <i class="fa fa-low-vision"></i></a>
