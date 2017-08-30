@@ -15,7 +15,7 @@ export class AuthService {
     this.token = localStorage.getItem('token');
     if (this.token) {
       // TODO seek a connection between having the auth service
-       this.callRefreshUserData();
+       //this.callRefreshUserData();
       // this.user = this.decodeUserFromToken(this.token);
     }
   }
