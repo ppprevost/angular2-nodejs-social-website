@@ -36,24 +36,10 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
-  followUserOk(wasterId) {
-    this.http.post('/api/users/followOk', JSON.stringify(this.obj(wasterId))).toPromise().then(data => {
-      this.auth.countFriendRequest--;
-      this.getThisUser(data.json());
-    });
-  }
-
   ngOnDestroy() {
     for (var i = 0; i < this.table.length; i++) {
       this['connection' + i].unsubscribe();
     }
-  }
-
-  follow(wasterId) {
-    this.http.post('/api/users/follow', JSON.stringify(this.obj(wasterId))).toPromise().then(data => {
-      this.getThisUser(data.json());
-
-    });
   }
 
   socketMethodUse(table) {
@@ -66,11 +52,6 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  unfollow(wasterId) {
-    this.http.post('/api/users/unfollow', JSON.stringify(this.obj(wasterId))).toPromise().then(data => {
-      this.getThisUser(data.json());
-    }, err => console.log(err));
-  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.previousValue) {
