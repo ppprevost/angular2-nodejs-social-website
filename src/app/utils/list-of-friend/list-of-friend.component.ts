@@ -16,7 +16,6 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
-    //console.log(this.user);
   }
 
   ngOnDestroy() {
