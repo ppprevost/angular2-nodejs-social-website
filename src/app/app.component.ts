@@ -52,7 +52,6 @@ export class AppComponent implements OnInit, OnDestroy {
       email: this.email,
       password: this.password
     });
-
     if (this.loggedIn()) {
       this.initSocket();
     }
@@ -76,7 +75,7 @@ export class AppComponent implements OnInit, OnDestroy {
       data => {
         console.log(data);
         this.router.navigate(['./']);
-        this.initSocket();
+        this.initSocket(true);
       },
       err => {
         if (typeof err.json() === 'string') {
@@ -132,14 +131,24 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.auth.loggedIn();
   }
 
-  private initSocket() {
-    this.auth.callRefreshUserData(null, (user) => {
-      user.following.forEach(elem => {
+  private initSocket(logged?) {
+    if (logged) {
+      this.auth.callRefreshUserData();
+      this.auth.user.following.forEach(elem => {
         if (elem.statut === 'requested') {
           this.auth.countFriendRequest++;
         }
       });
-    });
+    } else {
+      this.auth.callRefreshUserData(null, (user) => {
+        user.following.forEach(elem => {
+          if (elem.statut === 'requested') {
+            this.auth.countFriendRequest++;
+          }
+        });
+      });
+    }
+
     // TODO search server side
     // auto completion
     // this.data.getUsers()

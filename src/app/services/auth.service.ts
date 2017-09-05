@@ -48,7 +48,7 @@ export class AuthService {
   }
 
   /**
-   * See data.redreshUserData
+   * Refresh the user. If callback async function and call the server to refresH. to log in, we only decode the token. and if we have the data we could refresh the user with that.
    * @param userData
    * @param callback
    * @returns {any}
@@ -57,12 +57,17 @@ export class AuthService {
     if (userData) {
       return this.user = userData;
     } else {
-      return this.data.refreshUserData({userId: this.decodeUserFromToken(this.token)._id}).subscribe(user => {
-        this.user = user.json();
-        if (callback) {
-          callback(this.user);
-        }
-      });
+      if (callback) {
+        return this.data
+          .refreshUserData({userId: this.decodeUserFromToken(this.token)._id}).subscribe(user => {
+            this.user = user.json();
+            if (callback) {
+              callback(this.user);
+            }
+          });
+      } else {
+        this.user = this.decodeUserFromToken(this.token);
+      }
     }
   }
 }

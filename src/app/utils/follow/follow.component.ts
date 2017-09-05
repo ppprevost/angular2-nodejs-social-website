@@ -86,8 +86,10 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     (`/api/users/followingFunction`, JSON.stringify(this.obj(wasterId, typeFollowing)))
       .toPromise()
       .then(data => {
-        this.getThisUser(data.json());
-      }).catch(err => console.log(err));
+        this.auth.callRefreshUserData(data.json());
+        this.getThisUser();
+      })
+      .catch(err => console.log(err));
   }
 
 
