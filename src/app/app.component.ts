@@ -133,7 +133,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private initSocket() {
-    this.auth.callRefreshUserData(null,(user) => {
+    this.auth.callRefreshUserData(null, (user) => {
       user.following.forEach(elem => {
         if (elem.statut === 'requested') {
           this.auth.countFriendRequest++;

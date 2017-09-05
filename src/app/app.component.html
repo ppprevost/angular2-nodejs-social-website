@@ -1,4 +1,4 @@
-<header *ngIf="auth.user">
+<header>
   <nav class="principal-navbar navbar navbar-default navbar-fixed-top principal-header">
     <div class="container">
       <div class="navbar-header">
@@ -12,10 +12,10 @@
       </div>
       <div id="navbar" class="navbar-collapse">
         <a href="/" class="navbar-brand">My Social Website</a>
-        <a *ngIf="auth.loggedIn()" class="navbar-brand" [routerLink]="['/my-profile', auth.user._id]"
+        <a *ngIf="auth.loggedIn() && auth.user" class="navbar-brand" [routerLink]="['/my-profile', auth.user._id]"
            routerLinkActive="active">My
           Profile</a>
-        <a *ngIf="auth.loggedIn()">
+        <a *ngIf="auth.loggedIn() && auth.user">
           <ng2-completer [clearUnselected]="true" #value=ngModel [placeholder]="'find a user'" [pause]="1000"
                          [(ngModel)]="searchUser" (selected)="sendData($event)"
                          [datasource]="dataUser"
@@ -36,7 +36,7 @@
             <a *ngIf="!auth.loggedIn()" routerLink="/signup" routerLinkActive="active">Create An Account</a>
           </div>
         </div>
-        <ul *ngIf="auth.loggedIn()" class="nav navbar-nav navbar-right">
+        <ul *ngIf="auth.loggedIn() && auth.user" class="nav navbar-nav navbar-right">
           <li class="dropdown">
             <a data-toggle="dropdown" class="navbar-avatar dropdown-toggle"> Menu<i class="caret"></i>
             </a>
@@ -49,7 +49,7 @@
             </ul>
           </li>
         </ul>
-        <ul *ngIf="auth.loggedIn()" class="nav navbar-nav navbar-right">
+        <ul *ngIf="auth.loggedIn() && auth.user" class="nav navbar-nav navbar-right">
           <li>
             <a>{{auth.user.username}}</a>
           </li>
@@ -64,7 +64,7 @@
 </header>
 
 <!-- Contenu  -->
-<article *ngIf="auth.user">
+<article>
   <div class="container primaryContent">
     <router-outlet></router-outlet>
     <!--<app-sidebar>CONTETN</app-sidebar>-->

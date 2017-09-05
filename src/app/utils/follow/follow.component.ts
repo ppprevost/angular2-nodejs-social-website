@@ -37,7 +37,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
-    for (var i = 0; i < this.table.length; i++) {
+    for (let i = 0; i < this.table.length; i++) {
       this['connection' + i].unsubscribe();
     }
   }
