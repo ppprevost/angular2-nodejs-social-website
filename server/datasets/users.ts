@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import {} from 'socket.io';
 import {Response} from 'express';
-import * as utils from '../utils/utils';
+import {typeFunctionMethod, sendSocketNotification, ipConnection} from '../utils/utils';
 const UsersConnected = require('./connected-users');
 
 interface IUser {
@@ -183,7 +183,7 @@ schema.statics.followMethod = function (infoFollowMethod: InfoMethod, io, callba
   const userId = infoFollowMethod.userId, wasterId = infoFollowMethod.wasterId;
   let exist: boolean;
   // take the good type of following function and the associated method
-  const actualMethodObject: any = utils.typeFunctionMethod().find(elem => elem.type === infoFollowMethod.typeFollowing);
+  const actualMethodObject: any = typeFunctionMethod().find(elem => elem.type === infoFollowMethod.typeFollowing);
   actualMethodObject.users = [{
     user: userId,
     waster: wasterId,
@@ -210,7 +210,7 @@ schema.statics.followMethod = function (infoFollowMethod: InfoMethod, io, callba
               callback(null, user);
               //  res.json(user);
             } else {
-              utils.sendSocketNotification(user, actualMethodObject.socketMessage, io, UsersConnected);
+              sendSocketNotification(user, actualMethodObject.socketMessage, io, UsersConnected);
             }
           });
         }
@@ -236,19 +236,19 @@ const locationSearch = function (savedUser, socketId, userData) {
   } else {
     userData.idOfLocation = savedUser.location[idOfLocation]['_id'];
   }
-}
+};
 
 schema.methods.setconnectedStatuts = async function (userData, req, callback) {
   UsersConnected.findOne({userId: userData._id}, (err, userAlreadyConnected) => {
     if (userAlreadyConnected) {
-      userAlreadyConnected.location.push({socketId: req.body.socketId, IP: utils.ipConnection(req)});
+      userAlreadyConnected.location.push({socketId: req.body.socketId, IP: ipConnection(req)});
       userAlreadyConnected.save(() => {
         locationSearch(userAlreadyConnected, req.body.socketId, userData);
       });
     } else {
       const newUserConnected = new UsersConnected({
         userId: userData._id,
-        location: [{socketId: req.body.socketId, IP: utils.ipConnection(req)}]
+        location: [{socketId: req.body.socketId, IP: ipConnection(req)}]
       });
       newUserConnected.save((err, savedUser) => {
         locationSearch(savedUser, req.body.socketId, userData);
@@ -291,7 +291,7 @@ schema.methods.deleteConnectedStatus = async function (user: IUser, callback: (e
       callback(err, null);
     }
   });
-}
+};
 
 
 // Omit the password when returning a user

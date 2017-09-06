@@ -7,7 +7,7 @@
  * @param req
  * @returns {*}
  */
-export const ipConnection = (req) => {
+const ipConnection = (req) => {
   let ip;
   if (req.headers['x-forwarded-for']) {
     ip = req.headers['x-forwarded-for'].split(',')[0];
@@ -24,7 +24,7 @@ export const ipConnection = (req) => {
  * @type {(p1?:*, p2?:*)}
  */
 
-export const sendSocketNotification = (waster, notif, io, usersConnected) => {
+const sendSocketNotification = (waster, notif, io, usersConnected) => {
   usersConnected.findOne({userId: waster._id}, (err, userCo) => {
     if (userCo) {
       userCo.location.forEach(elem => {
@@ -35,7 +35,7 @@ export const sendSocketNotification = (waster, notif, io, usersConnected) => {
 };
 
 
-export const typeFunctionMethod = (): Array<any> => {
+const typeFunctionMethod = (): Array<any> => {
   return [
     {
       type: 'unfollow',
@@ -63,7 +63,7 @@ export const typeFunctionMethod = (): Array<any> => {
     },
     {
       type: 'follow',
-      socektMessage: 'friendRequest',
+      socketMessage: 'friendRequest',
       statut: ['pending', 'requested'],
       associatedMethod: function (user, objUserId) {
         if (!user.following.length) { // init s tableau vide
@@ -91,3 +91,21 @@ export const typeFunctionMethod = (): Array<any> => {
     }
   ];
 }
+
+const asyncEach = (iterableList, callback, done) => {
+  let i = -1,
+    length = iterableList.length;
+
+  function loop() {
+    i++;
+    if (i === length) {
+      done();
+      return;
+    }
+    callback(iterableList[i], loop);
+  }
+
+  loop();
+};
+export{ipConnection, sendSocketNotification, asyncEach, typeFunctionMethod}
+

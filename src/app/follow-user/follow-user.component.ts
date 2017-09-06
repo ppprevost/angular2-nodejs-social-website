@@ -3,10 +3,12 @@ import {DataService} from '../services/data.service';
 import {InfiniteScrollService} from '../services/infinite-scroll.service';
 import {AuthService} from '../services/auth.service';
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/concatMap';
 import {ListOfFriendComponent} from '../utils/list-of-friend/list-of-friend.component';
 import {ActivatedRoute} from '@angular/router';
 import * as Masonry from 'masonry-layout';
 import {Waste} from '../interface/interface';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-follow-user',
@@ -26,17 +28,20 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
   }
 
   ngOnInit() {
-    this.unsub = this.route.snapshot.data['follow'].subscribe(data => {
-      this.wasters = data.json()
-        .filter(elem => {
-          return elem._id !== this.auth.user._id;
-        })
-        .map(follower => {
-          follower.following.filter(contact => contact.statut === 'accepted');
-          return follower;
-        });
-      //    console.log(this.wasters);
-    });
+    this.unsub = this.route.snapshot.data['follow']
+      .map(res => res.json())
+      .concatMap(arr => Observable.from(arr))
+      .filter(elem => {
+        return elem._id !== this.auth.user._id;
+      })
+      .toArray()
+      .subscribe(data => {
+        this.wasters = data
+          .map(follower => {
+            follower.following.filter(contact => contact.statut === 'accepted');
+            return follower;
+          });
+      });
   }
 
   @HostListener('window:scroll', ['$event']) onScroll($event) {

@@ -9,8 +9,8 @@ import {
   HostListener
 } from '@angular/core';
 import {DataService} from '../../services/data.service';
-import {SocketService} from "../../services/socket.service";
-import {Waste} from "../../interface/interface";
+import {SocketService} from '../../services/socket.service';
+import {Waste} from '../../interface/interface';
 import {InfiniteScrollService} from '../../services/infinite-scroll.service';
 import {AuthService} from '../../services/auth.service';
 import * as Masonry from 'masonry-layout';

@@ -1,7 +1,11 @@
 const Waste = require('../datasets/wastes');
 const Users = require('../datasets/users');
-const mongoose = require('mongoose');
-type TypePost = 'publicOnly'|'all';
+type TypePost = 'publicOnly' | 'all';
+const extractWithEmbedly = require('article-parser');
+import {asyncEach} from '../utils/utils';
+const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+const regex = new RegExp(expression);
+
 
 export class WasteController {
   private io;
@@ -16,6 +20,7 @@ export class WasteController {
     this.io = io;
 
   }
+
 
   /**
    *
@@ -46,17 +51,26 @@ export class WasteController {
               if (err) {
                 res.status(400).send(err);
               }
-              allWastes.map(doc => {
+              asyncEach(allWastes, function (doc, callback) {
                 allUserImage.forEach((elem) => {
                   if (doc.userId == elem._id) {
                     doc._doc.image = elem.image; // hack Mongoose
                     doc._doc.username = elem.username;
-                    return doc
+                    if (doc.content.match(regex)) {
+                      extractWithEmbedly(doc.content)
+                        .then((article) => {
+                          doc.content = article;
+                          callback();
+                        }).catch((error) => {
+                        console.log(error);
+                      });
+                    }
+                    return doc;
                   }
                 });
-
+              }, function () {
+                res.json(allWastes);
               });
-              res.json(allWastes);
             });
           }
         });

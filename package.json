@@ -39,6 +39,7 @@
     "@types/mongodb": "^2.2.0",
     "angular2-jwt": "^0.2.3",
     "angular2-recaptcha": "^0.4.1",
+    "article-parser": "^2.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "1.16.1",
     "bootstrap": "3.3.7",
