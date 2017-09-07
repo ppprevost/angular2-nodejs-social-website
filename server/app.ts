@@ -21,7 +21,7 @@ class Server {
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({extended: false}));
     this.app.set('port', (process.env.PORT || 3000));
-    this.app.use('/', express.static(path.join(__dirname, './../dist')));
+    this.app.use('/', express.static(path.join(__dirname, './../')));
     this.app.use(morgan('dev'));
 
     this.limiter({
@@ -56,7 +56,7 @@ class Server {
       const routes = new RouterApp(this.app, this.io);
       routes.routing();
       this.app.get('/*', function (req, res) {
-        res.sendFile(path.join(__dirname, './../dist/index.html'));
+        res.sendFile(path.join(__dirname, './../index.html'));
       });
     });
   }
