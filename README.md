@@ -24,12 +24,16 @@ npm install -g nodemon angular-cli
 npm install
 ```
 ## Installing
-
-### Development mode
 * Please fulfill the information in the .env file. It contains all variables uses by node.js ( mongodb_uri, gmail, amazon etc...)
+### Development mode
+2 console one for client and one for server.
 ```
 npm run dev
 ```
+```
+npm run startNodemon
+```
+
 Your application is listening to localhost:4200
 ### Production mode and Heroku
 

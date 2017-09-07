@@ -58,8 +58,9 @@ export class AuthService {
       return this.user = userData;
     } else {
       if (callback) {
-        return this.data
-          .refreshUserData({userId: this.decodeUserFromToken(this.token)._id}).subscribe(user => {
+        this.data
+          .refreshUserData({userId: this.decodeUserFromToken(this.token)._id})
+          .subscribe(user => {
             this.user = user.json();
             if (callback) {
               callback(this.user);

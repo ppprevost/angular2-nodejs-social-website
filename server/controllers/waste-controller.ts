@@ -64,6 +64,8 @@ export class WasteController {
                         }).catch((error) => {
                         console.log(error);
                       });
+                    } else {
+                      callback();
                     }
                     return doc;
                   }

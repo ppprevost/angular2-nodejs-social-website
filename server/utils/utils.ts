@@ -92,7 +92,7 @@ const typeFunctionMethod = (): Array<any> => {
   ];
 }
 
-const asyncEach = (iterableList, callback, done) => {
+const asyncEach = (iterableList: Array<any>, callback: (string, Function) => any, done: () => void) => {
   let i = -1,
     length = iterableList.length;
 
