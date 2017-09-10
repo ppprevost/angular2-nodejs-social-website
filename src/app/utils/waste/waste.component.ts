@@ -8,9 +8,10 @@ import {
   ViewChild,
   HostListener
 } from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
 import {DataService} from '../../services/data.service';
 import {SocketService} from '../../services/socket.service';
-import {Waste} from '../../interface/interface';
+import {Waste, Commentary} from '../../interface/interface';
 import {InfiniteScrollService} from '../../services/infinite-scroll.service';
 import {AuthService} from '../../services/auth.service';
 import * as Masonry from 'masonry-layout';
@@ -34,7 +35,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   connection;
   private subComment;
 
-  constructor(private infinite: InfiniteScrollService, private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
+  constructor(private _sanitizer: DomSanitizer, private infinite: InfiniteScrollService, private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
 
   }
 
@@ -79,12 +80,17 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   getPosts() {
+    var self = this;
     this.data.getPost(this.userId, this.numberOfWaste, this.typePost, this.onlyOwnPost, this.wastes.length)
       .map(res => res.json())
       .subscribe(
         data => {
           this.wastes = data;
           this.wastes.forEach(waste => {
+            if (waste && waste.content && waste.content.source === 'YouTube') {
+              console.log('THIS', this);
+              waste.content._url = self._sanitizer.bypassSecurityTrustResourceUrl(waste.content._url);
+            }
             waste.isOpeningCommentary = false;
           });
         },
@@ -98,7 +104,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
         .subscribe(res => {
           return this.wastes = this.wastes.map(elem => {
             if (elem._id === res._id) {
-              elem = res as Waste;
+              elem.commentary = res.commentary;
             }
             return elem;
           });

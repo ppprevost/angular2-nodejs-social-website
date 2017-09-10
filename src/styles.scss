@@ -62,9 +62,17 @@ header {
   height: 70px;
 }
 
-.waste-section img {
+.waste-section {
+
+  .panel-body img{
+    width:100%;
+    height:auto;
+  }
+
+img{
   width: 100px;
   height: 100px;
+}
 }
 
 .newUserSignIn {

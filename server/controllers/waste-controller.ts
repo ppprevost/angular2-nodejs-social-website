@@ -1,8 +1,8 @@
 const Waste = require('../datasets/wastes');
 const Users = require('../datasets/users');
 type TypePost = 'publicOnly' | 'all';
-const extractWithEmbedly = require('article-parser');
-import {asyncEach} from '../utils/utils';
+const extract = require('article-parser');
+import {asyncEach, youtube_parser} from '../utils/utils';
 const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 const regex = new RegExp(expression);
 
@@ -51,25 +51,15 @@ export class WasteController {
               if (err) {
                 res.status(400).send(err);
               }
-              asyncEach(allWastes, function (doc, callback) {
+              asyncEach(allWastes, function (doc, next) {
                 allUserImage.forEach((elem) => {
                   if (doc.userId == elem._id) {
                     doc._doc.image = elem.image; // hack Mongoose
                     doc._doc.username = elem.username;
-                    if (doc.content.match(regex)) {
-                      extractWithEmbedly(doc.content)
-                        .then((article) => {
-                          doc.content = article;
-                          callback();
-                        }).catch((error) => {
-                        console.log(error);
-                      });
-                    } else {
-                      callback();
-                    }
-                    return doc;
                   }
+                  return doc;
                 });
+                next()
               }, function () {
                 res.json(allWastes);
               });
@@ -113,17 +103,38 @@ export class WasteController {
    */
   sendPost = (req, res) => {
     const data = req.body.request;
+    let waste;
+    let saveWaste = (waste, user) => {
+      if (waste && waste.content && waste.content.source === 'YouTube') {
+        waste.content._url = 'https://www.youtube.com/embed/' + youtube_parser(waste.content._url);
+      }
+      waste = new Waste(data);
+      waste.save((er) => {
+        if (!er) {
+          waste = waste.getMoreWasteInfo(user);
+          Users.getListOfFriendAndSentSocket(user, waste, 'getNewPost', this.io)
+            .then(() => res.json(waste))
+            .catch(error => res.status(400).send(error));
+        }
+      });
+    }
     if (data) {
       Users.findById(data.userId, (err, user) => {
-        let waste = new Waste(data);
-        waste.save((er) => {
-          if (!er) {
-            waste = waste.getMoreWasteInfo(user);
-            Users.getListOfFriendAndSentSocket(user, waste, 'getNewPost', this.io)
-              .then(() => res.json(waste))
-              .catch(error => res.status(400).send(error));
-          }
-        });
+        if (data.content.match(regex)) {
+          extract.extractWithEmbedly(data.content)
+            .then((article) => {
+              data.content = article;
+              saveWaste(data, user);
+            }).catch((error) => {
+            console.log(error);
+          });
+        } else {
+          data.content = {
+            content: data.content,
+            type: 'text'
+          };
+          saveWaste(data, user)
+        }
       });
     } else {
       res.status(404).send('no content saved in the database');
@@ -139,16 +150,19 @@ export class WasteController {
   sendComments = (req, res) => {
     const comments = req.body.comments;
     Waste.findById(comments.wasteId, (err, waste) => {
-      comments.date = new Date();
-      // delete comments.wasteId
-      waste.commentary.push(comments);
-      waste.save(() => {
-        Users.findById(comments.userId, (err, user) => {
-          Users.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
-            .then(waster => res.json(comments))
-            .catch(error => console.log(error));
+      if (!err) {
+        comments.date = new Date();
+        // delete comments.wasteId
+        waste.commentary.push(comments);
+        waste.save(() => {
+        waste.getMore
+          Users.findById(comments.userId, (err, user) => {
+            Users.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
+              .then(waster => res.json(comments))
+              .catch(error => console.log(error));
+          });
         });
-      });
+      }
     });
   }
 

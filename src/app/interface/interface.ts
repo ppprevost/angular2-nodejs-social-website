@@ -19,13 +19,25 @@ export interface User {
   modifiedAt: Date;
 }
 
+export interface Article {
+  author: string;
+  content: string;
+  description: string;
+  type: string;
+  image: string;
+  source: string;
+  title: string;
+  url: any;
+  _url: any;
+}
+
 export type TypePost = 'public' | 'private' |'all';
 
 export interface Waste {
   readonly _id: string;
   userId: string;
   commentary: Array<Commentary>;
-  content: string;
+  content: Article;
   date: Date;
   likes: Array<string>;
   likeItVeryMuch: boolean;

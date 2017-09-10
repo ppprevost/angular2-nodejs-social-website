@@ -1,10 +1,26 @@
 import * as mongoose from 'mongoose';
 
 
-var schema = new mongoose.Schema({
+let Article = new mongoose.Schema({
+  author: String,
+  content: String,
+  description: String,
+  type: {
+    type: String,
+    enum: ['text', 'image', 'articleUrl', 'videoUrl']
+  },
+  image: String,
+  source: String,
+  title: String,
+  url: String,
+  _url: String
+});
+
+
+const schema = new mongoose.Schema({
   userId: {type: String, required: true},
   userType: {type: String, enum: ['public', 'private']},
-  content: String,
+  content: Article,
   likes: [String],
   commentary: [{
     userId: String, typeWaste: String,
@@ -25,5 +41,6 @@ schema.methods.getMoreWasteInfo = function (user) {
   this._doc.image = user.image;
   return this
 };
+
 
 module.exports = mongoose.model('Waste', schema);

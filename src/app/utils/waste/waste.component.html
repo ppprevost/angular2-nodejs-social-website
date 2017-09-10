@@ -23,9 +23,17 @@
               </div>
             </div>
           </div>
-
           <div class="panel-body">
-            <p>{{waste.content}}</p>
+            <div *ngIf="waste.content.author">Publish by :{{waste.content.author}}</div>
+            <h5 *ngIf="waste.content.title"><a [href]="waste.content._url" target="_blank">{{waste.content.title}}</a>
+            </h5>
+            <div *ngIf="waste.content.image && waste.content.source !== 'YouTube'"><img [src]="waste.content.image"
+                                                                                        alt=""></div>
+            <div *ngIf="waste.content.source ==='YouTube'">
+              <iframe width="100%" height="315" [src]="waste.content._url" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <p *ngIf="!waste.content.description">{{waste.content.content}}</p>
+            <p *ngIf="waste.content.description">{{waste.content.description}}</p>
           </div>
           <div
             class="view-all-comments">

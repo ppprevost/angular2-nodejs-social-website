@@ -3,6 +3,7 @@ import {DataService} from '../services/data.service';
 import {WasteComponent} from '../utils/waste/waste.component';
 import {User} from '../interface/interface';
 import {AuthService} from '../services/auth.service';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,7 @@ export class HomeComponent {
   newWaste: string;
   @ViewChild(WasteComponent) wasteComponent: WasteComponent;
 
-  constructor(private auth: AuthService, private data: DataService) {
+  constructor(private _sanitizer: DomSanitizer, private auth: AuthService, private data: DataService) {
     console.log(this);
   }
 
@@ -38,9 +39,12 @@ export class HomeComponent {
       return this.data.sendWaste({request: request}).map(res => res.json())
         .subscribe(data => {
             this.newWaste = '';
+          if (data && data.content && data.content.source === 'YouTube') {
+            data.content._url = this._sanitizer.bypassSecurityTrustResourceUrl(data.content._url);
+          }
+            this.wasteComponent.wastes.unshift(data)
           },
-          (err => console.log(err)),
-          () => this.wasteComponent.getPosts()); // une fois// qu'on a bien enregfistré on rappelle la méthode getost du component child
+          (err => console.log(err))); // une fois// qu'on a bien enregfistré on rappelle la méthode getost du component child
     }
   }
 

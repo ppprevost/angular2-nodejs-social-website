@@ -92,7 +92,7 @@ const typeFunctionMethod = (): Array<any> => {
   ];
 }
 
-const asyncEach = (iterableList: Array<any>, callback: (string, Function) => any, done: () => void) => {
+const asyncEach = (iterableList: Array<any>, next: (string, Function) => any, done: () => void) => {
   let i = -1,
     length = iterableList.length;
 
@@ -102,10 +102,16 @@ const asyncEach = (iterableList: Array<any>, callback: (string, Function) => any
       done();
       return;
     }
-    callback(iterableList[i], loop);
+    next(iterableList[i], loop);
   }
 
   loop();
 };
-export{ipConnection, sendSocketNotification, asyncEach, typeFunctionMethod}
+
+const youtube_parser = (url) => {
+  var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+  var match = url.match(regExp);
+  return (match && match[7].length == 11) ? match[7] : false;
+}
+export{ipConnection, sendSocketNotification, asyncEach, typeFunctionMethod, youtube_parser}
 
