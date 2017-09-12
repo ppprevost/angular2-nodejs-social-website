@@ -6,6 +6,7 @@ import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
 import {Router} from '@angular/router';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 import {SocketService} from './services/socket.service';
+import {User} from './interface/interface';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,7 @@ import {SocketService} from './services/socket.service';
 export class AppComponent implements OnInit, OnDestroy {
   private loginUser: FormGroup;
   private loginAndSocket;
-  private table = [{type: 'friendRequest', see: 'Friend Request'}, {
+  private table: any = [{type: 'friendRequest', see: 'Friend Request'}, {
     type: 'removeFriend',
     see: 'You\'re not friend anymore'
   }, {type: 'friendRequestAccepted', see: 'Friend Request Accepted'}];
@@ -42,9 +43,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   }
 
-  sendData(dd) {
-    console.log(dd);
-    this.router.navigate(['/my-profile', dd.originalObject._id]);
+  sendData(userInfo) {
+    console.log(userInfo);
+    this.router.navigate(['/my-profile', userInfo.originalObject._id]);
   }
 
   ngOnInit() {
@@ -93,7 +94,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private socketMethodUse(table) {
     table.forEach((elem, i) => {
       this['connection' + i] = this.socket.socketFunction(elem.type)
-        .subscribe(waste => {
+        .subscribe((waste: User) => {
           this.auth.callRefreshUserData(waste);
           if (elem.type === 'friendRequest') {
             this.auth.countFriendRequest++;
@@ -131,21 +132,26 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.auth.loggedIn();
   }
 
+  private friendRequested(user: User) {
+    user.following.forEach(elem => {
+      if (elem.statut === 'requested') {
+        this.auth.countFriendRequest++;
+      }
+    });
+  }
+
+  /**
+   * Initialize the socket and the connection either synchonr if connected or asynchronous if not connected
+   * @param logged
+   */
   private initSocket(logged?) {
     if (logged) {
       this.auth.callRefreshUserData();
-      this.auth.user.following.forEach(elem => {
-        if (elem.statut === 'requested') {
-          this.auth.countFriendRequest++;
-        }
-      });
+      this.friendRequested(this.auth.user);
+
     } else {
       this.auth.callRefreshUserData(null, (user) => {
-        user.following.forEach(elem => {
-          if (elem.statut === 'requested') {
-            this.auth.countFriendRequest++;
-          }
-        });
+        this.friendRequested(user);
       });
     }
 
