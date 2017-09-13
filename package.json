@@ -2,6 +2,10 @@
   "name": "social-website-angular2-full-stack",
   "version": "0.9.5",
   "license": "MIT",
+  "engines": {
+    "node": "7.8.0",
+    "npm": "4.2.0"
+  },
   "author": "Pierre-Philippe PREVOST",
   "description": "Angular 4 full stack project.",
   "angular-cli": {},

@@ -3,6 +3,10 @@ import {PublicService} from './public.service';
 import {JwtHelper, tokenNotExpired} from 'angular2-jwt';
 import {Injectable} from '@angular/core';
 import {User} from '../interface/interface';
+import {
+  Router, Resolve, RouterStateSnapshot,
+  ActivatedRouteSnapshot
+} from '@angular/router';
 
 @Injectable()
 export class AuthService {
@@ -70,5 +74,10 @@ export class AuthService {
         this.user = this.decodeUserFromToken(this.token);
       }
     }
+  }
+
+  resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
+    return this.data.refreshUserData({userId: this.decodeUserFromToken(this.token)._id}).toPromise();
+
   }
 }

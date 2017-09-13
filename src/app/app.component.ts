@@ -54,7 +54,7 @@ export class AppComponent implements OnInit, OnDestroy {
       password: this.password
     });
     if (this.loggedIn()) {
-      this.initSocket();
+      this.initSocket(true);
     }
 
   }
@@ -98,8 +98,8 @@ export class AppComponent implements OnInit, OnDestroy {
           this.auth.callRefreshUserData(waste);
           if (elem.type === 'friendRequest') {
             this.auth.countFriendRequest++;
-            this.toastyService.info({title: 'new request from friend', msg: waste.username + ' : ' + elem.see});
           }
+          this.toastyService.info({title: elem.type, msg: waste.username + ' : ' + elem.see});
         });
     });
   }
@@ -144,11 +144,10 @@ export class AppComponent implements OnInit, OnDestroy {
    * Initialize the socket and the connection either synchonr if connected or asynchronous if not connected
    * @param logged
    */
-  private initSocket(logged?) {
+  private initSocket(logged?: boolean) {
     if (logged) {
       this.auth.callRefreshUserData();
       this.friendRequested(this.auth.user);
-
     } else {
       this.auth.callRefreshUserData(null, (user) => {
         this.friendRequested(user);

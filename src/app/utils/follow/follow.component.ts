@@ -88,6 +88,9 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
       .then(data => {
         this.auth.callRefreshUserData(data.json());
         this.getThisUser();
+        if (typeFollowing == 'followOk') {
+          this.auth.countFriendRequest--;
+        }
       })
       .catch(err => console.log(err));
   }

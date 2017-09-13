@@ -33,7 +33,10 @@ const routing = RouterModule.forRoot([
   {
     path: '', component: HomeComponent
   },
-  {path: 'profil', component: ProfileComponent, canActivate: [AuthGuard]},
+  {
+    path: 'profil', component: ProfileComponent, canActivate: [AuthGuard],
+    resolve: {user: AuthService}
+  },
   {path: 'signup', component: SignupComponent},
   {
     path: 'email-verification', children: [{

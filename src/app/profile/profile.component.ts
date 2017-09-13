@@ -34,9 +34,9 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.user = this.auth.user;
+    this.uploader.authToken = 'Bearer ' + localStorage.token;
     this.uploader.onBuildItemForm = (item: any, form) => {
-      form.append('userId', this.user['_id']);
+      form.append('userId', this.auth.user['_id']);
       form.append('uploadType', this.typeUpload);
 
     };
@@ -45,7 +45,7 @@ export class ProfileComponent implements OnInit {
       file.typeUpload = this.typeUpload;
     };
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-      this.auth.callRefreshUserData(response);
+      this.auth.callRefreshUserData(response.json());
     };
     this.updatePass = this.passwordForm.group({
       lastPassword: this.lastPassword,
@@ -60,7 +60,7 @@ export class ProfileComponent implements OnInit {
       userId: string;
     }
     const obj: Obj = <any>{};
-    obj['userId'] = this.user['_id'];
+    obj['userId'] = this.auth.user['_id'];
     obj[event.target.name] = event.target.value;
 
     this.data.updateChamp(obj).subscribe(res => {
@@ -81,7 +81,7 @@ export class ProfileComponent implements OnInit {
         }
       });
       if (this.updatePass.value.confirm === this.updatePass.value.password) {
-        this.updatePass.value['userId'] = this.user['_id'];
+        this.updatePass.value['userId'] = this.auth.user['_id'];
         this.data.updatePassword(this.updatePass.value)
           .map(res => res.json())
           .subscribe(res => {
