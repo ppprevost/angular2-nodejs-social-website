@@ -38,9 +38,6 @@ Your application is listening to localhost:4200
 ### Production mode and Heroku
 
 if you want push to Heroku : Add your environment var. Then :
-```
-"postinstall": "ng build -aot -prod",
-```
 
 ```
 npm run prod

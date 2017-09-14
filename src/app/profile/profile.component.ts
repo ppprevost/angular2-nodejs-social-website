@@ -30,7 +30,7 @@ export class ProfileComponent implements OnInit {
   });
 
   constructor(private auth: AuthService, private data: DataService, private passwordForm: FormBuilder, private zone: NgZone) {
-
+    this.user = this.auth.user;
   }
 
   ngOnInit() {
@@ -45,7 +45,7 @@ export class ProfileComponent implements OnInit {
       file.typeUpload = this.typeUpload;
     };
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-      this.auth.callRefreshUserData(response.json());
+      this.auth.callRefreshUserData(JSON.parse(response));
     };
     this.updatePass = this.passwordForm.group({
       lastPassword: this.lastPassword,

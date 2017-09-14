@@ -1,5 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {DataService} from './services/data.service';
+import {Headers, RequestOptions} from '@angular/http'
 import {CompleterService, CompleterItem, RemoteData} from 'ng2-completer';
 import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
@@ -153,19 +154,10 @@ export class AppComponent implements OnInit, OnDestroy {
         this.friendRequested(user);
       });
     }
-
-    // TODO search server side
-    // auto completion
-    // this.data.getUsers()
-    //   .then(tableOfUsers => {
-    //     tableOfUsers.subscribe(dataElement => {
-    //       this.dataUser = this.completerService.local(dataElement.json(), 'username', 'username').imageField('image');
-    //     });
-    //   });
     this.dataUser = this.completerService.remote(null, 'username', 'username')
       .imageField('image');
-    this.dataUser.urlFormater(term => `api/users/get?token=${localStorage.token}&limitData=0&searchData=${term}`);
-
+    this.dataUser.requestOptions(new RequestOptions({headers: new Headers({'authorization': 'Bearer ' + localStorage.token})}));
+    this.dataUser.urlFormater(term => `api/users/get?limitData=0&searchData=${term}`);
 
     // the socket is connected
     this.connectionOfUser = this.socket.socketFunction('connect')

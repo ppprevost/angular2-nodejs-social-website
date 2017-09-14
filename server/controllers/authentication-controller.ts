@@ -22,6 +22,7 @@ export class AuthentificationController {
     /**
      * Information to add if your are using the Verification Module
      */
+
     nev.configure({
       persistentUserModel: Users,
       expirationTime: 600, // 10 minutes
@@ -37,14 +38,9 @@ export class AuthentificationController {
         //   refreshToken: process.env.REFRESHTOKEN,
         //   clientId: process.env.CLIENTID
         // },
-
-        secure: true, // use SSL
         auth: {
           user: process.env.MAILACCOUNT,
           pass: process.env.MAILPASS
-        },
-        tls: {
-          rejectUnauthorized: false
         }
       },
 

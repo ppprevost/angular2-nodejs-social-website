@@ -12,7 +12,7 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build",
-    "postinstall": "node install-env.js",
+    "postinstall": "concurrently \"tsc -p ./server\" \"ng build -aot -prod\"",
     "start": "node dist/server/app.js",
     "predev": "tsc -p ./server",
     "preprod": "tsc -p ./server",

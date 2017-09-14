@@ -47,7 +47,8 @@ export class RouterApp {
    */
   checkIfUser(req, res, next) {
     let token: string;
-    if (req.headers['authorization'] && req.headers['authorization'].split(' ')[1] !== null || req.query.token) {
+    console.log(req.headers)
+    if (req.headers['authorization'] && req.headers['authorization'].split(' ')[1] !== null) {
       try {
         token = req.headers['authorization'].split(' ')[1];
       } catch (err) {
