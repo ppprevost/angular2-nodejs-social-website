@@ -41,12 +41,12 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
 
 
   ngOnInit() {
-    this.connection = this.socket.socketFunction("getNewPost")
+    this.connection = this.socket.socketFunction('getNewPost')
       .subscribe(message => {
         message.user = message.username;
         this.wastes.unshift(message);
       });
-    this.subComment = this.socket.socketFunction("newComments")
+    this.subComment = this.socket.socketFunction('newComments')
       .subscribe(message => {
         this.getBackPosts(this.wastes, message);
       });
@@ -74,7 +74,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
 
   ngOnChanges(changes) {
     console.log(changes);
-    if (changes.userId && changes.userId.currentValue && changes.userId.currentValue != changes.userId.previousValue) {
+    if (changes.userId && changes.userId.currentValue && changes.userId.currentValue !== changes.userId.previousValue) {
       this.getPosts();
     }
   }
@@ -140,10 +140,10 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
    * @returns {Subscription}
    */
   sendWasteComments(wasteId, value) {
-    let comments = {
+    const comments = {
       wasteId: wasteId,
       userId: this.userId,
-      typeWaste: "text",
+      typeWaste: 'text',
       data: value.value,
     };
     return this.data.sendWasteComments(comments)
