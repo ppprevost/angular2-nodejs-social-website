@@ -88,14 +88,24 @@
                   *ngIf="actualUser && uploadPicture.length && actualUser?._id===id || actualUser && uploadPicture.length && user?.friendShip=='accepted';else error">
                   <div class="row">
                     <div class="col-xs-12">
-                      <button *ngIf="actualUser?._id==id" class="btn btn-warning" (click)="deleteAllPictureUser()">
+                      <button *ngIf="actualUser?._id==id" class="btn btn-warning" (click)="deletePictureUser()">
                         Delete files
                       </button>
                     </div>
 
                   </div>
-                  <div *ngFor="let uplPic of uploadPicture; let i=index">
+
+                  <div *ngFor="let uplPic of uploadPicture; let i=index" class="view view-first">
                     <img [src]="'/assets/upload/'+user?._id+'/'+uplPic"/>
+                    <div class="mask">
+                      <h2>Menu</h2>
+                      <a href="'/assets/upload/'+user?._id+'/'+uplPic" class="info">See</a>
+                      <a (click)="deletePictureUser(uplPic)" class="info">Delete</a>
+                      <a (click)="makeProfilPicture()" class="info">Make profil picture</a>
+                    </div>
+                  </div>
+                  <div>
+
                   </div>
                 </div>
               </div>

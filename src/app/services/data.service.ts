@@ -79,8 +79,8 @@ export class DataService {
    * @param userId
    * @returns {Observable<Response>}
    */
-  deleteAllPicture(userId: string): Observable<any> {
-    return this.http.delete(`/api/users/deleteAllPicture/${userId}`);
+  deletePictures(userId: string, photos?: string): Promise<any> {
+    return this.http.delete(`/api/users/deleteAllPicture/${userId}` + photos ? '/' + photos : '').toPromise();
   }
 
   /**

@@ -17,11 +17,6 @@ export class AuthService {
 
   constructor(private publicService: PublicService, private data: DataService) {
     this.token = localStorage.getItem('token');
-    if (this.token) {
-      // TODO seek a connection between having the auth service
-      //this.callRefreshUserData();
-      // this.user = this.decodeUserFromToken(this.token);
-    }
   }
 
   /**

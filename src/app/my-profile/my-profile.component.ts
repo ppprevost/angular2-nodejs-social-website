@@ -69,15 +69,21 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         () => this.isLoading = false);
   }
 
-  deleteAllPictureUser() {
-    return this.data.deleteAllPicture(this.auth.user._id).subscribe(
-      data => {
+  /**
+   * if a pictureId is present delete only one picture. If not, delete all picures !
+   * @param {string} [pictureId] -picture to delete
+   */
+  deletePictureUser(pictureId?) {
+    return this.data.deletePictures(this.auth.user._id, pictureId)
+      .then(data => {
         this.auth.callRefreshUserData(data.json());
         this._compiler.clearCache();
         this.uploadPicture = [];
-      },
-      err => console.log(err));
+      }).catch(err => {
+        console.log(err)
+      });
   }
+
 
   sendWaste() {
     if (this.newWaste && this.newWaste !== '') {

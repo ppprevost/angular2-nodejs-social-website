@@ -47,7 +47,6 @@ export class RouterApp {
    */
   checkIfUser(req, res, next) {
     let token: string;
-    console.log(req.headers)
     if (req.headers['authorization'] && req.headers['authorization'].split(' ')[1] !== null) {
       try {
         token = req.headers['authorization'].split(' ')[1];
@@ -98,7 +97,7 @@ export class RouterApp {
 
 // User
     this.app.get('/api/users/uploadPicture/:id', this.checkIfUser, this.usersController.uploadPicture);
-    this.app.delete('/api/users/deleteAllPicture/:id', this.checkIfUser, this.usersController.deleteAllPictures);
+    this.app.delete('/api/users/deleteAllPicture/:id/:pictureId', this.checkIfUser, this.usersController.deleteAllPictures);
     this.app.get('/api/users/get', this.checkIfUser, this.usersController.getUsers);
     this.app.post('/api/users/getListOfFriends', this.checkIfUser, this.usersController.getlistOfFriends);
     this.app.post('/api/users/followingFunction', this.checkIfUser, this.usersController.followingFunction);

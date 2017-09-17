@@ -12,7 +12,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {DataService} from '../../services/data.service';
 import {SocketService} from '../../services/socket.service';
 import {Waste, Commentary} from '../../interface/interface';
-import {InfiniteScrollService} from '../../services/infinite-scroll.service';
+import {InfiniteScrollerDirective} from '../infinite-scroller.directive';
 import {AuthService} from '../../services/auth.service';
 import * as Masonry from 'masonry-layout';
 
@@ -20,7 +20,7 @@ import * as Masonry from 'masonry-layout';
   selector: 'app-waste',
   templateUrl: './waste.component.html',
   styleUrls: ['./waste.component.scss'],
-  providers: [InfiniteScrollService]
+  providers: [InfiniteScrollerDirective]
 })
 
 export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnChanges {
@@ -33,12 +33,20 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   masonry;
   wastes: Array<Waste> = [];
   connection;
+  scrollCallback;
   private subComment;
 
-  constructor(private _sanitizer: DomSanitizer, private infinite: InfiniteScrollService, private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
+  constructor(private _sanitizer: DomSanitizer, private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
+    this.scrollCallback = this.getMorePost.bind(this);
 
   }
 
+  getMorePost() {
+    console.log('ok')
+    return this.data.getPost(this.userId, 10, 'all', false, this.wastes.length)
+      .map(res => res.json())
+      .do((data) => this.wastes = this.wastes.concat(data), err => console.log(err));
+  }
 
   ngOnInit() {
     this.connection = this.socket.socketFunction('getNewPost')
@@ -55,6 +63,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   ngAfterViewChecked() {
     if (this.wasteCompo) {
       const item = this.wasteCompo.nativeElement;
+      // TODO make masonry better
       return this.masonry = new Masonry(item, {
         itemSelector: '.item'
       });
@@ -65,12 +74,6 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
 
   }
 
-  @HostListener('window:scroll', ['$event']) onScroll($event) {
-    this.infinite.getInfiniteScroll(() => {
-      this.data.getPost(this.userId, 10, 'all', false, this.wastes.length).map(res => res.json())
-        .subscribe((data) => this.wastes = this.wastes.concat(data), err => console.log(err));
-    });
-  }
 
   ngOnChanges(changes) {
     console.log(changes);
@@ -88,7 +91,6 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
           this.wastes = data;
           this.wastes.forEach(waste => {
             if (waste && waste.content && waste.content.source === 'YouTube') {
-              console.log('THIS', this);
               waste.content._url = self._sanitizer.bypassSecurityTrustResourceUrl(waste.content._url);
             }
             waste.isOpeningCommentary = false;

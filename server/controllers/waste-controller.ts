@@ -20,8 +20,6 @@ export class WasteController {
     this.io = io;
 
   }
-
-
   /**
    *
    * @param {Array} requestedWastes -Array of userId

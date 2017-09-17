@@ -1,5 +1,5 @@
 <header>
-  <nav class="principal-navbar navbar navbar-default navbar-fixed-top principal-header">
+  <nav class="navbar navbar-main navbar-default navbar-fixed-top">
     <div class="container">
       <div class="navbar-header">
         <button data-toggle="collapse" data-target="#navbar" class="navbar-toggle collapsed">
@@ -16,14 +16,29 @@
            routerLinkActive="active">My
           Profile</a>
         <a *ngIf="auth.loggedIn() && auth.user">
-          <ng2-completer [clearUnselected]="true" #value=ngModel [placeholder]="'find a user'" [pause]="1000"
-                         [(ngModel)]="searchUser" (selected)="sendData($event)"
-                         [datasource]="dataUser"
-                         [minSearchLength]="0"></ng2-completer>
+          <form class="navbar-form margin-none navbar-left hidden-xs ">
+            <!-- Search -->
+            <div class="search-1">
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                <ng2-completer name="fsfd" [clearUnselected]="true" #value=ngModel
+                               [placeholder]="'Find a user'"
+                               [pause]="1000"
+                               [maxChars]="52"
+                               [inputName]="'searchFriends'"
+                               [inputClass]="'form-control'"
+                               [(ngModel)]="searchUser" (selected)="sendData($event)"
+                               [datasource]="dataUser"
+                               [autoMatch]="true"
+                               [minSearchLength]="1"></ng2-completer>
+              </div>
+            </div>
+          </form>
         </a>
         <div class="nav navbar-nav navbar-right">
           <div class="form-inline">
-            <form *ngIf="!auth.loggedIn()" [formGroup]="loginUser">
+            <form *ngIf="!auth.loggedIn()" [formGroup]="loginUser"
+                  class="navbar-form margin-none navbar-left hidden-xs ">
               <md-input-container>
                 <input mdInput type="text" placeholder="your email" formControlName="email">
               </md-input-container>
@@ -33,25 +48,20 @@
 
               <button (click)="loginAccount()">Login</button>
             </form>
-            <a *ngIf="!auth.loggedIn()" routerLink="/signup" routerLinkActive="active">Create An Account</a>
           </div>
         </div>
         <ul *ngIf="auth.loggedIn() && auth.user" class="nav navbar-nav navbar-right">
           <li class="dropdown">
-            <a data-toggle="dropdown" class="navbar-avatar dropdown-toggle"> Menu<i class="caret"></i>
+            <a class="dropdown-toggle" data-toggle="dropdown">
+              <img [src]="" width="35" class="img-circle"> {{auth.user.username}} <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" role="menu">
               <li><a routerLink='/profil' routerLinkActive="active">Edit Profile</a></li>
-              <li class="divider"></li>
+
               <li><a [routerLink]="['/app-follow-user']" routerLinkActive="active">Follow Users</a></li>
-              <li class="divider"></li>
+
               <li><a (click)="logOut()">Logout</a></li>
             </ul>
-          </li>
-        </ul>
-        <ul *ngIf="auth.loggedIn() && auth.user" class="nav navbar-nav navbar-right">
-          <li>
-            <a>{{auth.user.username}}</a>
           </li>
         </ul>
         <ul class="countFriendRequest nav navbar-nav navbar-right" *ngIf="auth.loggedIn() && auth.countFriendRequest">

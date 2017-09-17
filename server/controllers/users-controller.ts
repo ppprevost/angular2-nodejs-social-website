@@ -195,26 +195,31 @@ export class UserController {
           if (err) {
             res.status(500).send('unerreru a la suppression:', err);
           }
-          files.forEach((file, i) => {
-            const filePath = directory + file;
-            fs.stat(filePath, function (err, stats) {
-              if (err) {
-                console.log(JSON.stringify(err));
-              } else {
-                if (stats.isFile()) {
-                  fs.unlink(filePath, function (er) {
-                    if (err) {
-                      res.status(400).json(er);
-                    }
-                  });
+          if (!req.pramas.pictureId) {
+            files.forEach((file, i) => {
+              const filePath = directory + file;
+              fs.stat(filePath, function (err, stats) {
+                if (err) {
+                  console.log(JSON.stringify(err));
+                } else {
+                  if (stats.isFile()) {
+                    fs.unlink(filePath, function (er) {
+                      if (err) {
+                        res.status(400).json(er);
+                      }
+                    });
+                  }
                 }
-              }
+              });
             });
-          });
-          user.image = undefined;
-          user.save(() => {
+            user.image = undefined;
+            user.save(() => {
+              res.json(user);
+            });
+          } else {
+            // ToDO delete pictures
             res.json(user);
-          });
+          }
         });
       }
     });

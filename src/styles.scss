@@ -33,46 +33,28 @@ $panel-heading-padding: 20px 30px;
 $panel-body-padding: 30px;
 
 ////
-
-html { ////
-  height: 100%;
-  box-sizing: border-box;
-
-}
-
-body { //
-  margin-top: 80px;
-  font-family: $font-family-base;
-  position: relative;
-}
-
-img {
-  vertical-align: middle;
-}
-
-a {
-  cursor: pointer;
-}
-
-article {
-  min-height: 80%;
-}
-
 header {
   height: 70px;
 }
 
+body { //
+  font-family: $font-family-base;
+}
+
+.input-group-addon {
+  border: 0;
+}
+
 .waste-section {
 
-  .panel-body img{
-    width:100%;
-    height:auto;
+  .panel-body img {
+    width: 100%;
   }
 
-img{
-  width: 100px;
-  height: 100px;
-}
+  img {
+    width: 100px;
+    height: 100px;
+  }
 }
 
 .newUserSignIn {
@@ -4075,7 +4057,6 @@ ul.icon-list {
     color: #e6e6e6;
   }
 }
-
 
 .list-group .list-group-item {
   &.active {
@@ -13139,9 +13120,6 @@ fieldset[disabled] .navbar-primary .btn-primary.active {
   }
 }
 
-
-
-
 .ls-top-navbar {
   body > .sidebar, .st-container > .sidebar, .ui-view-main > .sidebar {
     top: 50px;
@@ -13299,8 +13277,6 @@ fieldset[disabled] .navbar-primary .btn-primary.active {
     }
   }
 }
-
-
 
 html.app-mobile {
   .container .sidebar, #content .container-fluid .sidebar {
