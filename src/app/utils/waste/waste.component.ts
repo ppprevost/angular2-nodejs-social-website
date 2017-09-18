@@ -15,6 +15,9 @@ import {Waste, Commentary} from '../../interface/interface';
 import {InfiniteScrollerDirective} from '../infinite-scroller.directive';
 import {AuthService} from '../../services/auth.service';
 import * as Masonry from 'masonry-layout';
+import 'rxjs/add/operator/concatMap';
+import {Observable} from 'rxjs';
+
 
 @Component({
   selector: 'app-waste',
@@ -42,9 +45,17 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   getMorePost() {
-    console.log('ok')
-    return this.data.getPost(this.userId, 10, 'all', false, this.wastes.length)
-      .map(res => res.json())
+    console.log('ok');
+    return this.data
+      .getPost(this.userId, 10, 'all', false, this.wastes.length)
+      .map(res => res.json() as any)
+      .concatMap(elem => Observable.from(elem))
+      .map(doc => {
+        if (doc.content.source === 'YouTube') {
+          doc.content._url = this._sanitizer.bypassSecurityTrustResourceUrl(doc.content._url);
+        }
+        return doc;
+      }).toArray()
       .do((data) => this.wastes = this.wastes.concat(data), err => console.log(err));
   }
 
@@ -83,7 +94,6 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   getPosts() {
-    var self = this;
     this.data.getPost(this.userId, this.numberOfWaste, this.typePost, this.onlyOwnPost, this.wastes.length)
       .map(res => res.json())
       .subscribe(
@@ -91,7 +101,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
           this.wastes = data;
           this.wastes.forEach(waste => {
             if (waste && waste.content && waste.content.source === 'YouTube') {
-              waste.content._url = self._sanitizer.bypassSecurityTrustResourceUrl(waste.content._url);
+              waste.content._url = this._sanitizer.bypassSecurityTrustResourceUrl(waste.content._url);
             }
             waste.isOpeningCommentary = false;
           });

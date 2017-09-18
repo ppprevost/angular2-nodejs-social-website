@@ -115,7 +115,7 @@ export class DataService {
    * Get post from a user and all this different friends
    * @param userId {String}
    * @param numberOfWaste {Number}
-   * @param typePost {String} means publicOnly or all
+   * @param typePost {String} means publicOnly or allnf
    * @param onlyOwnPost {Boolean} means that i only want my own post
    * @param skipLimit for infinite scrollig
    * @returns {Observable<Response>}

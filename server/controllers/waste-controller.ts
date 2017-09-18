@@ -20,6 +20,7 @@ export class WasteController {
     this.io = io;
 
   }
+
   /**
    *
    * @param {Array} requestedWastes -Array of userId
@@ -125,6 +126,7 @@ export class WasteController {
               saveWaste(data, user);
             }).catch((error) => {
             console.log(error);
+            res.status(401).send(error);
           });
         } else {
           data.content = {
@@ -153,7 +155,7 @@ export class WasteController {
         // delete comments.wasteId
         waste.commentary.push(comments);
         waste.save(() => {
-        waste.getMore
+          waste.getMore
           Users.findById(comments.userId, (err, user) => {
             Users.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
               .then(waster => res.json(comments))
