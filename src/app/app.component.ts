@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
       password: this.password
     });
     if (this.loggedIn()) {
-      this.initSocket(true);
+      this.initSocket();
     }
 
   }

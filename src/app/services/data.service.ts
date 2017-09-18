@@ -120,7 +120,7 @@ export class DataService {
    * @param skipLimit for infinite scrollig
    * @returns {Observable<Response>}
    */
-  getPost(userId: string, numberOfWaste: number, typePost: TypePost, onlyOwnPost: boolean, skipLimit: number) {
+  getPost(userId: string, numberOfWaste: number, typePost: TypePost, onlyOwnPost: boolean, skipLimit: number):Observable<any> {
     return this.http.post('/api/waste/getPost', JSON.stringify({
       following: userId,
       numberOfWaste,

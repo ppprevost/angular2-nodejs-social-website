@@ -71,6 +71,7 @@ export class AuthService {
     }
   }
 
+  // todo car ca commence a bien faire
   resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
     return this.data.refreshUserData({userId: this.decodeUserFromToken(this.token)._id}).toPromise();
 

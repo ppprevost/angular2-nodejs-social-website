@@ -38,9 +38,10 @@ export interface Waste {
   userId: string;
   commentary: Array<Commentary>;
   content: Article;
+  youLikeThis: boolean;
   date: Date;
   likes: Array<string>;
-  likeItVeryMuch: boolean;
+  persoLikeSentence: {content: string,userIds: Array<string>};
   userType: TypePost;
   isOpeningCommentary?: boolean;
 }

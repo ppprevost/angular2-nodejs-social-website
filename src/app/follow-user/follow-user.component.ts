@@ -44,17 +44,17 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
       });
   }
 
-  @HostListener('window:scroll', ['$event']) onScroll($event) {
-    this.infinite.getInfiniteScroll(() => {
-      this.data.getUsers()
-        .then(elem => elem
-          .subscribe(response => this.wasters = this.wasters.concat(response.json())
-            .filter(doc => {
-              return doc._id !== this.auth.user._id;
-            }), err => console.log(err)
-          ));
-    });
-  }
+  // @HostListener('window:scroll', ['$event']) onScroll($event) {
+  //   this.infinite.getInfiniteScroll(() => {
+  //     this.data.getUsers()
+  //       .then(elem => elem
+  //         .subscribe(response => this.wasters = this.wasters.concat(response.json())
+  //           .filter(doc => {
+  //             return doc._id !== this.auth.user._id;
+  //           }), err => console.log(err)
+  //         ));
+  //   });
+  // }
 
   ngAfterViewChecked() {
     if (this.wasteCompo) {

@@ -40,23 +40,8 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   private subComment;
 
   constructor(private _sanitizer: DomSanitizer, private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
-    this.scrollCallback = this.getMorePost.bind(this);
 
-  }
 
-  getMorePost() {
-    console.log('ok');
-    return this.data
-      .getPost(this.userId, 10, 'all', false, this.wastes.length)
-      .map(res => res.json() as any)
-      .concatMap(elem => Observable.from(elem))
-      .map(doc => {
-        if (doc.content.source === 'YouTube') {
-          doc.content._url = this._sanitizer.bypassSecurityTrustResourceUrl(doc.content._url);
-        }
-        return doc;
-      }).toArray()
-      .do((data) => this.wastes = this.wastes.concat(data), err => console.log(err));
   }
 
   ngOnInit() {
@@ -72,6 +57,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   ngAfterViewChecked() {
+
     if (this.wasteCompo) {
       const item = this.wasteCompo.nativeElement;
       // TODO make masonry better
@@ -79,6 +65,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
         itemSelector: '.item'
       });
     }
+
   }
 
   ngOnDestroy() {
@@ -100,6 +87,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
         data => {
           this.wastes = data;
           this.wastes.forEach(waste => {
+            this.likeComment(waste);
             if (waste && waste.content && waste.content.source === 'YouTube') {
               waste.content._url = this._sanitizer.bypassSecurityTrustResourceUrl(waste.content._url);
             }
@@ -124,18 +112,42 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
     }
   }
 
+  /**
+   * Update number of like of a post
+   * @param {Waste} elem -exisiting waste already published
+   * @param {Waste} data -new one
+   */
+  likeComment(elem: Waste, data: Waste) {
+    var contentLike = function (doc) {
+      return {
+        youOnly: 'You like this',
+        youAndOther: 'You and ' + (doc.length - 1) + 'likes this',
+        otherOnly: doc.length + ' people like' + (doc.length > 1 ? 's' : '')
+      }
+    };
+    data = data ? data : elem; // for init no need to update
+    if (data.likes) {
+      data.likes.forEach(doc => {
+        elem.persoLikeSentence = {content: contentLike(data.likes).otherOnly, userIds: data.likes};
+        if (doc === this.auth.user._id) {
+          elem.youLikeThis = !elem.youLikeThis;
+          if (data.likes.length === 1) {
+            elem.persoLikeSentence.content = elem.youLikeThis ? contentLike(data.likes).youOnly : '';
+          } else {
+            elem.persoLikeSentence.content = !elem.youLikeThis ? contentLike(data.likes).youAndOther : ''
+          }
+        }
+      });
+    }
+  }
+
   likeThisPostOrComment(wasteId, commentId?) {
     return this.data.likeThisPostOrComment(wasteId, commentId).map(res => res.json())
       .subscribe(data => {
         return this.wastes.map(elem => {
           if (elem._id === data._id) {
             if (!commentId) {
-              elem.likes = data.likes.map(doc => {
-                if (doc === this.auth.user._id) {
-                  doc.likeItVeryMuch = true;
-                }
-                return doc;
-              });
+              this.likeComment(elem, data)
             } else {
               this.wastes[this.wastes.indexOf(elem)].likes = this.wastes[this.wastes.indexOf(data)].likes;
             }
