@@ -120,7 +120,7 @@ export class DataService {
    * @param skipLimit for infinite scrollig
    * @returns {Observable<Response>}
    */
-  getPost(userId: string, numberOfWaste: number, typePost: TypePost, onlyOwnPost: boolean, skipLimit: number):Observable<any> {
+  getPost(userId: string, numberOfWaste: number, typePost: TypePost, onlyOwnPost: boolean, skipLimit: number): Observable<any> {
     return this.http.post('/api/waste/getPost', JSON.stringify({
       following: userId,
       numberOfWaste,
@@ -144,8 +144,8 @@ export class DataService {
     return this.http.delete('/api/waste/deletePost/' + wasteId + (commentId ? '/' + commentId : ''));
   }
 
-  likeThisPostOrComment(wasteId, commentId?): Observable<any> {
-    return this.http.get('api/waste/likeThisPostOrComment/' + wasteId + (commentId ? '/' + commentId : ''));
+  likeThisPostOrComment(userId, wasteId, commentId?): Observable<any> {
+    return this.http.get('api/waste/likeThisPostOrComment/' + userId + '/' + wasteId + (commentId ? '/' + commentId : ''));
   }
 
   listOfFriends(followingTable: Friends[]) {

@@ -38,7 +38,8 @@
           <div
             class="view-all-comments">
             <div class="likes">
-              <a *ngIf="waste.youLikeThis" (click)="likeThisPostOrComment(waste._id)"><i class="fa fa-thumbs-down">Dislike</i></a>
+              <a *ngIf="waste.youLikeThis" (click)="likeThisPostOrComment(waste._id)"><i
+                class="fa fa-thumbs-down">Dislike</i></a>
               <a *ngIf="!waste.youLikeThis" (click)="likeThisPostOrComment(waste._id)"><i
                 class="fa fa-thumbs-up">Like</i></a>
               <span *ngIf="waste.likes.length" class="number-of-like">

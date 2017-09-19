@@ -121,31 +121,42 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
     var contentLike = function (doc) {
       return {
         youOnly: 'You like this',
-        youAndOther: 'You and ' + (doc.length - 1) + 'likes this',
+        youAndOther: 'You and ' + (doc.length - 1) + ' people likes this',
         otherOnly: doc.length + ' people like' + (doc.length > 1 ? 's' : '')
       }
     };
     data = data ? data : elem; // for init no need to update
-    if (data.likes) {
+    if (data.likes.length) {
       data.likes.forEach(doc => {
         elem.persoLikeSentence = {content: contentLike(data.likes).otherOnly, userIds: data.likes};
         if (doc === this.auth.user._id) {
           elem.youLikeThis = !elem.youLikeThis;
-          if (data.likes.length === 1) {
-            elem.persoLikeSentence.content = elem.youLikeThis ? contentLike(data.likes).youOnly : '';
+          if (data.likes.length === 1 && elem.youLikeThis) {
+            elem.persoLikeSentence.content = contentLike(data.likes).youOnly
           } else {
-            elem.persoLikeSentence.content = !elem.youLikeThis ? contentLike(data.likes).youAndOther : ''
+            if (elem.youLikeThis) {
+              elem.persoLikeSentence.content = contentLike(data.likes).youAndOther
+            }
           }
         }
       });
+    } else {
+      elem.youLikeThis = false;
     }
   }
 
+  /**
+   * Like or Unlike the post
+   * @param wasteId
+   * @param commentId
+   * @returns {Subscription}
+   */
   likeThisPostOrComment(wasteId, commentId?) {
-    return this.data.likeThisPostOrComment(wasteId, commentId).map(res => res.json())
+    return this.data.likeThisPostOrComment(this.auth.user._id, wasteId, commentId).map(res => res.json())
       .subscribe(data => {
         return this.wastes.map(elem => {
           if (elem._id === data._id) {
+            elem.likes = data.likes;
             if (!commentId) {
               this.likeComment(elem, data)
             } else {

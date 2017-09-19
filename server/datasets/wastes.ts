@@ -16,17 +16,19 @@ let Article = new mongoose.Schema({
   _url: String
 });
 
+const Commentary = new mongoose.Schema({
+  userId: String, typeWaste: String,
+  likes: [String],
+  data: String, date: {type: Date, default: Date.now}
+});
+
 
 const schema = new mongoose.Schema({
   userId: {type: String, required: true},
   userType: {type: String, enum: ['public', 'private']},
   content: Article,
   likes: [String],
-  commentary: [{
-    userId: String, typeWaste: String,
-    likes: [String],
-    data: String, date: {type: Date, default: Date.now}
-  }],
+  commentary: [Commentary],
   date: {type: Date, default: Date.now}
 });
 

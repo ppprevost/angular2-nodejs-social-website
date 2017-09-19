@@ -93,7 +93,7 @@ export class RouterApp {
     this.app.delete('/api/waste/deletePost/:wasteId/:commentId?', this.checkIfUser, this.wasteController.deletePost);
     this.app.post('/api/waste/sendComments', this.checkIfUser, this.wasteController.sendComments);
     this.app.post('/api/waste/getCommentary', this.checkIfUser, this.wasteController.getCommentary);
-    this.app.get('/api/waste/likeThisPostOrComment/:wasteId/:commentId?', this.checkIfUser, this.wasteController.likeThisPostOrComment);
+    this.app.get('/api/waste/likeThisPostOrComment/:userId/:wasteId/:commentId?', this.checkIfUser, this.wasteController.likeThisPostOrComment);
 
 // User
     this.app.get('/api/users/uploadPicture/:id', this.checkIfUser, this.usersController.uploadPicture);

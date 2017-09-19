@@ -1,5 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges} from '@angular/core';
 import {DataService} from '../../services/data.service';
+import {AuthService} from '../../services/auth.service';
 import {User} from '../../interface/interface';
 
 @Component({
@@ -12,7 +13,7 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
   @Input() user: User;
   @Output() notify: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor(private data: DataService) {
+  constructor(private data: DataService, private auth: AuthService) {
   }
 
   ngOnInit() {
@@ -24,7 +25,10 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.currentValue) {
-      // this.getFollowerImage(this.user); // limit xhr call
+      //Oly call for the user authentified, for the others getusers call listOf Friends directlyh
+      if (changes.user.currentValue._id === this.auth.user._id) {
+        this.getFollowerImage(this.user); // limit xhr call
+      }
     }
   }
 

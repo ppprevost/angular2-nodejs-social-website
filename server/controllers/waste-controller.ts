@@ -151,17 +151,27 @@ export class WasteController {
     const comments = req.body.comments;
     Waste.findById(comments.wasteId, (err, waste) => {
       if (!err) {
-        comments.date = new Date();
         // delete comments.wasteId
-        waste.commentary.push(comments);
+        const index = waste.commentary.push(comments) - 1; // return length or Array so minus one to find the position
         waste.save(() => {
-          waste.getMore
           Users.findById(comments.userId, (err, user) => {
+            let wasteContent = waste.commentary[index];
+            const tab = ['image', 'username'], userObj = user.toObject();
+            for (let prop in userObj) {
+              tab.forEach(elem => { // ok there is only two property...
+                if (prop === elem) {
+                  wasteContent._doc[prop] = userObj[prop];
+                }
+              });
+              wasteContent._doc.wasteId = comments.wasteId;
+            }
             Users.getListOfFriendAndSentSocket(user, waste, 'newComments', this.io)
-              .then(waster => res.json(comments))
+              .then(waster => res.json(wasteContent))
               .catch(error => console.log(error));
           });
         });
+      } else {
+        console.error(err);
       }
     });
   }
@@ -188,7 +198,6 @@ export class WasteController {
           return comment;
         });
       });
-      req.body.commentary = commentary;
       res.json(req.body);
     });
   }
@@ -202,20 +211,25 @@ export class WasteController {
    * @param typeOfFunction string
    */
   private likeOrDeletePost(req, res, typeOfFunction) {
-    const wasteId = req.params.wasteId;
+    const wasteId = req.params.wasteId,
+      userId = req.params.userId;
     Waste.findById(wasteId, (err, result) => {
       if (!err) {
         if (!req.params.commentId) {
-          if (typeOfFunction == 'likes') {
+          if (typeOfFunction == 'likes') { // you like it
             const testIfExist = result.likes.find(elem => {
-              return elem == result.userId;
+              return elem == userId;
             });
-            if (!testIfExist) {
-              result.likes = [...result.likes, result.userId];
-            } else {
-              console.log('user alreqdy like this post ');
+            if (!testIfExist) { //cannot find it so we could inject the like
+              result.likes = [...result.likes, userId];
+            } else { // means you want to delete it
+              console.log('user alreqdy like this post, we delete the like ');
+              const index = result.likes.findIndex(elem => {
+                return elem === result.userId
+              });
+              result.likes.splice(index, 1);
             }
-          } else {
+          } else { // you delete your post
             result.remove();
           }
           result.save(() => {
