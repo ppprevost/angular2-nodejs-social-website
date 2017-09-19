@@ -54,7 +54,8 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.user.previousValue) {
+    if (changes.user.currentValue) {
+      this.getThisUser(changes.user.currentValue);
     }
   }
 

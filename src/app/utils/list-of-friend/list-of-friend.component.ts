@@ -24,8 +24,7 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.user.currentValue) {
-      this.getFollowerImage(this.user);
-      // this.user = changes.user.currentValue;
+      // this.getFollowerImage(this.user); // limit xhr call
     }
   }
 

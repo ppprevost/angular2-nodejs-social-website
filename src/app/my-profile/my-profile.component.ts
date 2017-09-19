@@ -36,22 +36,26 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   }
 
   getThisUser() {
-    this.getThisUserSub = this.activatedRoute.params.subscribe((params: Params) => {
-      this.id = params['id'];
-      if (this.id !== this.auth.user._id) {
-        this.data.getThisUser(this.id).subscribe(following => {
-          this.user = following.json();
-          this.actualUser = this.auth.user;
+    this.auth.user = this.activatedRoute.snapshot.data['user'].json();
+    this.getThisUserSub = this.activatedRoute.params
+      .subscribe((params: Params) => {
+        this.id = params['id'];
+        if (this.id !== this.auth.user._id) {
+          this.data.getThisUser(this.id)
+            .subscribe(following => {
+              this.user = following.json();
+              this.actualUser = this.auth.user;
+              this.getPictureUser(this.user._id);
+            });
+        } else {
+          this.user = this.actualUser = this.auth.user;
           this.getPictureUser(this.user._id);
-        });
-      } else {
-        this.user = this.actualUser = this.auth.user;
-        this.getPictureUser(this.user._id);
-        this.user.following = this.user.following.filter(elem => {
-          return elem.statut === 'accepted';
-        });
-      }
-    });
+          this.user.following = this.user.following.filter(elem => {
+            return elem.statut === 'accepted';
+          });
+        }
+      });
+
   };
 
   /**
@@ -80,7 +84,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         this._compiler.clearCache();
         this.uploadPicture = [];
       }).catch(err => {
-        console.log(err)
+        console.log(err);
       });
   }
 

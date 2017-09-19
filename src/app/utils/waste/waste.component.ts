@@ -117,7 +117,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
    * @param {Waste} elem -exisiting waste already published
    * @param {Waste} data -new one
    */
-  likeComment(elem: Waste, data: Waste) {
+  likeComment(elem: Waste, data?: Waste) {
     var contentLike = function (doc) {
       return {
         youOnly: 'You like this',

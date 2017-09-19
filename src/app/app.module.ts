@@ -48,7 +48,8 @@ const routing = RouterModule.forRoot([
   {
     path: 'my-profile/:id',
     component: MyProfileComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    resolve: {user: AuthService}
   },
   {
     path: 'app-follow-user',

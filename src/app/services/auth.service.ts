@@ -9,7 +9,7 @@ import {
 } from '@angular/router';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements Resolve<any> {
   user: User;
   jwtHelper: JwtHelper = new JwtHelper();
   token;
@@ -72,8 +72,9 @@ export class AuthService {
   }
 
   // todo car ca commence a bien faire
-  resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
-    return this.data.refreshUserData({userId: this.decodeUserFromToken(this.token)._id}).toPromise();
+  resolve(route: ActivatedRouteSnapshot) {
+    return this.data
+      .refreshUserData({userId: this.decodeUserFromToken(this.token)._id});
 
   }
 }
