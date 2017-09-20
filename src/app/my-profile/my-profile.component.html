@@ -85,111 +85,113 @@
             <div id="home" class="tab-pane fade active in">
               <div *ngIf="id">
                 <div
-                  *ngIf="actualUser && uploadPicture.length && actualUser?._id===id || actualUser && uploadPicture.length && user?.friendShip=='accepted';else error">
-                  <div class="row">
-                    <div class="col-xs-12">
-                      <button *ngIf="actualUser?._id==id" class="btn btn-warning" (click)="deletePictureUser()">
-                        Delete files
-                      </button>
+                  *ngIf="actualUser && uploadPicture.length && actualUser?._id===id;else error">
+                  <div
+                    *ngIf="actualUser && uploadPicture.length && user?.friendShip=='accepted';else forbidden">
+                    <ng-template #error>
+                      <h4>Aucune image à afficher</h4>
+                    </ng-template>
+                    <ng-template #forbidden>
+                      <h4>You can't see picture because it's not your friend</h4>
+                    </ng-template>
+                    <ng-template #loading>
+                      <h4 class="card-header">Loading...</h4>
+                      <div class="card-block text-xs-center">
+                        <i class="fa fa-circle-o-notch fa-spin fa-3x"></i>
+                      </div>
+                    </ng-template>
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <button *ngIf="actualUser?._id==id" class="btn btn-warning" (click)="deletePictureUser()">
+                          Delete files
+                        </button>
+                      </div>
+
                     </div>
 
-                  </div>
-
-                  <div *ngFor="let uplPic of uploadPicture; let i=index" class="view view-first">
-                    <img [src]="'/assets/upload/'+user?._id+'/'+uplPic"/>
-                    <div class="mask">
-                      <h2>Menu</h2>
-                      <a href="'/assets/upload/'+user?._id+'/'+uplPic" class="info">See</a>
-                      <a (click)="deletePictureUser(uplPic)" class="info">Delete</a>
-                      <a (click)="makeProfilPicture()" class="info">Make profil picture</a>
+                    <div *ngFor="let uplPic of uploadPicture; let i=index" class="view view-first">
+                      <img [src]="'/assets/upload/'+user?._id+'/'+uplPic"/>
+                      <div class="mask">
+                        <h2>Menu</h2>
+                        <a href="'/assets/upload/'+user?._id+'/'+uplPic" class="info">See</a>
+                        <a (click)="deletePictureUser(uplPic)" class="info">Delete</a>
+                        <a (click)="makeProfilPicture()" class="info">Make profil picture</a>
+                      </div>
                     </div>
-                  </div>
-                  <div>
+                    <div>
 
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="panel panel-default">
-              <div class="panel-heading panel-heading-gray">
-                <a *ngIf="actualUser._id==id" [routerLink]="['/profil']" routerLinkActive="active"
-                   class="btn btn-white btn-xs pull-right" href="#"><i class="fa fa-pencil"></i></a>
-                <i class="fa fa-fw fa-info-circle"></i> About
-              </div>
-              <div class="panel-body">
-                <ul class="list-unstyled profile-about margin-none">
-
-                  <li class="padding-v-5">
-                    <div class="row">
-                      <div class="col-sm-4"><span class="text-muted">Gender</span></div>
-                      <div class="col-sm-8">{{user?.gender}}</div>
-                    </div>
-                  </li>
-                  <li class="padding-v-5">
-                    <div class="row">
-                      <div class="col-sm-4"><span class="text-muted">Lives in</span></div>
-                      <div class="col-sm-8">{{user?.location}}</div>
-                    </div>
-                  </li>
-
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="panel panel-default">
-              <div class="panel-heading panel-heading-gray">
-                <div class="pull-right">
-                  <!--<a *ngIf="actualUser._id==id" class="btn btn-primary btn-xs"-->
-                  <!--[routerLink]=['/app-follow-user']>-->
-                  <!--Add <i class="fa fa-plus"></i></a>-->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading panel-heading-gray">
+                  <a *ngIf="actualUser._id==id" [routerLink]="['/profil']" routerLinkActive="active"
+                     class="btn btn-white btn-xs pull-right" href="#"><i class="fa fa-pencil"></i></a>
+                  <i class="fa fa-fw fa-info-circle"></i> About
                 </div>
-                <i class="icon-user-1"></i> Friends
+                <div class="panel-body">
+                  <ul class="list-unstyled profile-about margin-none">
+
+                    <li class="padding-v-5">
+                      <div class="row">
+                        <div class="col-sm-4"><span class="text-muted">Gender</span></div>
+                        <div class="col-sm-8">{{user?.gender}}</div>
+                      </div>
+                    </li>
+                    <li class="padding-v-5">
+                      <div class="row">
+                        <div class="col-sm-4"><span class="text-muted">Lives in</span></div>
+                        <div class="col-sm-8">{{user?.location}}</div>
+                      </div>
+                    </li>
+
+                  </ul>
+                </div>
               </div>
-              <div class="panel-body">
-                <app-list-of-friend
-                  (notify)="user.friends = $event" [user]="user"></app-list-of-friend>
+            </div>
+            <div class="col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading panel-heading-gray">
+                  <div class="pull-right">
+                    <!--<a *ngIf="actualUser._id==id" class="btn btn-primary btn-xs"-->
+                    <!--[routerLink]=['/app-follow-user']>-->
+                    <!--Add <i class="fa fa-plus"></i></a>-->
+                  </div>
+                  <i class="icon-user-1"></i> Friends
+                </div>
+                <div class="panel-body">
+                  <app-list-of-friend
+                    (notify)="user.friends = $event" [user]="user"></app-list-of-friend>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <h3>Last three posts</h3>
-        <div *ngIf="actualUser && actualUser._id || user && user._id">
-          <app-waste [numberOfWaste]="3"
-                     [userId]="user._id"
-                     [onlyOwnPost]="true"
-                     [typePost]="(actualUser._id===id || user?.friendShip=='accepted')? 'all':'publicOnly'"></app-waste>
+          <h3>Last three posts</h3>
+          <div *ngIf="actualUser && actualUser._id || user && user._id">
+            <app-waste [numberOfWaste]="3"
+                       [userId]="user._id"
+                       [onlyOwnPost]="true"
+                       [typePost]="(actualUser._id===id || user?.friendShip=='accepted')? 'all':'publicOnly'"></app-waste>
+          </div>
         </div>
       </div>
+      <div id="ascrail2000" class="nicescroll-rails"
+           style="width: 5px; z-index: auto; cursor: default; position: absolute; top: 71px; left: 1683px; height: 40px; display: none; opacity: 0;">
+        <div
+          style="position: relative; top: 0px; float: right; width: 5px; height: 0px; background-color: rgb(22, 174, 159); border: 0px none; background-clip: padding-box; border-radius: 5px;"></div>
+      </div>
+      <div id="ascrail2000-hr" class="nicescroll-rails"
+           style="height: 5px; z-index: auto; top: 106px; left: 280px; position: absolute; cursor: default; display: none; opacity: 0;">
+        <div
+          style="position: absolute; top: 0px; height: 5px; width: 0px; background-color: rgb(22, 174, 159); border: 0px none; background-clip: padding-box; border-radius: 5px; left: 0px;"></div>
+      </div>
     </div>
-    <div id="ascrail2000" class="nicescroll-rails"
-         style="width: 5px; z-index: auto; cursor: default; position: absolute; top: 71px; left: 1683px; height: 40px; display: none; opacity: 0;">
-      <div
-        style="position: relative; top: 0px; float: right; width: 5px; height: 0px; background-color: rgb(22, 174, 159); border: 0px none; background-clip: padding-box; border-radius: 5px;"></div>
-    </div>
-    <div id="ascrail2000-hr" class="nicescroll-rails"
-         style="height: 5px; z-index: auto; top: 106px; left: 280px; position: absolute; cursor: default; display: none; opacity: 0;">
-      <div
-        style="position: absolute; top: 0px; height: 5px; width: 0px; background-color: rgb(22, 174, 159); border: 0px none; background-clip: padding-box; border-radius: 5px; left: 0px;"></div>
-    </div>
+    <!-- /st-content-inner -->
+
+
   </div>
-  <!-- /st-content-inner -->
-
-  <ng-template #error>
-    <h4>Aucune image à afficher</h4>
-  </ng-template>
-  <ng-template #forbidden>
-    <h4>You can't see picture because it's not your friend</h4>
-  </ng-template>
-  <ng-template #loading>
-    <h4 class="card-header">Loading...</h4>
-    <div class="card-block text-xs-center">
-      <i class="fa fa-circle-o-notch fa-spin fa-3x"></i>
-    </div>
-  </ng-template>
-
-</div>
