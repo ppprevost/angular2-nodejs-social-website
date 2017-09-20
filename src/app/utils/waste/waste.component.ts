@@ -132,10 +132,10 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
         if (doc === this.auth.user._id) {
           elem.youLikeThis = !elem.youLikeThis;
           if (data.likes.length === 1 && elem.youLikeThis) {
-            elem.persoLikeSentence.content = contentLike(data.likes).youOnly
+            elem.persoLikeSentence.content = contentLike(data.likes).youOnly;
           } else {
             if (elem.youLikeThis) {
-              elem.persoLikeSentence.content = contentLike(data.likes).youAndOther
+              elem.persoLikeSentence.content = contentLike(data.likes).youAndOther;
             }
           }
         }
@@ -189,13 +189,13 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   getBackPosts(wasters, res) {
-    wasters.map(waste => {
+    wasters.forEach(waste => {
       if (waste._id === res.wasteId) {
         delete res.wasteId;
         delete res.userId;
         waste.commentary.push(res);
         waste.isOpeningCommentary = true;
-        this.dataCommentaryWanted(waste, this.userId);
+       // this.dataCommentaryWanted(waste, this.userId);
       }
       return waste;
     });
