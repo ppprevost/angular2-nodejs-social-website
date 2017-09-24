@@ -6,6 +6,9 @@ export interface Friends {
   statut: string;
 }
 
+/**
+ *
+ */
 export interface User {
   username: string;
   readonly _id: string;
@@ -16,6 +19,7 @@ export interface User {
   gender?: string;
   location?: string;
   bio?: string;
+  statut?:string;
   modifiedAt: Date;
 }
 

@@ -23,6 +23,7 @@
                 <p>{{waste.email}}</p>
                 <div class="profile-icons">
                   <span><i class="fa fa-users"></i> {{waste.following.length}}</span>
+                  <span><i class="fa fa-photo"></i> {{waste.message}}</span>
                   <span><i class="fa fa-photo"></i> none</span>
                 </div>
                 <h3 *ngIf="waste.isConnected" class="blink_me">Online</h3>
@@ -37,8 +38,7 @@
           </div>
         </div>
         <div *ngIf="auth.user">
-          <app-follow (follower)='waste.following.length=$event'
-
+          <app-follow (follower)='waste.following=$event'
                       [waste]="waste"
                       [user]="auth.user"></app-follow>
         </div>

@@ -56,13 +56,20 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
   //   });
   // }
 
+  /**
+   * get more information about the friends of the follower
+   * @param {User} user
+   */
+
+
+
   ngAfterViewChecked() {
-    if (this.wasteCompo) {
-      const item = this.wasteCompo.nativeElement;
-      return new Masonry(item, {
-        itemSelector: '.item'
-      });
-    }
+    // if (this.wasteCompo) {
+    //   const item = this.wasteCompo.nativeElement;
+    //   return new Masonry(item, {
+    //     itemSelector: '.item'
+    //   });
+    // }
   }
 
   ngOnChanges(changes) {

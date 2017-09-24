@@ -149,6 +149,6 @@ export class DataService {
   }
 
   listOfFriends(followingTable: Friends[]) {
-    return this.http.post('/api/users/getListOfFriends', JSON.stringify(followingTable));
+    return this.http.post('/api/users/getListOfFriends', JSON.stringify(followingTable)).toPromise();
   }
 }
