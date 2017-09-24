@@ -33,13 +33,14 @@
         <div class="panel-body">
           <p class="common-friends">Common Friends</p>
           <div class="user-friend-list">
-            <app-list-of-friend (notify)="waste.friends = $event" [user]="waste"></app-list-of-friend>
+            <app-list-of-friend [user]="waste"></app-list-of-friend>
           </div>
         </div>
         <div *ngIf="auth.user">
-          <app-follow (follower)='waste.following.length=$event' (notify)='waste.statut = $event; onNotify($event,waste)
-          ' [waste]="waste"
-          [user]="auth.user"></app-follow>
+          <app-follow (follower)='waste.following.length=$event'
+
+                      [waste]="waste"
+                      [user]="auth.user"></app-follow>
         </div>
       </div>
     </div>

@@ -73,10 +73,10 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
     this.unsub.unsubscribe();
   }
 
-  onNotify(message: string) {
-    console.log('response from parentData', message === 'accepted');
-    if (this.listOfFriendComponent && message === 'accepted') {
-      this.listOfFriendComponent.getFollowerImage(this.auth.user);
-    }
-  }
+  // onNotify(message: string) {
+  //   console.log('response from parentData', message === 'accepted');
+  //   if (this.listOfFriendComponent && message === 'accepted') {
+  //     this.listOfFriendComponent.getFollowerImage(this.auth.user);
+  //   }
+  // }
 }

@@ -27,7 +27,6 @@ export class HomeComponent {
     }
   }
 
-
   sendWaste() {
     const request = {
       user: this.auth.user.username,

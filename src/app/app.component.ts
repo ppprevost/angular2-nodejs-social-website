@@ -46,7 +46,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   sendData(userInfo) {
     console.log(userInfo);
-    this.router.navigate(['/my-profile', userInfo.originalObject._id]);
+    if (userInfo) {
+      this.router.navigate(['/my-profile', userInfo.originalObject._id]);
+    }
   }
 
   ngOnInit() {
@@ -55,7 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
       password: this.password
     });
     if (this.loggedIn()) {
-      this.initSocket();
+      this.initSocketAndUserData();
     }
 
   }
@@ -77,7 +79,7 @@ export class AppComponent implements OnInit, OnDestroy {
       data => {
         console.log(data);
         this.router.navigate(['./']);
-        this.initSocket(true);
+        this.initSocketAndUserData(data);
       },
       err => {
         if (typeof err.json() === 'string') {
@@ -142,39 +144,52 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Launch socket io when data of the user is ready
+   */
+  private initSocketIo() {
+    // the socket is connected
+    this.connectionOfUser = this.socket.socketFunction('connect')
+      .subscribe(connection => {
+        console.log('connection of the socket', connection)
+        this.data.refreshSocketIdOfConnectedUsers(
+          this.auth.user._id, this.socket.socket.id, localStorage.token)
+          .subscribe((refreshStorage) => {
+            console.log(refreshStorage);
+            this.socketMethodUsed();
+          });
+      });
+  }
+
+  private socketMethodUsed() {
+    this.socketMethodUse(this.table);
+    this.connection = this.socket.socketFunction('getNewPost').subscribe(message => {
+      console.log(message);
+      this.toastyService.info({title: 'you have a new post !', msg: message.content});
+    });
+    this.commentarySub = this.socket.socketFunction('newComments').subscribe(message => {
+      this.toastyService.info({title: message.username + ' answered to your comment', msg: message.content});
+    });
+  }
+
+
+  /**
    * Initialize the socket and the connection either synchonr if connected or asynchronous if not connected
    * @param logged
    */
-  private initSocket(logged?: boolean) {
-    if (logged) {
-      this.auth.callRefreshUserData();
-      this.friendRequested(this.auth.user);
+  private initSocketAndUserData(userIsNowLogged?) {
+    if (userIsNowLogged) {
+      this.auth.callRefreshUserData(userIsNowLogged);
+      this.friendRequested(userIsNowLogged);
+      this.initSocketIo()
     } else {
       this.auth.callRefreshUserData(null, (user) => {
         this.friendRequested(user);
+        this.initSocketIo()
       });
     }
     this.dataUser = this.completerService.remote(null, 'username', 'username')
       .imageField('image');
     this.dataUser.requestOptions(new RequestOptions({headers: new Headers({'authorization': 'Bearer ' + localStorage.token})}));
     this.dataUser.urlFormater(term => `api/users/get?limitData=0&searchData=${term}`);
-
-    // the socket is connected
-    this.connectionOfUser = this.socket.socketFunction('connect')
-      .subscribe(connection => {
-        this.data.refreshSocketIdOfConnectedUsers(
-          this.auth.user._id, this.socket.socket.id, localStorage.token)
-          .subscribe((refreshStorage) => {
-            this.socketMethodUse(this.table);
-            console.log(refreshStorage);
-            this.connection = this.socket.socketFunction('getNewPost').subscribe(message => {
-              console.log(message);
-              this.toastyService.info({title: 'you have a new post !', msg: message.content});
-            });
-            this.commentarySub = this.socket.socketFunction('newComments').subscribe(message => {
-              this.toastyService.info({title: message.username + ' answered to your comment', msg: message.content});
-            });
-          });
-      });
   }
 }

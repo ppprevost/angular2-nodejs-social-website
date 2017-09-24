@@ -49,7 +49,7 @@ export class AuthService implements Resolve<any> {
   /**
    * Refresh the user. If callback async function and call the server to refresH. to log in, we only decode the token. and if we have the data we could refresh the user with that.
    * @param userData
-   * @param callback
+   * @param {Function} callback -if callback refresh data and add asynchronous logik
    * @returns {any}
    */
   callRefreshUserData(userData?: User, callback?: (User) => any) {
@@ -61,9 +61,7 @@ export class AuthService implements Resolve<any> {
           .refreshUserData({userId: this.decodeUserFromToken(this.token)._id})
           .subscribe(user => {
             this.user = user.json();
-            if (callback) {
               callback(this.user);
-            }
           });
       } else {
         this.user = this.decodeUserFromToken(this.token);

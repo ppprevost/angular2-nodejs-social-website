@@ -17,7 +17,9 @@ export class AuthGuard implements CanActivate {
       return false;
     }
     if (this.router.navigated) {
-      this.auth.callRefreshUserData();
+      this.auth.callRefreshUserData(null, elem => {
+        return elem
+      });
     }
     return true;
   }

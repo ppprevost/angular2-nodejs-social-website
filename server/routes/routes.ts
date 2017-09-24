@@ -23,12 +23,11 @@ export class RouterApp {
     this.router = Router();
     // traitement socket
     this.app = app;
-
     this.io = io;
-    this.profileController = new ProfileController(io);
-    this.usersController = new UserController(io);
-    this.authenticationController = new AuthentificationController(io);
-    this.wasteController = new WasteController(io);
+    this.profileController = new ProfileController(this.io);
+    this.usersController = new UserController(this.io);
+    this.authenticationController = new AuthentificationController(this.io);
+    this.wasteController = new WasteController(this.io);
     this.io.on('connection', socket => {
       console.log('connection socket server ok');
       socket.emit('news', {hello: 'bienvenue sur mon reseau'});

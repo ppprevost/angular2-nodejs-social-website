@@ -217,11 +217,6 @@ schema.statics.followMethod = function (infoFollowMethod: InfoMethod, io, callba
       });
       return false;
     });
-    // modifier cette fonction c'et ca qui fait que ca marche pas
-    // if (!exist) {
-    //   callback(new Error('unable to find the query'), null);
-    //   // res.status(403).send('unable to find the query');
-    // }
   });
 };
 

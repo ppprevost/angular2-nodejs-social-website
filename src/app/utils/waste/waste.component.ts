@@ -61,9 +61,9 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
     if (this.wasteCompo) {
       const item = this.wasteCompo.nativeElement;
       // TODO make masonry better
-      return this.masonry = new Masonry(item, {
-        itemSelector: '.item'
-      });
+      // return this.masonry = new Masonry(item, {
+      //   itemSelector: '.item'
+      // });
     }
 
   }
@@ -72,11 +72,35 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
 
   }
 
+  onScrollDown() {
+    console.log('scrolled down!!');
+    this.data.getPost(this.userId, 10, 'all', false, this.wastes.length)
+      .map(res => res.json())
+      .subscribe((data) => {
+          data = data.map(elem => {
+            this.videoByPassSecurity(elem);
+            return elem
+          });
+          this.wastes = this.wastes.concat(data) as Waste[], err => console.log(err)
+        }
+      )
+    ;
+  }
+
+  onScrollUp() {
+    console.log('scrolled up!!')
+  }
 
   ngOnChanges(changes) {
     console.log(changes);
     if (changes.userId && changes.userId.currentValue && changes.userId.currentValue !== changes.userId.previousValue) {
       this.getPosts();
+    }
+  }
+
+  private videoByPassSecurity = function (waste) {
+    if (waste && waste.content && waste.content.source === 'YouTube') {
+      waste.content._url = this._sanitizer.bypassSecurityTrustResourceUrl(waste.content._url);
     }
   }
 
@@ -88,9 +112,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
           this.wastes = data;
           this.wastes.forEach(waste => {
             this.likeComment(waste);
-            if (waste && waste.content && waste.content.source === 'YouTube') {
-              waste.content._url = this._sanitizer.bypassSecurityTrustResourceUrl(waste.content._url);
-            }
+            this.videoByPassSecurity(waste);
             waste.isOpeningCommentary = false;
           });
         },
@@ -121,12 +143,13 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
     var contentLike = function (doc) {
       return {
         youOnly: 'You like this',
-        youAndOther: 'You and ' + (doc.length - 1) + ' people likes this',
+        youAndOther: 'You and ' + (doc.length - 1) + ' people like this',
         otherOnly: doc.length + ' people like' + (doc.length > 1 ? 's' : '')
       }
     };
     data = data ? data : elem; // for init no need to update
     if (data.likes.length) {
+      elem.youLikeThis = false;
       data.likes.forEach(doc => {
         elem.persoLikeSentence = {content: contentLike(data.likes).otherOnly, userIds: data.likes};
         if (doc === this.auth.user._id) {
@@ -140,8 +163,6 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
           }
         }
       });
-    } else {
-      elem.youLikeThis = false;
     }
   }
 
@@ -195,7 +216,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
         delete res.userId;
         waste.commentary.push(res);
         waste.isOpeningCommentary = true;
-       // this.dataCommentaryWanted(waste, this.userId);
+        // this.dataCommentaryWanted(waste, this.userId);
       }
       return waste;
     });

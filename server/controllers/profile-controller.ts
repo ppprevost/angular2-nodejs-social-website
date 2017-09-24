@@ -33,7 +33,7 @@ export class ProfileController {
   public io;
 
   constructor(io) {
-
+    this.io = io
   }
 
   /**

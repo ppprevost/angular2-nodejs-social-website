@@ -36,10 +36,9 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
   }
 
+  // no unsubscribe for thuiis kinf of socket !
   ngOnDestroy() {
-    for (let i = 0; i < this.table.length; i++) {
-      this['connection' + i].unsubscribe();
-    }
+
   }
 
   socketMethodUse(table) {
@@ -59,7 +58,10 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-
+  /**
+   *
+   * @param user
+   */
   getThisUser(user?) { // pour rafraichir la liste des différents followers
     const waster = user ? user : this.auth.user;
     let ok = false;
@@ -77,8 +79,6 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.waste.statut = '';
     }
-    this.follower.emit(this.waste.following.length);
-    this.notify.emit(this.waste.statut);
     this.isLoading = false;
   }
 
@@ -91,6 +91,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
         this.getThisUser();
         if (typeFollowing == 'followOk') {
           this.auth.countFriendRequest--;
+          this.follower.emit(this.waste.following.length);
         }
       })
       .catch(err => console.log(err));
