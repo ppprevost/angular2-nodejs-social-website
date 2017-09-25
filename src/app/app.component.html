@@ -60,7 +60,7 @@
             <ul class="dropdown-menu" role="menu">
               <li><a routerLink='/profil' routerLinkActive="active">Edit Profile</a></li>
 
-              <li><a [routerLink]="['/app-follow-user']" routerLinkActive="active">Follow Users</a></li>
+              <li><a [routerLink]="['/app-follow-user','all']" routerLinkActive="active">Follow Users</a></li>
 
               <li><a (click)="logOut()">Logout</a></li>
             </ul>
@@ -68,7 +68,8 @@
         </ul>
         <ul class="countFriendRequest nav navbar-nav navbar-right" *ngIf="auth.loggedIn() && auth.countFriendRequest">
           <li><a href="" [routerLink]="['/app-follow-user','requested']" routerLinkActive="active"><span
-            class="fa fa-user-circle blink_me"></span>{{auth.countFriendRequest}}</a></li>
+            [ngClass]="{'blink_me':auth.countFriendRequest}" class="fa fa-user-circle"></span>{{auth.countFriendRequest}}</a>
+          </li>
         </ul>
       </div>
     </div>

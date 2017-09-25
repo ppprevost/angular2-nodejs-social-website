@@ -37,10 +37,20 @@ export class UserController {
    * @param {express.Response} res
    */
   getUsers = (req, res) => {
-    const search = req.query.searchData ? {username: new RegExp(req.query.searchData, 'i')} : {},
-      limitData = req.query.limitData ? Number(req.query.limitData) : 0;
-    Users
-      .find(search)
+    let obj = {
+      all: {},
+      requested: {'following.status': 'requested'},
+      accepted: {'following.status': 'accepted'},
+      research: {username: new RegExp(req.query.searchData, 'i')}
+    }, search;
+    if (req.query.searchData) {
+      search = obj[req.query.searchData];
+      if (!search) {
+        search = {username: new RegExp(req.query.searchData, 'i')};
+      }
+    }
+    const limitData = req.query.limitData ? Number(req.query.limitData) : 0;
+    Users.find(search)
       .select({
         password: 0,
         __v: 0
