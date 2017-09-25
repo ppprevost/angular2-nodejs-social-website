@@ -53,7 +53,7 @@ const routing = RouterModule.forRoot([
     resolve: {user: AuthService}
   },
   {
-    path: 'app-follow-user',
+    path: 'app-follow-user/:userId/:request',
     component: FollowUserComponent,
     canActivate: [AuthGuard],
     resolve: {follow: FollowUserResolverService}

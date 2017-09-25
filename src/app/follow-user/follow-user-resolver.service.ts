@@ -5,16 +5,26 @@ import {
   ActivatedRouteSnapshot
 } from '@angular/router';
 import {DataService} from '../services/data.service';
-
+import {AuthService} from '../services/auth.service';
 
 @Injectable()
 export class FollowUserResolverService implements Resolve<User[]> {
-  constructor(private data: DataService, private router: Router) {
+
+  params;
+
+  constructor(private auth: AuthService, private data: DataService) {
 
   }
 
+  /**
+   *
+   * @param route
+   * @returns {any}
+   */
   resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
-    return this.data.getUsers();
-
+    return this.data.getUsers([{key: 'searchData', value: route.params.request}, {
+      key: 'userId',
+      value: route.params.userId
+    }]);
   }
 }

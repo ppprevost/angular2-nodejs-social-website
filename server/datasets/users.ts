@@ -80,9 +80,10 @@ const schema = new mongoose.Schema({
 schema.statics.listOfFriends = function (followingTable: Follower[] = [],
                                          numberOfFriends: number = 0,
                                          fullDataWanted: boolean = false,
-                                         callback: (IUser) => void) {
+                                         callback: (IUser) => void, typeOfRequest?: string) {
   const following = followingTable;
-  const newTable = following.filter(elem => elem.statut === 'accepted').map(doc => doc.userId);
+  const newTable = following.filter(elem => elem.statut === (typeOfRequest || 'accepted'))
+    .map(doc => doc.userId);
   const valueSeek = fullDataWanted ? {} : {image: 1, _id: 1, username: 1};
   this.find({_id: {$in: newTable}}).select(valueSeek).limit(numberOfFriends)
     .exec(function (err, waster) {
@@ -90,7 +91,7 @@ schema.statics.listOfFriends = function (followingTable: Follower[] = [],
         .map(doc => doc.toObject())
         .map(el => {
           el.userId = el._id.toString();
-          el.statut = 'accepted';
+          el.statut = typeOfRequest || 'accepted';
           delete el._id;
           return el;
         });

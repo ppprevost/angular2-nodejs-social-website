@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as utils from '../utils/utils';
 
 import {ipConnection} from '../utils/utils';
+type Request =['requested','accepted']
 
 const uploadUtil = (req, res, callback) => {
   const userId = req.params.id;
@@ -23,7 +24,7 @@ export class UserController {
   }
 
   getlistOfFriends = (req, res) => {
-    return Users.listOfFriends(req.body, 0, false, (followers) => {
+    return Users.listOfFriends(req.body, 0, false, followers => {
       res.json(followers);
     });
   }
@@ -39,9 +40,8 @@ export class UserController {
   getUsers = (req, res) => {
     let obj = {
       all: {},
-      requested: {'following.status': 'requested'},
-      accepted: {'following.status': 'accepted'},
-      research: {username: new RegExp(req.query.searchData, 'i')}
+      requested: {_id: req.params.userId},
+      accepted: {_id: req.params.userId},
     }, search;
     if (req.query.searchData) {
       search = obj[req.query.searchData];
@@ -49,8 +49,9 @@ export class UserController {
         search = {username: new RegExp(req.query.searchData, 'i')};
       }
     }
-    const limitData = req.query.limitData ? Number(req.query.limitData) : 0;
-    Users.find(search)
+    const limitData = req.query.limitData ? Number(req.query.limitData) : 0, request = req.query.request;
+    Users
+      .find(search)
       .select({
         password: 0,
         __v: 0
@@ -85,7 +86,7 @@ export class UserController {
                 } else {
                   asyncLoop(++i, usersData);
                 }
-              });
+              }, request);
             };
             asyncLoop(0, usersData);
           } else {
@@ -161,14 +162,15 @@ export class UserController {
     });
   }
 
+
   getThisUser = (req, res) => {
-    const userId = req.body.userId;
+    const userId = req.body.userId, typeOfRequest: Request = req.body.typeOfRequest;
     Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
       if (!err) {
         Users.listOfFriends(user.following, 10, false, waster => {
           user.following = waster;
           res.json(user);
-        });
+        }, typeOfRequest);
       }
     });
   };

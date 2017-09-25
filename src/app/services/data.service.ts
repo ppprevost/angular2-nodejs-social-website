@@ -18,20 +18,23 @@ export class DataService {
    */
   getUsers(...args): Promise<any> {
     let str = '';
+    args = args[0]
     args
       .filter(elem => elem)
-      .forEach(doc => str += `${doc.key}=${doc.value}`);
-    return Promise.resolve(this.http.get('api/users/get' + (str ? '?' + str : '')));
+      .forEach(doc =>
+        str += `${doc.key}=${doc.value}`);
+    return Promise.resolve(this.http.get('api/users/get' + (str ? '?' + str + '&' : '')));
   }
 
   /**
    * Get data from a specific user and load data from the backend
    * @param {String} userid
+   * @param {String} [typeOfRequest] - [requested,accepted] default accepted
    * @path {Post}
    * @returns {Observable<Response>}
    */
-  getThisUser(userid): Observable<any> {
-    return this.http.post('/api/users/getThisUsers', JSON.stringify({userId: userid}));
+  getThisUser(userId, typeOfRequest?): Observable<any> {
+    return this.http.post('/api/users/getThisUsers', JSON.stringify({userId, typeOfRequest}));
   }
 
   /**
