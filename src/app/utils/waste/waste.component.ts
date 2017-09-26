@@ -12,7 +12,6 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {DataService} from '../../services/data.service';
 import {SocketService} from '../../services/socket.service';
 import {Waste, Commentary} from '../../interface/interface';
-import {InfiniteScrollerDirective} from '../infinite-scroller.directive';
 import {AuthService} from '../../services/auth.service';
 import * as Masonry from 'masonry-layout';
 import 'rxjs/add/operator/concatMap';
@@ -22,8 +21,7 @@ import {Observable} from 'rxjs';
 @Component({
   selector: 'app-waste',
   templateUrl: './waste.component.html',
-  styleUrls: ['./waste.component.scss'],
-  providers: [InfiniteScrollerDirective]
+  styleUrls: ['./waste.component.scss']
 })
 
 export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnChanges {

@@ -5,6 +5,12 @@ import {Commentary, Waste, Friends, TypePost, User} from '../interface/interface
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
+function encodeData(data) {
+  return Object.keys(data).map(function (key) {
+    return [key, data[key]].map(encodeURIComponent).join('=');
+  }).join('&');
+}
+
 @Injectable()
 export class DataService {
 
@@ -16,14 +22,8 @@ export class DataService {
    * Get all Users
    * @param {Object} args -key limitData and searchData and precise value
    */
-  getUsers(...args): Promise<any> {
-    let str = '';
-    args = args[0]
-    args
-      .filter(elem => elem)
-      .forEach(doc =>
-        str += `${doc.key}=${doc.value}`);
-    return Promise.resolve(this.http.get('api/users/get' + (str ? '?' + str + '&' : '')));
+  getUsers(data): Promise<any> {
+    return Promise.resolve(this.http.get('api/users/get?' + encodeData(data)));
   }
 
   /**

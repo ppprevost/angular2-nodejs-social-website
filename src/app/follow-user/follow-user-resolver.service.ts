@@ -22,9 +22,8 @@ export class FollowUserResolverService implements Resolve<User[]> {
    * @returns {any}
    */
   resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
-    return this.data.getUsers([{key: 'searchData', value: route.params.request}, {
-      key: 'userId',
-      value: route.params.userId
+    return this.data.getUsers([{'searchData': route.params.request}, {
+      'userId': route.params.userId
     }]);
   }
 }
