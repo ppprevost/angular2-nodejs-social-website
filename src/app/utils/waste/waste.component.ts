@@ -86,7 +86,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   onScrollUp() {
-    console.log('scrolled up!!')
+    console.log('scrolled up!!');
   }
 
   ngOnChanges(changes) {

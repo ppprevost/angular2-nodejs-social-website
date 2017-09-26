@@ -28,39 +28,16 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
   }
 
   ngOnInit() {
-    this.unsub = this.route.snapshot.data['follow']
-      .map(res => res.json())
-      .concatMap(arr => Observable.from(arr))
+    this.unsub = this.route.snapshot.data['follow'].json();
+    this.wasters = this.unsub
       .filter(elem => {
         return elem._id !== this.auth.user._id;
       })
-      .toArray()
-      .subscribe(data => {
-        this.wasters = data
-          .map(follower => {
-            follower.following.filter(contact => contact.statut === 'accepted');
-            return follower;
-          });
+      .map(follower => {
+        follower.following.filter(contact => contact.statut === 'accepted');
+        return follower;
       });
   }
-
-  // @HostListener('window:scroll', ['$event']) onScroll($event) {
-  //   this.infinite.getInfiniteScroll(() => {
-  //     this.data.getUsers()
-  //       .then(elem => elem
-  //         .subscribe(response => this.wasters = this.wasters.concat(response.json())
-  //           .filter(doc => {
-  //             return doc._id !== this.auth.user._id;
-  //           }), err => console.log(err)
-  //         ));
-  //   });
-  // }
-
-  /**
-   * get more information about the friends of the follower
-   * @param {User} user
-   */
-
 
 
   ngAfterViewChecked() {
@@ -77,13 +54,6 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
   }
 
   ngOnDestroy() {
-    this.unsub.unsubscribe();
-  }
 
-  // onNotify(message: string) {
-  //   console.log('response from parentData', message === 'accepted');
-  //   if (this.listOfFriendComponent && message === 'accepted') {
-  //     this.listOfFriendComponent.getFollowerImage(this.auth.user);
-  //   }
-  // }
+  }
 }

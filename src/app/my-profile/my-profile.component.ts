@@ -42,7 +42,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         this.id = params['id'];
         if (this.id !== this.auth.user._id) {
           this.data.getThisUser(this.id)
-            .subscribe(following => {
+            .then(following => {
               this.user = following.json();
               this.actualUser = this.auth.user;
               this.getPictureUser(this.user._id);

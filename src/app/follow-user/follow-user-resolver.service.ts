@@ -9,7 +9,6 @@ import {AuthService} from '../services/auth.service';
 
 @Injectable()
 export class FollowUserResolverService implements Resolve<User[]> {
-
   params;
 
   constructor(private auth: AuthService, private data: DataService) {
@@ -21,9 +20,14 @@ export class FollowUserResolverService implements Resolve<User[]> {
    * @param route
    * @returns {any}
    */
-  resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
-    return this.data.getUsers([{'searchData': route.params.request}, {
-      'userId': route.params.userId
-    }]);
+  resolve(route: ActivatedRouteSnapshot | any): Promise<User[]> {
+    if (route.params.userId && (route.params.request === 'requested' || route.params.request === 'accepted')) {
+      return this.data.getThisUser(route.params.userId, route.params.request);
+    } else {
+      return this.data.getUsers({
+        'searchData': route.params.request
+      });
+    }
+
   }
 }

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as utils from '../utils/utils';
 
 import {ipConnection} from '../utils/utils';
-type Request =['requested','accepted']
+type Request = ['requested', 'accepted']
 
 const uploadUtil = (req, res, callback) => {
   const userId = req.params.id;
@@ -23,11 +23,12 @@ export class UserController {
     this.io = io;
   }
 
-  getlistOfFriends = (req, res) => {
+
+  getlistOfFriends(req, res) {
     return Users.listOfFriends(req.body, 0, false, followers => {
       res.json(followers);
     });
-  }
+  };
 
   /**
    * Get all Users and add the connected carcterisitc
@@ -37,7 +38,7 @@ export class UserController {
    * @param {number} [req.body.skipLimit] -for scrolling users
    * @param {express.Response} res
    */
-  getUsers = (req, res) => {
+  getUsers(req, res) {
     let obj = {
       all: {},
       requested: {_id: req.params.userId},
@@ -81,7 +82,11 @@ export class UserController {
                         return doc;
                       }
                     });
-                    res.json(usersData);
+                    if (req.query.searchData === 'accepted' || req.query.searchData === 'requested') {
+                      res.json(usersData[0].following);
+                    } else {
+                      res.json(usersData);
+                    }
                   });
                 } else {
                   asyncLoop(++i, usersData);
@@ -162,14 +167,22 @@ export class UserController {
     });
   }
 
-
+  /**
+   * get user infos and list of Friends. If typerequest send follloower and not the user itself
+   * @param req
+   * @param res
+   */
   getThisUser = (req, res) => {
     const userId = req.body.userId, typeOfRequest: Request = req.body.typeOfRequest;
     Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
       if (!err) {
         Users.listOfFriends(user.following, 10, false, waster => {
-          user.following = waster;
-          res.json(user);
+          if (typeOfRequest) { // for get request and accepted users.
+            res.json(waster)
+          } else {
+            user.following = waster;
+            res.json(user);
+          }
         }, typeOfRequest);
       }
     });

@@ -108,10 +108,9 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
 
   private getFollowingRefreshed(follower, callback) {
     this.data.getThisUser(follower)
-      .map(res => res.json())
-      .subscribe(elem => {
-        callback(elem)
-      })
+      .then(elem => {
+        callback(elem);
+      });
   }
 
 }

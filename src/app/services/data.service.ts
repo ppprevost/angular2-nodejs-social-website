@@ -23,7 +23,7 @@ export class DataService {
    * @param {Object} args -key limitData and searchData and precise value
    */
   getUsers(data): Promise<any> {
-    return Promise.resolve(this.http.get('api/users/get?' + encodeData(data)));
+    return this.http.get('api/users/get?' + encodeData(data)).toPromise();
   }
 
   /**
@@ -33,8 +33,8 @@ export class DataService {
    * @path {Post}
    * @returns {Observable<Response>}
    */
-  getThisUser(userId, typeOfRequest?): Observable<any> {
-    return this.http.post('/api/users/getThisUsers', JSON.stringify({userId, typeOfRequest}));
+  getThisUser(userId, typeOfRequest?): Promise<any> {
+    return this.http.post('/api/users/getThisUsers', JSON.stringify({userId, typeOfRequest})).toPromise();
   }
 
   /**
@@ -151,7 +151,7 @@ export class DataService {
     return this.http.get('api/waste/likeThisPostOrComment/' + userId + '/' + wasteId + (commentId ? '/' + commentId : ''));
   }
 
-  listOfFriends(followingTable: Friends[]) {
+  listOfFriends(followingTable: Friends[]): Promise<any> {
     return this.http.post('/api/users/getListOfFriends', JSON.stringify(followingTable)).toPromise();
   }
 }
