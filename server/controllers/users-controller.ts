@@ -38,7 +38,7 @@ export class UserController {
    * @param {number} [req.body.skipLimit] -for scrolling users
    * @param {express.Response} res
    */
-  getUsers(req, res) {
+  getUsers(req, res) {///
     let obj = {
       all: {},
       requested: {_id: {$in: req.waster}},

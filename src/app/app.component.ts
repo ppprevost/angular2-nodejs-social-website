@@ -1,13 +1,13 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {DataService} from './services/data.service';
 import {Headers, RequestOptions} from '@angular/http'
-import {CompleterService, CompleterItem, RemoteData} from 'ng2-completer';
+import {CompleterService, RemoteData} from 'ng2-completer';
 import {AuthService} from './services/auth.service';
 import {FormGroup, FormControl, Validators, FormBuilder} from '@angular/forms';
-import {Router} from '@angular/router';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 import {SocketService} from './services/socket.service';
 import {User} from './interface/interface';
+import {Router, Event, NavigationStart, NavigationEnd, NavigationError, NavigationCancel} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -31,6 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private commentarySub;
   protected searchUser: string;
   user;
+  loading: boolean = true;
 
   constructor(private socket: SocketService,
               public auth: AuthService,
@@ -41,7 +42,21 @@ export class AppComponent implements OnInit, OnDestroy {
               private router: Router,
               private completerService: CompleterService) {
     this.toastyConfig.theme = 'material';
+    this.router.events.subscribe((routerEvent: Event) => {
+      this.checkRouterEvent(routerEvent);
+    });
+  }
 
+  checkRouterEvent(routerEvent: Event): void {
+    if (routerEvent instanceof NavigationStart) {
+      this.loading = true;
+    } else {
+      if (routerEvent instanceof NavigationEnd ||
+        routerEvent instanceof NavigationCancel ||
+        routerEvent instanceof NavigationError) {
+        this.loading = false;
+      }
+    }
   }
 
   sendData(userInfo) {

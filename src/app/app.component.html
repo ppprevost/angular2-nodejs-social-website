@@ -79,8 +79,18 @@
 <!-- Contenu  -->
 <article>
   <div class="container primaryContent">
+
     <router-outlet></router-outlet>
     <!--<app-sidebar>CONTETN</app-sidebar>-->
   </div>
   <ng2-toasty></ng2-toasty>
 </article>
+
+<ng-template #loading>
+  <h4 class="card-header">Loading...</h4>
+  <div class="card-block text-xs-center">
+    <i class="fa fa-circle-o-notch fa-spin fa-3x"></i>
+  </div>
+</ng-template>
+
+

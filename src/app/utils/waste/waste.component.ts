@@ -8,6 +8,7 @@ import {
   ViewChild,
   HostListener
 } from '@angular/core';
+import {Router} from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
 import {DataService} from '../../services/data.service';
 import {SocketService} from '../../services/socket.service';
@@ -37,7 +38,7 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   scrollCallback;
   private subComment;
 
-  constructor(private _sanitizer: DomSanitizer, private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
+  constructor(private _router: Router, private _sanitizer: DomSanitizer, private auth: AuthService, private socket: SocketService, private data: DataService) { // en le mettant dans le constructeur toutes les methodes sont  disponibles
 
 
   }
@@ -55,7 +56,6 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
   }
 
   ngAfterViewChecked() {
-
     if (this.wasteCompo) {
       const item = this.wasteCompo.nativeElement;
       // TODO make masonry better
@@ -70,19 +70,23 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
 
   }
 
+  /**
+   * Inifinite scroll module
+   */
   onScrollDown() {
-    console.log('scrolled down!!');
-    this.data.getPost(this.userId, 10, 'all', false, this.wastes.length)
-      .map(res => res.json())
-      .subscribe((data) => {
-          data = data.map(elem => {
-            this.videoByPassSecurity(elem);
-            return elem
-          });
-          this.wastes = this.wastes.concat(data) as Waste[], err => console.log(err)
-        }
-      )
-    ;
+    if (!this._router.url.match(/\/my-profile/i)) { // for my-profile no infinite scroll !!
+      console.log('scrolled down!!');
+      this.data.getPost(this.userId, 10, 'all', false, this.wastes.length)
+        .map(res => res.json())
+        .subscribe((data) => {
+            data = data.map(elem => {
+              this.videoByPassSecurity(elem);
+              return elem
+            });
+            this.wastes = this.wastes.concat(data) as Waste[], err => console.log(err)
+          }
+        );
+    }
   }
 
   onScrollUp() {
