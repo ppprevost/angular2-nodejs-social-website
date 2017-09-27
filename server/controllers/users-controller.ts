@@ -23,9 +23,9 @@ export class UserController {
     this.io = io;
   }
 
-
   getlistOfFriends(req, res) {
-    return Users.listOfFriends(req.body, 0, false, followers => {
+    let fullDataWanted = req.body.fullDataWanted;
+    return Users.listOfFriends(req.body, 0, fullDataWanted, followers => {
       res.json(followers);
     });
   };
@@ -41,11 +41,13 @@ export class UserController {
   getUsers(req, res) {
     let obj = {
       all: {},
-      requested: {_id: req.params.userId},
-      accepted: {_id: req.params.userId},
+      requested: {_id: {$in: req.waster}},
+      accepted: {_id: {$in: req.waster}},
     }, search;
-    if (req.query.searchData) {
-      search = obj[req.query.searchData];
+    const requestWanted = req.query.searchData || req.body.typeOfRequest;
+    if (requestWanted) {
+      search = obj[requestWanted];
+      console.log('search', search);
       if (!search) {
         search = {username: new RegExp(req.query.searchData, 'i')};
       }
@@ -63,6 +65,7 @@ export class UserController {
         if (err) {
           res.status(500).send(err);
         } else {
+
           if (Array.isArray(usersData) && usersData.length) {
             const asyncLoop = (i, usersData) => {
               Users.listOfFriends(usersData[i].following, 10, false, waster => {
@@ -82,11 +85,7 @@ export class UserController {
                         return doc;
                       }
                     });
-                    if (req.query.searchData === 'accepted' || req.query.searchData === 'requested') {
-                      res.json(usersData[0].following);
-                    } else {
-                      res.json(usersData);
-                    }
+                    res.json(usersData);
                   });
                 } else {
                   asyncLoop(++i, usersData);
@@ -178,16 +177,24 @@ export class UserController {
     Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
       if (!err) {
         Users.listOfFriends(user.following, 10, fullDataWanted, waster => {
-          if (typeOfRequest) { // for get request and accepted users.
-            res.json(waster);
-          } else {
-            user.following = waster;
-            res.json(user);
-          }
+          this.sendFollowerToClient(waster, typeOfRequest, req, res, user);
         }, typeOfRequest);
+      } else {
+        console.error(err);
       }
     });
   };
+
+  private sendFollowerToClient(waster, typeOfRequest, req, res, user) {
+    if (typeOfRequest) { // for get request and accepted users.
+      req.waster = waster.map(elem => elem.userId);
+      console.log('fsdfsd', req.waster);
+      this.getUsers(req, res);
+    } else {
+      user.following = waster;
+      res.json(user);
+    }
+  }
 
   uploadPicture = (req, res) => {
     return uploadUtil(req, res, (files, directory, userId) => {

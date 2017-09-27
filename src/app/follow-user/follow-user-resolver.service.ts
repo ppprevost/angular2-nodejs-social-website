@@ -22,10 +22,10 @@ export class FollowUserResolverService implements Resolve<User[]> {
    */
   resolve(route: ActivatedRouteSnapshot | any): Promise<User[]> {
     if (route.params.userId && (route.params.request === 'requested' || route.params.request === 'accepted')) {
-      return this.data.getThisUser(route.params.userId, route.params.request, true);
+      return this.data.getThisUser(route.params.userId, route.params.request, false);
     } else {
       return this.data.getUsers({
-        'searchData': route.params.request
+        'typeOfRequest': route.params.request
       });
     }
 

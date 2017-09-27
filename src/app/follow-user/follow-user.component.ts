@@ -6,9 +6,7 @@ import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/concatMap';
 import {ListOfFriendComponent} from '../utils/list-of-friend/list-of-friend.component';
 import {ActivatedRoute} from '@angular/router';
-import * as Masonry from 'masonry-layout';
 import {Waste} from '../interface/interface';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-follow-user',

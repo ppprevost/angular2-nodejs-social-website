@@ -19,9 +19,9 @@
     "prod": "concurrently \"tsc -p ./server\" \"ng build -aot -prod\" \"node dist/server/app.js\"",
     "dev": "concurrently \"ng serve -pc proxy.conf.json\" \"npm run debug\"",
     "servDev": "tsc -w -p  ./server&& nodemon dist/server/app.js",
-    "startNodemon": "tsc -d -p ./server & nodemon dist/server/app.js",
+    "startNodemon": "concurrently \"tsc -d -w -p  ./server\" \"nodemon dist/server/app.js\"",
     "buildDev": "ng serve -pc proxy.conf.json",
-    "debug": "tsc -p ./server & nodemon %NODE_DEBUG_OPTION% dist/server/app.js",
+    "debug": "concurrently \"tsc -d -w -p  ./server\" \"nodemon %NODE_DEBUG_OPTION% dist/server/app.js\"",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
