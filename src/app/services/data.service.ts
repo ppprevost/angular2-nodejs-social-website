@@ -33,8 +33,12 @@ export class DataService {
    * @path {Post}
    * @returns {Observable<Response>}
    */
-  getThisUser(userId, typeOfRequest?): Promise<any> {
-    return this.http.post('/api/users/getThisUsers', JSON.stringify({userId, typeOfRequest})).toPromise();
+  getThisUser(userId, typeOfRequest?, fullDataWanted?): Promise<any> {
+    return this.http.post('/api/users/getThisUsers', JSON.stringify({
+      userId,
+      typeOfRequest,
+      fullDataWanted
+    })).toPromise();
   }
 
   /**

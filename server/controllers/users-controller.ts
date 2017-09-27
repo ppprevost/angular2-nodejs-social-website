@@ -173,12 +173,13 @@ export class UserController {
    * @param res
    */
   getThisUser = (req, res) => {
-    const userId = req.body.userId, typeOfRequest: Request = req.body.typeOfRequest;
+    const userId = req.body.userId, typeOfRequest: Request = req.body.typeOfRequest,
+      fullDataWanted = req.body.fullDataWanted;
     Users.findById(userId).select({password: 0, __v: 0}).exec((err, user) => {
       if (!err) {
-        Users.listOfFriends(user.following, 10, false, waster => {
+        Users.listOfFriends(user.following, 10, fullDataWanted, waster => {
           if (typeOfRequest) { // for get request and accepted users.
-            res.json(waster)
+            res.json(waster);
           } else {
             user.following = waster;
             res.json(user);

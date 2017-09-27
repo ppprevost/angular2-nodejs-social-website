@@ -28,7 +28,7 @@ npm install
 ### Development mode
 2 console one for client and one for server.
 ```
-npm run dev
+npm run buildDev
 ```
 ```
 npm run startNodemon
