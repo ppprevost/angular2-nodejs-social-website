@@ -23,7 +23,6 @@ class Server {
     this.app.set('port', (process.env.PORT || 3000));
     this.app.use('/', express.static(path.join(__dirname, './../')));
     this.app.use(morgan('dev'));
-
     this.limiter({
       method: 'all',
       total: 100,
@@ -61,5 +60,5 @@ class Server {
     });
   }
 }
-
-export default new Server();
+const serverExpress = new Server();
+export {serverExpress};
