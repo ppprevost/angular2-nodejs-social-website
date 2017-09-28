@@ -16,10 +16,10 @@ describe('Users', () => {
   });
 
   describe('Backend tests for users', () => {
-
+// TODo make test
     it('should get all the users', done => {
       chai.request(serverExpress)
-        .get('/api/users')
+        .get('/api/users/get')
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('array');
