@@ -301,4 +301,4 @@ schema.set('toJSON', {
 // schema.plugin(friends({pathName: 'friendManagement'}));
 const User = mongoose.model('User', schema);
 module.exports = User;
-
+export default User;

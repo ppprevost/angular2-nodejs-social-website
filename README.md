@@ -26,6 +26,10 @@ npm install
 ## Installing
 * Please fulfill the information in the .env file. It contains all variables uses by node.js ( mongodb_uri, gmail, amazon etc...)
 ### Development mode
+1 console : 
+```
+npm run dev
+```
 2 console one for client and one for server.
 ```
 npm run buildDev
