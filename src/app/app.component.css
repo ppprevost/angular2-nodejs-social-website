@@ -1,3 +1,9 @@
 .completer-dropdown {
   top: 31%;
 }
+
+article .card-block.text-xs-center {
+  margin: 0 auto;
+  width: 6%;
+  display: block;
+}

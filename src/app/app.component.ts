@@ -30,8 +30,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private connectionOfUser;
   private commentarySub;
   protected searchUser: string;
-  user;
-  loading: boolean = true;
+  user: User;
+  busy = true;
 
   constructor(private socket: SocketService,
               public auth: AuthService,
@@ -49,12 +49,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   checkRouterEvent(routerEvent: Event): void {
     if (routerEvent instanceof NavigationStart) {
-      this.loading = true;
+      this.busy = true;
     } else {
       if (routerEvent instanceof NavigationEnd ||
         routerEvent instanceof NavigationCancel ||
         routerEvent instanceof NavigationError) {
-        this.loading = false;
+        this.busy = false;
       }
     }
   }

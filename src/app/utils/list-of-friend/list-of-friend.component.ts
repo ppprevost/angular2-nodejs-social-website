@@ -24,7 +24,6 @@ export class ListOfFriendComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('change list of friend component', changes)
     if (changes.user.currentValue) {
       //Oly call for the user authentified, for the others getusers call listOf Friends directlyh
       if (changes.user.currentValue._id === this.auth.user._id) {

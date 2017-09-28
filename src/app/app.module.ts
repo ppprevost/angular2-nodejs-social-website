@@ -29,6 +29,8 @@ import {TooltipDirective} from './utils/tooltip.directive';
 import {ReCaptchaModule} from 'angular2-recaptcha';
 import {Ng2CompleterModule} from 'ng2-completer';
 import {AuthModule} from './auth-http/auth-http.module';
+import { RouteReuseStrategy } from '@angular/router';
+import { CustomReuseStrategy } from './reuse-strategy';
 
 const routing = RouterModule.forRoot([
   {
@@ -96,6 +98,7 @@ const routing = RouterModule.forRoot([
     routing
   ],
   providers: [
+    {provide: RouteReuseStrategy, useClass: CustomReuseStrategy},
     DataService,
     AuthService,
     FollowUserResolverService,
