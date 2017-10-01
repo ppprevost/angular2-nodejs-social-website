@@ -29,7 +29,7 @@ export class DataService {
   /**
    * Get data from a specific user and load data from the backend
    * @param {String} userid
-   * @param {String} [typeOfRequest] - [requested,accepted] default accepted
+   * @param {String} [typeOfRequest] - [requested,accepted] default accepted friend
    * @path {Post}
    * @returns {Observable<Response>}
    */

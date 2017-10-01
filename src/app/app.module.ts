@@ -24,13 +24,14 @@ import {WasteComponent} from './utils/waste/waste.component';
 import {ValidPictureDirective} from './utils/valid-picture.directive';
 import {InfiniteScrollModule} from 'angular2-infinite-scroll';
 import {MdRadioModule, MdInputModule, MdTooltipModule} from '@angular/material';
+import {GetThisUserResolverService} from './my-profile/getThisUser-resolver.service';
 import {ListOfFriendComponent} from './utils/list-of-friend/list-of-friend.component';
 import {TooltipDirective} from './utils/tooltip.directive';
 import {ReCaptchaModule} from 'angular2-recaptcha';
 import {Ng2CompleterModule} from 'ng2-completer';
 import {AuthModule} from './auth-http/auth-http.module';
-import { RouteReuseStrategy } from '@angular/router';
-import { CustomReuseStrategy } from './reuse-strategy';
+import {RouteReuseStrategy} from '@angular/router';
+import {CustomReuseStrategy} from './reuse-strategy';
 
 const routing = RouterModule.forRoot([
   {
@@ -38,7 +39,7 @@ const routing = RouterModule.forRoot([
   },
   {
     path: 'profil', component: ProfileComponent, canActivate: [AuthGuard],
-    resolve: {user: AuthService}
+    resolve: {authUser: AuthService}
   },
   {path: 'signup', component: SignupComponent},
   {
