@@ -66,7 +66,7 @@ Anyone who wants to make some tests or adding more modules or fonctionality are 
 
 ## Authors
 
-* **Pierre-Philippe PREVOST** - *Initial work* - [Angular4 Social Project](http://angular2-web.herokuapp.com)
+* **Pierre-Philippe PREVOST** - *Initial work* - [Angular4 Social Project](https://angular2-web.herokuapp.com)
 
 Don't hesitate to contribute and pull request !
 
