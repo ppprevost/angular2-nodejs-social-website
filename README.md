@@ -2,6 +2,8 @@
 
 Social website created with Angular 4, Angular-cli, MongoDB, Node.js, Express.js, Typescript, Bootstrap and Socket.io.
 
+![alt tag](/src/assets/Sans%20titre.png)
+
 ## Getting Started
 
 Email-verification system, backend server with node.js and front end with Angular 4 and Angular 4 Material, login access with JSON webToken, profile ... Development mode uses File system and production mode use Cloudinary. etc...
