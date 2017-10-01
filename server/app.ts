@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as express from 'express';
 import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
-import * as dotenv from 'dotenv';
+
 import {RouterApp} from './routes/routes';
 import * as mongoose from 'mongoose';
 // import * as expressValidator from 'express-validator';
@@ -36,7 +36,10 @@ class Server {
   }
 
   databases() {
-    dotenv.config({path: '.env'});
+    if(process.env.NODE_ENV !=='production'){
+      import * as dotenv from 'dotenv';
+      dotenv.config({path: '.env'});
+    }
     mongoose.connect(process.env.MONGODB_URI);
     const db = mongoose.connection;
     (<any>mongoose).Promise = global.Promise;
