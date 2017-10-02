@@ -36,10 +36,10 @@ class Server {
   }
 
   databases() {
-    if (process.env.NODE_ENV && process.env.NODE_ENV !== 'production') {
+
       const dotenv = require('dotenv');
       dotenv.config({path: '.env'});
-    }
+
     mongoose.connect(process.env.MONGODB_URI);
     const db = mongoose.connection;
     (<any>mongoose).Promise = global.Promise;

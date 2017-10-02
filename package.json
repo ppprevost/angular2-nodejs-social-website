@@ -21,7 +21,7 @@
     "servDev": "tsc -w -p  ./server&& nodemon dist/server/app.js",
     "startNodemon": "concurrently \"tsc -d -w -p  ./server\" \"nodemon dist/server/app.js\"",
     "buildDev": "ng serve -pc proxy.conf.json",
-    "debug": "concurrently \"tsc -d -w -p  ./server\" \"node %NODE_DEBUG_OPTION% dist/server/app.js\"",
+    "debug": "concurrently --allow-restart --restart-after 2000 \"tsc -d -w -p  ./server\" \"node %NODE_DEBUG_OPTION% dist/server/app.js\"",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
