@@ -36,7 +36,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   }
 
   getThisUser() {
-    this.auth.user = this.activatedRoute.snapshot.data['authUser'].json();
+    this.auth.user = this.activatedRoute.snapshot.data['user'].json();
 
     this.getThisUserSub = this.activatedRoute.params
       .subscribe((params: Params) => {

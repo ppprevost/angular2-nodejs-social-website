@@ -39,7 +39,7 @@ const routing = RouterModule.forRoot([
   },
   {
     path: 'profil', component: ProfileComponent, canActivate: [AuthGuard],
-    resolve: {authUser: AuthService}
+    resolve: {user: AuthService}
   },
   {path: 'signup', component: SignupComponent},
   {
