@@ -33,7 +33,7 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.getThisUser();
+    // this.getThisUser();
     this.socketMethodUse(this.table);
 
   }
@@ -98,11 +98,10 @@ export class FollowComponent implements OnInit, OnChanges, OnDestroy {
           }
           this.getFollowingRefreshed(this.waste, elem => {
             this.waste = elem.json() as any
-            this.getThisUser(data.json());
             this.follower.emit(this.waste.following);
           });
-
         }
+        this.getThisUser(data.json());
       })
       .catch(err => console.log(err));
   }
