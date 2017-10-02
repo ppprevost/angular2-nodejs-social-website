@@ -22,7 +22,7 @@ import {MyProfileComponent} from './my-profile/my-profile.component';
 import {FollowComponent} from './utils/follow/follow.component';
 import {WasteComponent} from './utils/waste/waste.component';
 import {ValidPictureDirective} from './utils/valid-picture.directive';
-import {InfiniteScrollModule} from 'angular2-infinite-scroll';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {MdRadioModule, MdInputModule, MdTooltipModule} from '@angular/material';
 import {GetThisUserResolverService} from './my-profile/getThisUser-resolver.service';
 import {ListOfFriendComponent} from './utils/list-of-friend/list-of-friend.component';
@@ -57,7 +57,7 @@ const routing = RouterModule.forRoot([
   {
     path: 'app-follow-user/:userId/:request',
     component: FollowUserComponent,
-    runGuardsAndResolvers: "always",
+    runGuardsAndResolvers: 'always',
     canActivate: [AuthGuard],
     resolve: {follow: FollowUserResolverService}
   },

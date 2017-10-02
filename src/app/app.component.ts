@@ -195,7 +195,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (userIsNowLogged) {
       this.auth.callRefreshUserData(userIsNowLogged);
       this.friendRequested(userIsNowLogged);
-      this.initSocketIo()
+      this.initSocketIo();
     } else {
       this.auth.callRefreshUserData(null, (user) => {
         this.friendRequested(user);
