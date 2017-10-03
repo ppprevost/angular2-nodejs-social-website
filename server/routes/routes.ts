@@ -67,7 +67,7 @@ export class RouterApp {
     } else {
       res.status(403).send({success: false, message: 'no token provided'});
     }
-  };
+  }
 
   routing() {
 
@@ -121,7 +121,7 @@ export class RouterApp {
     this.app.post('/api/users/refreshSocketId', this.checkIfUser, this.usersController.refreshSocketIdOfConnectedUsers);
     this.app.post('/api/users/refreshUserData', this.checkIfUser, this.usersController.refreshUserData);
     this.app.post('/api/users/logout', this.checkIfUser, this.usersController.logout);
-  };
+  }
 }
 
 
