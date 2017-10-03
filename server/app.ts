@@ -2,10 +2,9 @@ import * as path from 'path';
 import * as express from 'express';
 import * as morgan from 'morgan';
 import * as bodyParser from 'body-parser';
-
+import {redirectHTTPS} from './utils/utils';
 import {RouterApp} from './routes/routes';
 import * as mongoose from 'mongoose';
-// import * as expressValidator from 'express-validator';
 const expressValidator = require('express-validator');
 
 class Server {
@@ -17,6 +16,7 @@ class Server {
   constructor() {
     this.app = express();
     this.limiter = require('express-limiter')(this.app);
+    this.app.use(redirectHTTPS());
     this.app.use(expressValidator());
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({extended: false}));
@@ -63,3 +63,5 @@ class Server {
 }
 const serverExpress = new Server();
 export {serverExpress};
+
+

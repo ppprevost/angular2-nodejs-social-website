@@ -19,6 +19,24 @@ const ipConnection = (req) => {
   return ip;
 }
 
+const redirectHTTPS = (environments?, status?) => {
+  environments = environments || ['production'];
+  status = status || 302;
+  return function (req, res, next) {
+    if (environments.indexOf(process.env.NODE_ENV) >= 0) {
+      if (req.headers['x-forwarded-proto'] != 'https') {
+        res.redirect(status, 'https://' + req.hostname + req.originalUrl);
+      }
+      else {
+        next();
+      }
+    }
+    else {
+      next();
+    }
+  };
+};
+
 /**
  * Send private notification to the receiver of the request
  * @type {(p1?:*, p2?:*)}
@@ -113,5 +131,5 @@ const youtube_parser = (url) => {
   var match = url.match(regExp);
   return (match && match[7].length == 11) ? match[7] : false;
 }
-export{ipConnection, sendSocketNotification, asyncEach, typeFunctionMethod, youtube_parser}
+export{ipConnection, sendSocketNotification, asyncEach, typeFunctionMethod, youtube_parser, redirectHTTPS}
 

@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import * as chaiHttp from 'chai-http';
+import * as jwt from 'jsonwebtoken';
 
 process.env.NODE_ENV = 'test';
 import {serverExpress} from '../app';
@@ -17,7 +18,12 @@ describe('Users', () => {
   describe('Backend tests for users', () => {
 // TODo make test
     it('should get all the users', done => {
+      const user = {username: 'Dave', email: 'dave@example.com', role: 'user'};
+      const token = jwt.sign({
+        user: user
+      }, process.env.SECRET_TOKEN, {expiresIn: '5h'});
       chai.request(serverExpress)
+        .set('Bearer', 'Bearer ' + token)
         .get('/api/users/get')
         .end((err, res) => {
           res.should.have.status(200);
@@ -30,7 +36,11 @@ describe('Users', () => {
     // TODO create temp user and user
     it('should create new user', done => {
       const user = {username: 'Dave', email: 'dave@example.com', role: 'user'};
+      const token = jwt.sign({
+        user: user
+      }, process.env.SECRET_TOKEN, {expiresIn: '5h'});
       chai.request(serverExpress)
+        .set('authorization', 'Bearer ' + token)
         .post('/api/user')
         .send(user)
         .end((err, res) => {
