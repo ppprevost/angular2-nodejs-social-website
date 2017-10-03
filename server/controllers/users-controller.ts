@@ -107,7 +107,7 @@ export class UserController {
    * @param {string} req.body.token -json web token
    * @param res
    */
-  deconnection = (req, res) => {
+  logout = (req, res) => {
     console.log(req.body);
     const userId = req.body.userId;
     Users.findOne({_id: userId}, (err, user) => {

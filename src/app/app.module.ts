@@ -24,7 +24,6 @@ import {WasteComponent} from './utils/waste/waste.component';
 import {ValidPictureDirective} from './utils/valid-picture.directive';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {MdRadioModule, MdInputModule, MdTooltipModule} from '@angular/material';
-import {GetThisUserResolverService} from './my-profile/getThisUser-resolver.service';
 import {ListOfFriendComponent} from './utils/list-of-friend/list-of-friend.component';
 import {TooltipDirective} from './utils/tooltip.directive';
 import {ReCaptchaModule} from 'angular2-recaptcha';
@@ -35,7 +34,8 @@ import {CustomReuseStrategy} from './reuse-strategy';
 
 const routing = RouterModule.forRoot([
   {
-    path: '', component: HomeComponent
+    path: '', component: HomeComponent,
+    resolve: {user: AuthService}
   },
   {
     path: 'profil', component: ProfileComponent, canActivate: [AuthGuard],
@@ -59,7 +59,7 @@ const routing = RouterModule.forRoot([
     component: FollowUserComponent,
     runGuardsAndResolvers: 'always',
     canActivate: [AuthGuard],
-    resolve: {follow: FollowUserResolverService}
+    resolve: {follow: FollowUserResolverService, user: AuthService}
   },
   {path: '404', component: HomeComponent},
   {path: '**', redirectTo: '404'}

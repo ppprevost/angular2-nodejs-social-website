@@ -1,0 +1,156 @@
+{
+  "authenticationController": [
+    {
+      "name": "verif",
+      "method": "post",
+      "secure": false
+    },
+    {
+      "name": "signup",
+      "method": "post",
+      "secure": false
+    },
+    {
+      "name": "resendVerifEmail",
+      "method": "get",
+      "params": [
+        "email"
+      ],
+      "secure": false
+    },
+    {
+      "name": "login",
+      "method": "post",
+      "secure": false
+    },
+    {
+      "name": "validCaptcha",
+      "method": "get",
+      "params": [
+        "token"
+      ],
+      "secure": false
+    }
+  ],
+  "profileController": [
+    {
+      "name": "updatePhoto",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "updateChamp",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "updatePassword",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "deleteAccount",
+      "method": "delete",
+      "params": [
+        "id"
+      ],
+      "secure": false
+    }
+  ],
+  "wasteController": [
+    {
+      "name": "getPost",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "sendPost",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "deletePost",
+      "method": "delete",
+      "params": [
+        "wasteId",
+        "commentId?"
+      ],
+      "secure": true
+    },
+    {
+      "name": "sendPost",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "getCommentary",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "likeThisPostOrComment",
+      "method": "get",
+      "secure": true,
+      "params": [
+        "userId",
+        "wasteId",
+        "commentId?"
+      ]
+    }
+  ],
+  "usersController": [
+    {
+      "name": "uploadPicture",
+      "method": "post",
+      "params": [
+        "id"
+      ],
+      "secure": true
+    },
+    {
+      "name": "deleteAllPicture",
+      "method": "delete",
+      "params": [
+        "id",
+        "pictureId"
+      ],
+      "secure": true
+    },
+    {
+      "name": "get",
+      "method": "get",
+      "secure": true
+    },
+    {
+      "name": "getListOfFriends",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "followingFunction",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "getThisUsers",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "refreshUserData",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "refreshSocketId",
+      "method": "post",
+      "secure": true
+    },
+    {
+      "name": "logout",
+      "method": "post",
+      "secure": true
+    }
+  ]
+}
+

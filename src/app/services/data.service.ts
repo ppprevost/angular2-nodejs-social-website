@@ -47,7 +47,7 @@ export class DataService {
    * @returns {Observable<Response>}
    */
   refreshUserData(userId): Observable<any> {
-    return this.http.post('/api/user/refreshUserData', JSON.stringify(userId));
+    return this.http.post('/api/users/refreshUserData', JSON.stringify(userId));
   }
 
   /**
@@ -65,7 +65,7 @@ export class DataService {
 
 
   logOut(userId): Observable<any> {
-    return this.http.post(`/api/user/logout/`, JSON.stringify({userId}));
+    return this.http.post(`/api/users/logout/`, JSON.stringify({userId}));
   }
 
   /**
@@ -98,7 +98,7 @@ export class DataService {
    * @returns {Observable<Response>}
    */
   refreshSocketIdOfConnectedUsers(userId: string, socketId: string, token: string): Observable<any> {
-    return this.http.post('/api/user/refreshSocketId', JSON.stringify({
+    return this.http.post('/api/users/refreshSocketId', JSON.stringify({
       userId,
       socketId,
       token

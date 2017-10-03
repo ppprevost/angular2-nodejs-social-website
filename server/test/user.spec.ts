@@ -8,7 +8,6 @@ import User from '../datasets/users';
 const should = chai.use(chaiHttp).should();
 
 describe('Users', () => {
-
   beforeEach(done => {
     User.remove({}, err => {
       done();
@@ -28,17 +27,7 @@ describe('Users', () => {
         });
     });
 
-    it('should get users count', done => {
-      chai.request(serverExpress)
-        .get('/api/users/count')
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('number');
-          res.body.should.be.eql(0);
-          done();
-        });
-    });
-
+    // TODO create temp user and user
     it('should create new user', done => {
       const user = {username: 'Dave', email: 'dave@example.com', role: 'user'};
       chai.request(serverExpress)
@@ -54,11 +43,14 @@ describe('Users', () => {
         });
     });
 
+
+    // TODo _id must be userId
     it('should get a user by its id', done => {
       const user = new User({username: 'User', email: 'user@example.com', role: 'user'});
       user.save((error, newUser) => {
         chai.request(serverExpress)
-          .get(`/api/user/${newUser.id}`)
+          .post(`/api/users/getThisUsers`)
+          .send(user)
           .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be.a('object');
@@ -71,11 +63,12 @@ describe('Users', () => {
       });
     });
 
+// TODO upate a field with put
     it('should update a user by its id', done => {
       const user = new User({username: 'User', email: 'user@example.com', role: 'user'});
       user.save((error, newUser) => {
         chai.request(serverExpress)
-          .put(`/api/user/${newUser.id}`)
+          .put(`/api/profile/updateChamp/${newUser.id}`)
           .send({username: 'User 2'})
           .end((err, res) => {
             res.should.have.status(200);
@@ -84,11 +77,12 @@ describe('Users', () => {
       });
     });
 
+
     it('should delete a user by its id', done => {
       const user = new User({username: 'User', email: 'user@example.com', role: 'user'});
       user.save((error, newUser) => {
         chai.request(serverExpress)
-          .delete(`/api/user/${newUser.id}`)
+          .delete(`/api/profile/deleteAccount/${newUser.id}`)
           .end((err, res) => {
             res.should.have.status(200);
             done();

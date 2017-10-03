@@ -3,6 +3,7 @@ import {UserController} from '../controllers/users-controller';
 import {WasteController} from '../controllers/waste-controller';
 import {AuthentificationController} from '../controllers/authentication-controller';
 import {Router, Application} from 'express';
+import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
 
 export class RouterApp {
@@ -69,20 +70,36 @@ export class RouterApp {
   };
 
   routing() {
+
+    // const routingMatch = {
+    //   authenticationController: 'user',
+    //   profileController: 'profile',
+    //   wasteController: 'waste',
+    //   usersController: 'users'
+    // };
+    //
+    // const routerJson = fs.readFileSync('./routes.json');
+    // for (const prop in routerJson) {
+    //   if (routerJson.hasOwnProperty(prop)) {
+    //     routerJson[prop].forEach(elem => {
+    //       this.app[elem.method](`api/${routingMatch[prop]}/${elem.name}, ` + elem.secure ? this.checkIfUser + ',' : '' + this[routerJson[prop]][elem.name]);
+    //     });
+    //   }
+    // }
+
     // APIs
 // Route
 // Authentication
-    this.app.post('/api/verif', this.authenticationController.emailVerif);
+    this.app.post('/api/user/verif', this.authenticationController.emailVerif);
     this.app.post('/api/user/signup', this.authenticationController.signup);
     this.app.get('/api/user/resendVerifEmail/:email', this.authenticationController.resendVerificationEmail);
     this.app.post('/api/user/login', this.authenticationController.login);
     this.app.get('/api/user/validCaptcha/:token', this.authenticationController.validCaptcha);
 
-    this.app.post('/api/user/logout', this.checkIfUser, this.usersController.deconnection);
 
 // Profile profileController.updatePhoto
     // app.options('api/upload', cors(corsOptions)); // enable pre-flight request for request
-    this.app.post('/api/upload', this.checkIfUser, this.profileController.updatePhoto);
+    this.app.post('/api/profile/updatePhoto', this.checkIfUser, this.profileController.updatePhoto);
     this.app.post('/api/profile/updateChamp', this.checkIfUser, this.profileController.updateChamp);
     this.app.post('/api/profile/updatePassword', this.checkIfUser, this.profileController.updatePassword);
     this.app.delete('/api/profile/deleteAccount/:id', this.checkIfUser, this.profileController.deleteAccount);
@@ -101,8 +118,9 @@ export class RouterApp {
     this.app.post('/api/users/getListOfFriends', this.checkIfUser, this.usersController.getlistOfFriends);
     this.app.post('/api/users/followingFunction', this.checkIfUser, this.usersController.followingFunction);
     this.app.post('/api/users/getThisUsers', this.checkIfUser, this.usersController.getThisUser);
-    this.app.post('/api/user/refreshSocketId', this.checkIfUser, this.usersController.refreshSocketIdOfConnectedUsers);
-    this.app.post('/api/user/refreshUserData', this.checkIfUser, this.usersController.refreshUserData);
+    this.app.post('/api/users/refreshSocketId', this.checkIfUser, this.usersController.refreshSocketIdOfConnectedUsers);
+    this.app.post('/api/users/refreshUserData', this.checkIfUser, this.usersController.refreshUserData);
+    this.app.post('/api/users/logout', this.checkIfUser, this.usersController.logout);
   };
 }
 

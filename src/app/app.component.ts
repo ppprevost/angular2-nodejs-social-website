@@ -199,7 +199,7 @@ export class AppComponent implements OnInit, OnDestroy {
     } else {
       this.auth.callRefreshUserData(null, (user) => {
         this.friendRequested(user);
-        this.initSocketIo()
+        this.initSocketIo();
       });
     }
     this.dataUser = this.completerService.remote(null, 'username', 'username')
