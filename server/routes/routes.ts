@@ -70,7 +70,7 @@ export class RouterApp {
   }
 
   routing() {
-
+// TODO reformat routing module
     // const routingMatch = {
     //   authenticationController: 'user',
     //   profileController: 'profile',
