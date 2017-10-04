@@ -3,10 +3,14 @@
   <div class="card-block text-xs-center">
     <i class="fa fa-circle-o-notch fa-spin fa-3x"></i>
   </div>
-
 </ng-template>
+
+<ng-template #noUser>
+  <h5 class="card-header text-center">Cannot find Users :(</h5>
+</ng-template>
+
 <div #wasteMasonry class="row userProfile" data-toggle="isotope" style="position: relative; ">
-  <div class="row">
+  <div class="row" *ngIf="wasters.length;else noUser">
     <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters">
       <div class="panel panel-default">
         <div class="panel-heading">

@@ -35,6 +35,7 @@ import {CustomReuseStrategy} from './reuse-strategy';
 const routing = RouterModule.forRoot([
   {
     path: '', component: HomeComponent,
+    resolve: {user: AuthService}
   },
   {
     path: 'profil', component: ProfileComponent, canActivate: [AuthGuard],

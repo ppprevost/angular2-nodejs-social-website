@@ -61,7 +61,7 @@ export class AuthService implements Resolve<any> {
           .refreshUserData({userId: this.decodeUserFromToken(this.token)._id})
           .subscribe(user => {
             this.user = user.json();
-              callback(this.user);
+            callback(this.user);
           });
       } else {
         this.user = this.decodeUserFromToken(this.token);
@@ -71,8 +71,9 @@ export class AuthService implements Resolve<any> {
 
   // todo car ca commence a bien faire
   resolve(route: ActivatedRouteSnapshot) {
-    return this.data
-      .refreshUserData({userId: this.decodeUserFromToken(this.token)._id});
-
+    if (this.loggedIn()) {
+      return this.data
+        .refreshUserData({userId: this.decodeUserFromToken(this.token)._id});
+    }
   }
 }
