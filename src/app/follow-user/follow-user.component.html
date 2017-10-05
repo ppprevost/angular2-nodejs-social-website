@@ -9,7 +9,13 @@
   <h5 class="card-header text-center">Cannot find Users :(</h5>
 </ng-template>
 
-<div #wasteMasonry class="row userProfile" data-toggle="isotope" style="position: relative; ">
+<div  #wasteMasonry class="row userProfile" data-toggle="isotope" style="position: relative; " infinite-scroll
+      [infiniteScrollDistance]="3"
+      [scrollWindow]="true"
+      [infiniteScrollUpDistance]="1.5"
+      [infiniteScrollThrottle]="500"
+      (scrolled)="onScrollDown()"
+      (scrolledUp)="onScrollUp()">
   <div class="row" *ngIf="wasters.length;else noUser">
     <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters">
       <div class="panel panel-default">

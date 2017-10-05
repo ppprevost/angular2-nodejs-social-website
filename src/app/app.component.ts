@@ -150,6 +150,10 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.auth.loggedIn();
   }
 
+  /**
+   * Add the number of friend request on the navBar
+   * @param user
+   */
   private friendRequested(user: User) {
     user.following.forEach(elem => {
       if (elem.statut === 'requested') {

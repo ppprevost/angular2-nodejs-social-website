@@ -7,6 +7,9 @@ import 'rxjs/add/operator/concatMap';
 import {ListOfFriendComponent} from '../utils/list-of-friend/list-of-friend.component';
 import {ActivatedRoute} from '@angular/router';
 import {Waste} from '../interface/interface';
+import {
+  ActivatedRouteSnapshot
+} from '@angular/router';
 
 @Component({
   selector: 'app-follow-user',
@@ -37,14 +40,31 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
       });
   }
 
+  /**
+   * Inifinite scroll module
+   */
+  onScrollDown() {
+    console.log('scrolled down!!');
+    this.data.getUsers({
+      'request': 'all',
+      'limitData': 10,
+      'skipLimit': this.wasters.length
+    })
+      .then(donc => {
+        this.wasters = this.wasters.concat(donc.json().filter(elem => {
+          return elem._id !== this.auth.user._id;
+        })
+          .map(follower => {
+            follower.following.filter(contact => contact.statut === 'accepted');
+            return follower;
+          }));
+      });
+
+  }
+
 
   ngAfterViewChecked() {
-    // if (this.wasteCompo) {
-    //   const item = this.wasteCompo.nativeElement;
-    //   return new Masonry(item, {
-    //     itemSelector: '.item'
-    //   });
-    // }
+
   }
 
   ngOnChanges(changes) {

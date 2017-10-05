@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as utils from '../utils/utils';
 
 import {ipConnection} from '../utils/utils';
+
 type Request = ['requested', 'accepted']
 
 const uploadUtil = (req, res, callback) => {
@@ -35,6 +36,7 @@ export class UserController {
    * @param req
    * @param {string} [req.body.searchData] -the sepcific users you are looking for
    * @param {number} [req.body.limitData] -the number of users you want to send
+   * @param {} [req.body.skipLimit] -the number to skip for infinite sroll
    * @param {number} [req.body.skipLimit] -for scrolling users
    * @param {express.Response} res
    */
@@ -44,7 +46,7 @@ export class UserController {
       requested: {_id: {$in: req.waster}},
       accepted: {_id: {$in: req.waster}},
     }, search;
-    const requestWanted = req.query.searchData || req.body.typeOfRequest;
+    const requestWanted = req.query.searchData || req.body.typeOfRequest || req.query.request;
     if (requestWanted) {
       search = obj[requestWanted];
       console.log('search', search);
@@ -52,20 +54,20 @@ export class UserController {
         search = {username: new RegExp(req.query.searchData, 'i')};
       }
     }
-    const limitData = req.query.limitData ? Number(req.query.limitData) : 0, request = req.query.request;
+    const limitData = req.query.limitData ? Number(req.query.limitData) : 0;
     Users
       .find(search)
       .select({
         password: 0,
         __v: 0
-      }).limit(limitData)
+      })
+      .skip(+req.query.skipLimit)
+      .limit(+limitData)
       .sort({createdAt: 1})
-      .skip(req.body.skipLimit)
       .exec(function (err, usersData) {
         if (err) {
           res.status(500).send(err);
         } else {
-
           if (Array.isArray(usersData) && usersData.length) {
             const asyncLoop = (i, usersData) => {
               Users.listOfFriends(usersData[i].following, 10, false, waster => {
@@ -75,22 +77,23 @@ export class UserController {
                     const connectedId = userConnected.map(elem => {
                       return elem.userId;
                     });
-                    usersData = usersData.map(doc => {
-                      let isConnected: boolean;
-                      if (doc && doc._id) {
-                        isConnected = connectedId.some(elem => {
-                          return elem === doc._id.toString();
-                        });
-                        doc._doc.isConnected = isConnected;
-                        return doc;
-                      }
-                    });
+                    usersData = usersData
+                      .map(doc => {
+                        let isConnected: boolean;
+                        if (doc && doc._id) {
+                          isConnected = connectedId.some(elem => {
+                            return elem === doc._id.toString();
+                          });
+                          doc._doc.isConnected = isConnected;
+                          return doc;
+                        }
+                      });
                     res.json(usersData);
                   });
                 } else {
                   asyncLoop(++i, usersData);
                 }
-              }, request);
+              }, requestWanted);
             };
             asyncLoop(0, usersData);
           } else {

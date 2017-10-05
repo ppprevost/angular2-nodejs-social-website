@@ -69,7 +69,6 @@ export class AuthService implements Resolve<any> {
     }
   }
 
-  // todo car ca commence a bien faire
   resolve(route: ActivatedRouteSnapshot) {
     if (this.loggedIn()) {
       return this.data

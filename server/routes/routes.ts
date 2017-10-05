@@ -2,6 +2,7 @@ import {ProfileController} from '../controllers/profile-controller';
 import {UserController} from '../controllers/users-controller';
 import {WasteController} from '../controllers/waste-controller';
 import {AuthentificationController} from '../controllers/authentication-controller';
+import {ChatController} from '../controllers/chat-controller';
 import {Router, Application} from 'express';
 import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
@@ -12,6 +13,7 @@ export class RouterApp {
   private authenticationController: AuthentificationController;
   private io;
   private wasteController: WasteController;
+  private chatController: ChatController;
   private app;
   private router: Router;
 
@@ -28,6 +30,7 @@ export class RouterApp {
     this.profileController = new ProfileController(this.io);
     this.usersController = new UserController(this.io);
     this.authenticationController = new AuthentificationController(this.io);
+    this.chatController = new ChatController(this.io);
     this.wasteController = new WasteController(this.io);
     this.io.on('connection', socket => {
       console.log('connection socket server ok');
@@ -121,7 +124,15 @@ export class RouterApp {
     this.app.post('/api/users/refreshSocketId', this.checkIfUser, this.usersController.refreshSocketIdOfConnectedUsers);
     this.app.post('/api/users/refreshUserData', this.checkIfUser, this.usersController.refreshUserData);
     this.app.post('/api/users/logout', this.checkIfUser, this.usersController.logout);
+
+    //Chat
+    this.app.get('api/chat/getMessage', this.checkIfUser, this.chatController.getChat);
+    this.app.post('api/chat/postMessage', this.checkIfUser, this.chatController.postMessage);
+    this.app.delete('/api/chat/deleteMessage', this.checkIfUser, this.chatController.deleteMessage);
+    this.app.put('/api/chat/updateMessage', this.checkIfUser, this.chatController.updateMessage);
   }
+
+
 }
 
 
