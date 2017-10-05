@@ -150,8 +150,8 @@ export class WasteComponent implements OnInit, AfterViewChecked, OnDestroy, OnCh
       }
     };
     data = data ? data : elem; // for init no need to update
+    elem.youLikeThis = false;
     if (data.likes.length) {
-      elem.youLikeThis = false;
       data.likes.forEach(doc => {
         elem.persoLikeSentence = {content: contentLike(data.likes).otherOnly, userIds: data.likes};
         if (doc === this.auth.user._id) {
