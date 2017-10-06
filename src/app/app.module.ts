@@ -31,6 +31,7 @@ import {Ng2CompleterModule} from 'ng2-completer';
 import {AuthModule} from './auth-http/auth-http.module';
 import {RouteReuseStrategy} from '@angular/router';
 import {CustomReuseStrategy} from './reuse-strategy';
+import { ChatComponent } from './chat/chat.component';
 
 const routing = RouterModule.forRoot([
   {
@@ -79,7 +80,8 @@ const routing = RouterModule.forRoot([
     WasteComponent,
     ValidPictureDirective,
     ListOfFriendComponent,
-    TooltipDirective
+    TooltipDirective,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
