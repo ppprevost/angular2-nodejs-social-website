@@ -59,9 +59,7 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
             return follower;
           }));
       });
-
   }
-
 
   ngAfterViewChecked() {
 

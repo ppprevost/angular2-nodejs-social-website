@@ -2,7 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpModule} from '@angular/http';
+import {HttpClientModule} from '@angular/common/http';
 import {RouterModule} from '@angular/router';
 import {AppComponent} from './app.component';
 import {DataService} from './services/data.service';
@@ -97,7 +97,7 @@ const routing = RouterModule.forRoot([
     MdInputModule,
     MdTooltipModule,
     ToastyModule.forRoot(),
-    HttpModule,
+    HttpClientModule,
     routing
   ],
   providers: [

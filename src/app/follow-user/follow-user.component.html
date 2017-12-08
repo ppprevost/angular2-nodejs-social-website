@@ -10,12 +10,12 @@
 </ng-template>
 
 <div  #wasteMasonry class="row userProfile" data-toggle="isotope" style="position: relative; " infinite-scroll
-      [infiniteScrollDistance]="3"
+      [infiniteScrollDistance]="1"
       [scrollWindow]="true"
       [infiniteScrollUpDistance]="1.5"
-      [infiniteScrollThrottle]="500"
+      [infiniteScrollThrottle]="1000"
       (scrolled)="onScrollDown()"
-      (scrolledUp)="onScrollUp()">
+     >
   <div class="row" *ngIf="wasters.length;else noUser">
     <div class="col-md-6 col-lg-4 item" *ngFor="let waste of wasters">
       <div class="panel panel-default">

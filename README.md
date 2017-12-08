@@ -1,6 +1,6 @@
-# Angular 4 Node.js MEAN Social Website 
+# Angular 5 Node.js MEAN Social Website 
 
-Social website created with Angular 4, Angular-cli, MongoDB, Node.js, Express.js, Typescript, Bootstrap and Socket.io.
+Social website created with Angular 5, Angular-cli, MongoDB, Node.js, Express.js, Typescript, Bootstrap and Socket.io.
 
 ![alt tag](/src/assets/Sans%20titre.png)
 
