@@ -15,6 +15,7 @@
     "postinstall": "concurrently \"tsc -p ./server\" \"ng build -aot -prod\" \"node install-env.js\"",
     "start": "node dist/server/app.js",
     "predev": "tsc -p ./server",
+    "update:packages": "node wipe-dependencies.js && rm -rf node_modules && npm update --save-dev && npm update --save",
     "preprod": "tsc -p ./server",
     "prod": "concurrently \"tsc -p ./server\" \"ng build -aot -prod\" \"node dist/server/app.js\"",
     "dev": "concurrently --allow-restart --restart-after 2000 \"ng serve -pc proxy.conf.json\" \"npm run startNodemon\"",
@@ -27,13 +28,13 @@
     "e2e": "ng e2e"
   },
   "dependencies": {
-    "@angular/material": "2.0.0-beta.7",
     "@angular/animations": "^5.0.3",
     "@angular/common": "^5.0.3",
     "@angular/compiler": "^5.0.3",
     "@angular/core": "^5.0.3",
     "@angular/forms": "^5.0.3",
     "@angular/http": "^5.0.3",
+    "@angular/material": "^2.0.0-beta.12",
     "@angular/platform-browser": "^5.0.3",
     "@angular/platform-browser-dynamic": "^5.0.3",
     "@angular/router": "^5.0.3",

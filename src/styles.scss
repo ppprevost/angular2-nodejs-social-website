@@ -49,7 +49,7 @@ body { //
 
   .panel-body img {
     width: 100%;
-    height:auto;
+    height: auto;
   }
 
   img {
@@ -61,7 +61,6 @@ body { //
 .newUserSignIn {
   margin-top: 50px
 }
-
 
 textarea {
   resize: none;
@@ -19341,4 +19340,19 @@ fieldset[disabled] .sidebar.sidebar-skin-white-brown .btn-default.active {
   &[data-pagination-position*="BOTTOM"] + .map-overlay-top {
     top: 0;
   }
+}
+
+.fa-close {
+  cursor: pointer;
+}
+
+.completer-input.form-control {
+  position: relative;
+
+}
+
+.completer-dropdown-holder {
+  position: absolute;
+  top: 50px;
+  //padding-top: 40px;
 }

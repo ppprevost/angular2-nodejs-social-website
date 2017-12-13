@@ -43,7 +43,7 @@ export class HomeComponent {
           }
             this.wasteComponent.wastes.unshift(data)
           },
-          (err => console.log(err))); // une fois// qu'on a bien enregfistré on rappelle la méthode getost du component child
+          (err => console.log(err)));
     }
   }
 

@@ -71,7 +71,7 @@ export class WasteController {
   }
 
   /**
-   * Get all Post from a user
+   * Get all Post from a user and his friends depends on the request
    * @param {Express.Request} req
    * @param {boolean} req.body.onlyOwnPost -if true get your own Post
    * @param {string] req.body.typePost -private or public
@@ -81,7 +81,7 @@ export class WasteController {
     const userData = req.body.following, onlyOwnPost: boolean = req.body.onlyOwnPost;
     let requestedWastes = [userData];
     Users.findById(userData, (err, user) => {
-      if (!err && !onlyOwnPost && user.following && user.following.length) {
+      if (!err && !onlyOwnPost && user.following && user.following.length) { // load own post plus post from friends
         Users.listOfFriends(user.following, 0, false, following => {
           following = following.map(elem => elem.userId);
           requestedWastes = requestedWastes.concat(following);

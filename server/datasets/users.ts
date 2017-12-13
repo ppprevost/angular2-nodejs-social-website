@@ -69,6 +69,8 @@ const schema = new mongoose.Schema({
   isConnected: Boolean,
   following: [follower]
 });
+// to search by username
+schema.index({'username': 'text'});
 
 /**
  *Get the list of friends('accepted') of a specific user.

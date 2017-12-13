@@ -7,6 +7,8 @@ import {environment} from '../../environments/environment';
 import {FileSelectDirective, FileDropDirective} from 'ng2-file-upload';
 import {User} from '../interface/interface';
 import swal from 'sweetalert2';
+import {FileLikeObject} from "ng2-file-upload/file-upload/file-like-object.class";
+import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 
 @Component({
   selector: 'app-profile',
@@ -29,12 +31,30 @@ export class ProfileComponent implements OnInit {
     allowedMimeType: ['image/png', 'image/jpg', 'image/gif', 'image/jpeg']
   });
 
-  constructor(private auth: AuthService, private data: DataService, private passwordForm: FormBuilder, private zone: NgZone) {
+  constructor(private toastyService: ToastyService, private auth: AuthService, private data: DataService, private passwordForm: FormBuilder, private zone: NgZone) {
     this.user = this.auth.user;
   }
 
   ngOnInit() {
     this.uploader.authToken = 'Bearer ' + localStorage.token;
+    this.fileUploader();
+    this.updatePass = this.passwordForm.group({
+      lastPassword: this.lastPassword,
+      password: this.password,
+      confirm: this.confirm
+    });
+  }
+
+  private fileUploader() {
+    this.uploader.onWhenAddingFileFailed = (item: FileLikeObject, filter: any, options: any) => {
+      console.log(item, filter, options)
+      if (item.size > options.maxFileSize) {
+        this.toastyService.info({
+          title: 'Too BiG ! ',
+          msg: 'This File is too BIG, please upload a file that do not exceed 1 mb'
+        })
+      }
+    };
     this.uploader.onBuildItemForm = (item: any, form) => {
       form.append('userId', this.auth.user['_id']);
       form.append('uploadType', this.typeUpload);
@@ -47,18 +67,15 @@ export class ProfileComponent implements OnInit {
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       this.auth.callRefreshUserData(JSON.parse(response));
     };
-    this.updatePass = this.passwordForm.group({
-      lastPassword: this.lastPassword,
-      password: this.password,
-      confirm: this.confirm
-    });
   }
 
   updateChamp(event) {
     console.log(event.target.value);
+
     interface Obj {
       userId: string;
     }
+
     const obj: Obj = <any>{};
     obj['userId'] = this.auth.user['_id'];
     obj[event.target.name] = event.target.value;

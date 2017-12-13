@@ -43,7 +43,7 @@ export class FollowUserComponent implements OnInit, AfterViewChecked, OnDestroy,
   /**
    * Inifinite scroll module
    */
-  onScrollDown() {
+  onScrollDown() { //  wait for refreshing correctly the users
     console.log('scrolled down!!');
     this.data.getUsers({
       'request': 'all',

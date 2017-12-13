@@ -169,11 +169,9 @@ export class AppComponent implements OnInit, OnDestroy {
     // the socket is connected
     this.connectionOfUser = this.socket.socketFunction('connect')
       .subscribe(connection => {
-        console.log('connection of the socket', connection)
         this.data.refreshSocketIdOfConnectedUsers(
           this.auth.user._id, this.socket.socket.id, localStorage.token)
           .subscribe((refreshStorage) => {
-            console.log(refreshStorage);
             this.socketMethodUsed();
           });
       });
@@ -183,7 +181,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.socketMethodUse(this.table);
     this.connection = this.socket.socketFunction('getNewPost').subscribe(message => {
       console.log(message);
-      this.toastyService.info({title: 'you have a new post !', msg: message.content});
+      this.toastyService.info({title: 'you have a new post !', msg: message.content.content});
     });
     this.commentarySub = this.socket.socketFunction('newComments').subscribe(message => {
       this.toastyService.info({title: message.username + ' answered to your comment', msg: message.content});

@@ -25,11 +25,9 @@
               <div class="expandable expandable-indicator-white expandable-trigger">
                 <div class="expandable-content" *ngIf='user?.bio'>
                   {{user?.bio}}
-                  <div class="expandable-indicator"><i></i></div>
                 </div>
                 <div class="expandable-content" *ngIf='!user?.bio'>
                   Merci de renseigner votre bio
-                  <div class="expandable-indicator"><i></i></div>
                 </div>
               </div>
             </div>
@@ -69,7 +67,7 @@
                 <button (click)="sendWaste()" type="submit" class="btn btn-primary"><i class="fa fa-envelope"></i>Send
                 </button>
               </div>
-              <input [(ngModel)]="newWaste" type="text" name="postContent"
+              <input (ngSubmit)="sendWaste()" [(ngModel)]="newWaste" type="text" name="postContent"
                      placeholder="Write message..."
                      class="form-control share-text">
             </div>

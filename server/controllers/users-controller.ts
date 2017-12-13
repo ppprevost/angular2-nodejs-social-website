@@ -36,7 +36,6 @@ export class UserController {
    * @param req
    * @param {string} [req.body.searchData] -the sepcific users you are looking for
    * @param {number} [req.body.limitData] -the number of users you want to send
-   * @param {} [req.body.skipLimit] -the number to skip for infinite sroll
    * @param {number} [req.body.skipLimit] -for scrolling users
    * @param {express.Response} res
    */
@@ -140,12 +139,16 @@ export class UserController {
    * @param {string} socketId string
    */
   deleteSocketIdDB = (socketId) => {
-    // TODO  deconnectionMethod('location.socketId', socketId)
     UsersConnected.findOne({'location.socketId': socketId}, (err, locationUser) => {
       if (!err) {
         if (locationUser) {
           if (locationUser.location.length <= 1) {
-            locationUser.remove()
+            Users.findOne(locationUser.userId, (err, user) => {
+
+
+            });
+            locationUser.remove();
+            Users.getListOfFriendAndSentSocket(locationUser,)
           } else {
             const indexOfLocation = locationUser.location.indexOf(locationUser.location.find(elem => {
               return elem.socketId === socketId;

@@ -5,6 +5,7 @@ import {Params, ActivatedRoute} from '@angular/router';
 import {WasteComponent} from '../utils/waste/waste.component';
 import {Compiler} from '@angular/core';
 import {User} from '../interface/interface';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-my-profile',
@@ -24,7 +25,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   @ViewChild(WasteComponent) wasteComponent: WasteComponent;
   getThisUserSub;
 
-  constructor(private _compiler: Compiler, private auth: AuthService, private activatedRoute: ActivatedRoute, private data: DataService) {
+  constructor(private _sanitizer: DomSanitizer, private _compiler: Compiler, private auth: AuthService, private activatedRoute: ActivatedRoute, private data: DataService) {
   }
 
   ngOnInit() {
@@ -102,11 +103,13 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         .map(res => res.json())
         .subscribe(data => {
             this.newWaste = '';
+            if (data && data.content && data.content.source === 'YouTube') {
+              data.content._url = this._sanitizer.bypassSecurityTrustResourceUrl(data.content._url);
+            }
+            this.wasteComponent.wastes.unshift(data)
           },
-          (err => console.log(err)),
-          () => this.wasteComponent.getPosts()); // une fois// qu'on a bien enregfistré on rappelle la méthode getost du component child
+          (err => console.log(err)));
+
     }
-
   }
-
 }

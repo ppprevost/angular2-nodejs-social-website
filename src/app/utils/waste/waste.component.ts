@@ -16,8 +16,6 @@ import {Waste, Commentary} from '../../interface/interface';
 import {AuthService} from '../../services/auth.service';
 import * as Masonry from 'masonry-layout';
 import 'rxjs/add/operator/concatMap';
-import {Observable} from 'rxjs';
-
 
 @Component({
   selector: 'app-waste',

@@ -5,9 +5,10 @@ import * as bodyParser from 'body-parser';
 import {redirectHTTPS} from './utils/utils';
 import {RouterApp} from './routes/routes';
 import * as mongoose from 'mongoose';
+
 const expressValidator = require('express-validator');
 
-class Server {
+class ServerApp {
   private app: express.Application;
   private io: any;
   private port: number;
@@ -38,16 +39,10 @@ class Server {
   databases() {
     const dotenv = require('dotenv');
     dotenv.config({path: '.env'});
-    mongoose.connect(process.env.MONGODB_URI);
-    const db = mongoose.connection;
     (<any>mongoose).Promise = global.Promise;
-    db.on('error', () => {
-      console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
-      process.exit(1);
-    });
-
-    db.once('open', () => {
-      console.log('Connected to MongoDB');
+    let mongodb: any = mongoose.connect(process.env.MONGODB_URI, {useMongoClient: true});
+    mongodb.then(db => {
+      console.log('Connected to MongoDB on', db.host + ':' + db.port);
       // all other routes are handled by Angular
       const server = this.app.listen(this.app.get('port'), () => {
         console.log('Angular 4 Full Stack listening on port ' + this.app.get('port'));
@@ -58,10 +53,13 @@ class Server {
       this.app.get('/*', function (req, res) {
         res.sendFile(path.join(__dirname, './../index.html'));
       });
+    }).catch(err => {
+      console.log('MongoDB Connection Error. Please make sure that MongoDB is running.')
+      console.error(err)
     });
   }
 }
-const serverExpress = new Server();
-export {serverExpress};
+
+export const serverExpress = new ServerApp();
 
 

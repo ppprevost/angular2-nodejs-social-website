@@ -26,7 +26,7 @@ export class FollowUserResolverService implements Resolve<User[]> {
     } else {
       return this.data.getUsers({
         'request': route.params.request,
-        'limitData': 10,
+        'limitData': 0,
       });
     }
   }

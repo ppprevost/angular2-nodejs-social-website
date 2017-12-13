@@ -22,7 +22,7 @@
                 <a href="#" class="pull-right text-muted"><i
                   class="icon-reply-all-fill fa fa-2x "></i></a>
                 <a (click)="deleteWasteOrPost(waste._id)" *ngIf="auth.user._id === waste.userId"
-                   class="fa fa-close pull-right"></a>
+                   class="fa fa-close pull-right" style="pointer:"></a>
                 <a [routerLink]="['/my-profile',waste.userId]">{{waste.username}}</a>
                 <p>{{waste.userType}} post</p>
                 <span>on {{waste.date | date: 'MM/dd/yyyy hh:mm'}}</span>
